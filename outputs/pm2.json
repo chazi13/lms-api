@@ -1,0 +1,173 @@
+{
+    "apps": [
+        {
+            "name": "Graphql Service",
+            "script": "npm run graphql"
+        },
+        null,
+        {
+            "name": "Email Service",
+            "script": "npm run email-services"
+        },
+        {
+            "name": "Storage Service",
+            "script": "npm run storage-services"
+        },
+        {
+            "name": "Push Notification Servic",
+            "script": "npm run pushNotification-services"
+        },
+        {
+            "name": "user Service",
+            "script": "npm run user-services"
+        },
+        {
+            "name": "menu Service",
+            "script": "npm run menu-services"
+        },
+        {
+            "name": "profile Service",
+            "script": "npm run profile-services"
+        },
+        {
+            "name": "student Service",
+            "script": "npm run student-services"
+        },
+        {
+            "name": "education Service",
+            "script": "npm run education-services"
+        },
+        {
+            "name": "work Service",
+            "script": "npm run work-services"
+        },
+        {
+            "name": "skill Service",
+            "script": "npm run skill-services"
+        },
+        {
+            "name": "project Service",
+            "script": "npm run project-services"
+        },
+        {
+            "name": "classRoom Service",
+            "script": "npm run classRoom-services"
+        },
+        {
+            "name": "group Service",
+            "script": "npm run group-services"
+        },
+        {
+            "name": "studentClass Service",
+            "script": "npm run studentClass-services"
+        },
+        {
+            "name": "studentGroup Service",
+            "script": "npm run studentGroup-services"
+        },
+        {
+            "name": "post Service",
+            "script": "npm run post-services"
+        },
+        {
+            "name": "event Service",
+            "script": "npm run event-services"
+        },
+        {
+            "name": "courseCategory Service",
+            "script": "npm run courseCategory-services"
+        },
+        {
+            "name": "course Service",
+            "script": "npm run course-services"
+        },
+        {
+            "name": "section Service",
+            "script": "npm run section-services"
+        },
+        {
+            "name": "lecture Service",
+            "script": "npm run lecture-services"
+        },
+        {
+            "name": "article Service",
+            "script": "npm run article-services"
+        },
+        {
+            "name": "reaction Service",
+            "script": "npm run reaction-services"
+        },
+        {
+            "name": "comment Service",
+            "script": "npm run comment-services"
+        },
+        {
+            "name": "subComment Service",
+            "script": "npm run subComment-services"
+        },
+        {
+            "name": "message Service",
+            "script": "npm run message-services"
+        },
+        {
+            "name": "messageImage Service",
+            "script": "npm run messageImage-services"
+        },
+        {
+            "name": "propertyUser Service",
+            "script": "npm run propertyUser-services"
+        },
+        {
+            "name": "workspace Service",
+            "script": "npm run workspace-services"
+        },
+        {
+            "name": "board Service",
+            "script": "npm run board-services"
+        },
+        {
+            "name": "list Service",
+            "script": "npm run list-services"
+        },
+        {
+            "name": "card Service",
+            "script": "npm run card-services"
+        },
+        {
+            "name": "checklist Service",
+            "script": "npm run checklist-services"
+        },
+        {
+            "name": "attachment Service",
+            "script": "npm run attachment-services"
+        },
+        {
+            "name": "quiz Service",
+            "script": "npm run quiz-services"
+        },
+        {
+            "name": "question Service",
+            "script": "npm run question-services"
+        },
+        {
+            "name": "option Service",
+            "script": "npm run option-services"
+        },
+        {
+            "name": "answer Service",
+            "script": "npm run answer-services"
+        },
+        {
+            "name": "review Service",
+            "script": "npm run review-services"
+        },
+        {
+            "name": "checkInRoomMessage Service",
+            "script": "npm run checkInRoomMessage-services"
+        },
+        {
+            "name": "checkInRoom Service",
+            "script": "npm run checkInRoom-services"
+        }
+    ]
+}
