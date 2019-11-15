@@ -9,6 +9,7 @@ type ClassRoom {
   students: [Student!]
   group(query: JSON): Group!
   workspaces(query: JSON): [Workspace]
+  background: String
 }
 input ClassRoomFilter {
   AND: [ClassRoomFilter!]
@@ -72,6 +73,20 @@ input ClassRoomFilter {
   workspaces: WorkspaceFilter
   workspaces_some: WorkspaceFilter
   workspaces_none: WorkspaceFilter
+  background: String
+  background_not: String
+  background_in: [String]
+  background_not_in: [String]
+  background_lt: String
+  background_lte: String
+  background_gt: String
+  background_gte: String
+  background_contains: String
+  background_not_contains: String
+  background_starts_with: String
+  background_not_starts_with: String
+  background_ends_with: String
+  background_not_ends_with: String
 }
 enum ClassRoomOrderBy {
   id_ASC
@@ -82,6 +97,8 @@ enum ClassRoomOrderBy {
   updatedAt_DESC
   name_ASC
   name_DESC
+  background_ASC
+  background_DESC
 }
 type ClassRoomConnection {
   total: Int
@@ -94,12 +111,14 @@ input CreateClassRoomInput {
   students: [CreateStudentInput]
   studentsIds: [String]
   groupId: String!
+  background: String
 }
 input UpdateClassRoomInput {
   name: String
   students: [UpdateStudentInput]
   studentsIds: [String]
   groupId: String
+  background: String
 }
 extend type Query {
   classRooms(

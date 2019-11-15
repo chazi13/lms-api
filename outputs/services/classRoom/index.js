@@ -8,7 +8,6 @@ const cote = require('cote')({ redis: { host: REDIS_HOST, port: REDIS_PORT } })
 const appRoot = require('app-root-path');
 const pluralize = require("pluralize")
 let externalHook = null
-
 try {
     const root = appRoot.toString()
     const split = root.split('/')
@@ -454,7 +453,22 @@ app.service('classRooms').hooks({
                     } 
                     
                     
+                    
                     //onDelete
+                    //ON DELETE SET RESTRICT
+                    let workspaces = await getRequester('workspace').send({ 
+                        type: 'find', 
+                        query: {
+                            classRoomId: context.id
+                        }, 
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }
+                    })
+                    if(workspaces.length > 0){
+                        throw Error("Failed delete", null)
+                    }
+                
                     //ON DELETE SET CASCADE
                     await getRequester('group').send({ type: 'delete', 
                         id: null,   

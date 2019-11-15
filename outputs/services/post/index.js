@@ -8,7 +8,6 @@ const cote = require('cote')({ redis: { host: REDIS_HOST, port: REDIS_PORT } })
 const appRoot = require('app-root-path');
 const pluralize = require("pluralize")
 let externalHook = null
-
 try {
     const root = appRoot.toString()
     const split = root.split('/')
@@ -440,7 +439,20 @@ app.service('posts').hooks({
                     } 
                     
                     
+                    
                     //onDelete
+                    //ON DELETE SET CASCADE
+                    await getRequester('attachment').send({ type: 'delete', 
+                        id: null,   
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }, 
+                        params: {
+                            query: {
+                                postId: context.id
+                            }
+                        }
+                    })
                     //ON DELETE SET CASCADE
                     await getRequester('reaction').send({ type: 'delete', 
                         id: null,   

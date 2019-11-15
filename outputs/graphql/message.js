@@ -10,6 +10,7 @@ type Message {
   user: User
   parentMessage: String
   isDeleted: Boolean
+  files(query: JSON): [ChatFileStorage]
 }
 input MessageFilter {
   AND: [MessageFilter!]
@@ -97,6 +98,9 @@ input MessageFilter {
   parentMessage_not_ends_with: String
   isDeleted: Boolean
   isDeleted_not: Boolean
+  files: ChatFileStorageFilter
+  files_some: ChatFileStorageFilter
+  files_none: ChatFileStorageFilter
 }
 enum MessageOrderBy {
   id_ASC
@@ -204,6 +208,13 @@ export const resolvers = ({ pubSub }) => ({
         user: async ({ userId }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: userId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        files: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.chatFileStorageRequester.send({ type: 'find', where: Object.assign({ messageId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

@@ -6,6 +6,7 @@ module.exports = function(app) {
         name: { type: String, required: true, unique: false },
         studentsId: [{ type: String, required: true }],
         groupId: { type: String, required: true },
+        background: { type: String, required: false, unique: false },
         createdBy: String,
         updatedBy: String
     }, {

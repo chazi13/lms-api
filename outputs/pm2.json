@@ -34,6 +34,10 @@
             "script": "npm run student-services"
         },
         {
+            "name": "studentWorkspace Service",
+            "script": "npm run studentWorkspace-services"
+        },
+        {
             "name": "education Service",
             "script": "npm run education-services"
         },
@@ -68,6 +72,10 @@
         {
             "name": "post Service",
             "script": "npm run post-services"
+        },
+        {
+            "name": "postAttachment Service",
+            "script": "npm run postAttachment-services"
         },
         {
             "name": "event Service",
@@ -106,12 +114,16 @@
             "script": "npm run subComment-services"
         },
         {
+            "name": "commentAttachment Service",
+            "script": "npm run commentAttachment-services"
+        },
+        {
             "name": "message Service",
             "script": "npm run message-services"
         },
         {
-            "name": "messageImage Service",
-            "script": "npm run messageImage-services"
+            "name": "chatFileStorage Service",
+            "script": "npm run chatFileStorage-services"
         },
         {
             "name": "propertyUser Service",

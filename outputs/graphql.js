@@ -8,13 +8,13 @@ import { GraphQLScalarType, Kind } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
 
 import { PubSub } from 'graphql-subscriptions'
-import { PhoneNumber, EmailAddress } from './utils/scallars'
 import { typeDef as Email, resolvers as emailResolvers } from './graphql/email'
 import { typeDef as PushNotification, resolvers as pushNotificationResolvers } from './graphql/pushNotification'
 import { typeDef as user, resolvers as userResolvers } from './graphql/user'
 import { typeDef as menu, resolvers as menuResolvers } from './graphql/menu'
 import { typeDef as profile, resolvers as profileResolvers } from './graphql/profile'
 import { typeDef as student, resolvers as studentResolvers } from './graphql/student'
+import { typeDef as studentWorkspace, resolvers as studentWorkspaceResolvers } from './graphql/studentWorkspace'
 import { typeDef as education, resolvers as educationResolvers } from './graphql/education'
 import { typeDef as work, resolvers as workResolvers } from './graphql/work'
 import { typeDef as skill, resolvers as skillResolvers } from './graphql/skill'
@@ -24,6 +24,7 @@ import { typeDef as group, resolvers as groupResolvers } from './graphql/group'
 import { typeDef as studentClass, resolvers as studentClassResolvers } from './graphql/studentClass'
 import { typeDef as studentGroup, resolvers as studentGroupResolvers } from './graphql/studentGroup'
 import { typeDef as post, resolvers as postResolvers } from './graphql/post'
+import { typeDef as postAttachment, resolvers as postAttachmentResolvers } from './graphql/postAttachment'
 import { typeDef as event, resolvers as eventResolvers } from './graphql/event'
 import { typeDef as courseCategory, resolvers as courseCategoryResolvers } from './graphql/courseCategory'
 import { typeDef as course, resolvers as courseResolvers } from './graphql/course'
@@ -33,8 +34,9 @@ import { typeDef as article, resolvers as articleResolvers } from './graphql/art
 import { typeDef as reaction, resolvers as reactionResolvers } from './graphql/reaction'
 import { typeDef as comment, resolvers as commentResolvers } from './graphql/comment'
 import { typeDef as subComment, resolvers as subCommentResolvers } from './graphql/subComment'
+import { typeDef as commentAttachment, resolvers as commentAttachmentResolvers } from './graphql/commentAttachment'
 import { typeDef as message, resolvers as messageResolvers } from './graphql/message'
-import { typeDef as messageImage, resolvers as messageImageResolvers } from './graphql/messageImage'
+import { typeDef as chatFileStorage, resolvers as chatFileStorageResolvers } from './graphql/chatFileStorage'
 import { typeDef as propertyUser, resolvers as propertyUserResolvers } from './graphql/propertyUser'
 import { typeDef as workspace, resolvers as workspaceResolvers } from './graphql/workspace'
 import { typeDef as board, resolvers as boardResolvers } from './graphql/board'
@@ -83,12 +85,8 @@ enum Visible {
    scalar Upload
    scalar DateTime
    scalar Date
-   scalar PhoneNumber
-   scalar EmailAddress
 `
 const resolver = {
-    PhoneNumber,
-    EmailAddress,
     JSON: GraphQLJSON,
     Upload: GraphQLUpload,
     Date: new GraphQLScalarType({
@@ -140,8 +138,8 @@ const resolver = {
     })
 }
 const schema = makeExecutableSchema({
-    typeDefs: [typeDefs, createRateLimitTypeDef(), injectConfigFromHook("email", Email), injectConfigFromHook("pushNotification", PushNotification), injectConfigFromHook('user', user), injectConfigFromHook('menu', menu), injectConfigFromHook('profile', profile), injectConfigFromHook('student', student), injectConfigFromHook('education', education), injectConfigFromHook('work', work), injectConfigFromHook('skill', skill), injectConfigFromHook('project', project), injectConfigFromHook('classRoom', classRoom), injectConfigFromHook('group', group), injectConfigFromHook('studentClass', studentClass), injectConfigFromHook('studentGroup', studentGroup), injectConfigFromHook('post', post), injectConfigFromHook('event', event), injectConfigFromHook('courseCategory', courseCategory), injectConfigFromHook('course', course), injectConfigFromHook('section', section), injectConfigFromHook('lecture', lecture), injectConfigFromHook('article', article), injectConfigFromHook('reaction', reaction), injectConfigFromHook('comment', comment), injectConfigFromHook('subComment', subComment), injectConfigFromHook('message', message), injectConfigFromHook('messageImage', messageImage), injectConfigFromHook('propertyUser', propertyUser), injectConfigFromHook('workspace', workspace), injectConfigFromHook('board', board), injectConfigFromHook('list', list), injectConfigFromHook('card', card), injectConfigFromHook('checklist', checklist), injectConfigFromHook('attachment', attachment), injectConfigFromHook('quiz', quiz), injectConfigFromHook('question', question), injectConfigFromHook('option', option), injectConfigFromHook('answer', answer), injectConfigFromHook('review', review), injectConfigFromHook('checkInRoomMessage', checkInRoomMessage), injectConfigFromHook('checkInRoom', checkInRoom)],
-    resolvers: merge(resolver, emailResolvers, pushNotificationResolvers, userResolvers({ pubSub }), menuResolvers({ pubSub }), profileResolvers({ pubSub }), studentResolvers({ pubSub }), educationResolvers({ pubSub }), workResolvers({ pubSub }), skillResolvers({ pubSub }), projectResolvers({ pubSub }), classRoomResolvers({ pubSub }), groupResolvers({ pubSub }), studentClassResolvers({ pubSub }), studentGroupResolvers({ pubSub }), postResolvers({ pubSub }), eventResolvers({ pubSub }), courseCategoryResolvers({ pubSub }), courseResolvers({ pubSub }), sectionResolvers({ pubSub }), lectureResolvers({ pubSub }), articleResolvers({ pubSub }), reactionResolvers({ pubSub }), commentResolvers({ pubSub }), subCommentResolvers({ pubSub }), messageResolvers({ pubSub }), messageImageResolvers({ pubSub }), propertyUserResolvers({ pubSub }), workspaceResolvers({ pubSub }), boardResolvers({ pubSub }), listResolvers({ pubSub }), cardResolvers({ pubSub }), checklistResolvers({ pubSub }), attachmentResolvers({ pubSub }), quizResolvers({ pubSub }), questionResolvers({ pubSub }), optionResolvers({ pubSub }), answerResolvers({ pubSub }), reviewResolvers({ pubSub }), checkInRoomMessageResolvers({ pubSub }), checkInRoomResolvers({ pubSub })),
+    typeDefs: [typeDefs, createRateLimitTypeDef(), injectConfigFromHook("email", Email), injectConfigFromHook("pushNotification", PushNotification), injectConfigFromHook('user', user), injectConfigFromHook('menu', menu), injectConfigFromHook('profile', profile), injectConfigFromHook('student', student), injectConfigFromHook('studentWorkspace', studentWorkspace), injectConfigFromHook('education', education), injectConfigFromHook('work', work), injectConfigFromHook('skill', skill), injectConfigFromHook('project', project), injectConfigFromHook('classRoom', classRoom), injectConfigFromHook('group', group), injectConfigFromHook('studentClass', studentClass), injectConfigFromHook('studentGroup', studentGroup), injectConfigFromHook('post', post), injectConfigFromHook('postAttachment', postAttachment), injectConfigFromHook('event', event), injectConfigFromHook('courseCategory', courseCategory), injectConfigFromHook('course', course), injectConfigFromHook('section', section), injectConfigFromHook('lecture', lecture), injectConfigFromHook('article', article), injectConfigFromHook('reaction', reaction), injectConfigFromHook('comment', comment), injectConfigFromHook('subComment', subComment), injectConfigFromHook('commentAttachment', commentAttachment), injectConfigFromHook('message', message), injectConfigFromHook('chatFileStorage', chatFileStorage), injectConfigFromHook('propertyUser', propertyUser), injectConfigFromHook('workspace', workspace), injectConfigFromHook('board', board), injectConfigFromHook('list', list), injectConfigFromHook('card', card), injectConfigFromHook('checklist', checklist), injectConfigFromHook('attachment', attachment), injectConfigFromHook('quiz', quiz), injectConfigFromHook('question', question), injectConfigFromHook('option', option), injectConfigFromHook('answer', answer), injectConfigFromHook('review', review), injectConfigFromHook('checkInRoomMessage', checkInRoomMessage), injectConfigFromHook('checkInRoom', checkInRoom)],
+    resolvers: merge(resolver, emailResolvers, pushNotificationResolvers, userResolvers({ pubSub }), menuResolvers({ pubSub }), profileResolvers({ pubSub }), studentResolvers({ pubSub }), studentWorkspaceResolvers({ pubSub }), educationResolvers({ pubSub }), workResolvers({ pubSub }), skillResolvers({ pubSub }), projectResolvers({ pubSub }), classRoomResolvers({ pubSub }), groupResolvers({ pubSub }), studentClassResolvers({ pubSub }), studentGroupResolvers({ pubSub }), postResolvers({ pubSub }), postAttachmentResolvers({ pubSub }), eventResolvers({ pubSub }), courseCategoryResolvers({ pubSub }), courseResolvers({ pubSub }), sectionResolvers({ pubSub }), lectureResolvers({ pubSub }), articleResolvers({ pubSub }), reactionResolvers({ pubSub }), commentResolvers({ pubSub }), subCommentResolvers({ pubSub }), commentAttachmentResolvers({ pubSub }), messageResolvers({ pubSub }), chatFileStorageResolvers({ pubSub }), propertyUserResolvers({ pubSub }), workspaceResolvers({ pubSub }), boardResolvers({ pubSub }), listResolvers({ pubSub }), cardResolvers({ pubSub }), checklistResolvers({ pubSub }), attachmentResolvers({ pubSub }), quizResolvers({ pubSub }), questionResolvers({ pubSub }), optionResolvers({ pubSub }), answerResolvers({ pubSub }), reviewResolvers({ pubSub }), checkInRoomMessageResolvers({ pubSub }), checkInRoomResolvers({ pubSub })),
     schemaDirectives: {
         rateLimit: createRateLimitDirective({
             keyGenerator
@@ -182,6 +180,11 @@ const profileRequester = new cote.Requester({
 const studentRequester = new cote.Requester({
     name: 'student Requester',
     key: 'student',
+})
+
+const studentWorkspaceRequester = new cote.Requester({
+    name: 'studentWorkspace Requester',
+    key: 'studentWorkspace',
 })
 
 const educationRequester = new cote.Requester({
@@ -229,6 +232,11 @@ const postRequester = new cote.Requester({
     key: 'post',
 })
 
+const postAttachmentRequester = new cote.Requester({
+    name: 'postAttachment Requester',
+    key: 'postAttachment',
+})
+
 const eventRequester = new cote.Requester({
     name: 'event Requester',
     key: 'event',
@@ -274,14 +282,19 @@ const subCommentRequester = new cote.Requester({
     key: 'subComment',
 })
 
+const commentAttachmentRequester = new cote.Requester({
+    name: 'commentAttachment Requester',
+    key: 'commentAttachment',
+})
+
 const messageRequester = new cote.Requester({
     name: 'message Requester',
     key: 'message',
 })
 
-const messageImageRequester = new cote.Requester({
-    name: 'messageImage Requester',
-    key: 'messageImage',
+const chatFileStorageRequester = new cote.Requester({
+    name: 'chatFileStorage Requester',
+    key: 'chatFileStorage',
 })
 
 const propertyUserRequester = new cote.Requester({
@@ -385,6 +398,7 @@ const context = ({ req, connection }) => {
             menuRequester,
             profileRequester,
             studentRequester,
+            studentWorkspaceRequester,
             educationRequester,
             workRequester,
             skillRequester,
@@ -394,6 +408,7 @@ const context = ({ req, connection }) => {
             studentClassRequester,
             studentGroupRequester,
             postRequester,
+            postAttachmentRequester,
             eventRequester,
             courseCategoryRequester,
             courseRequester,
@@ -403,8 +418,9 @@ const context = ({ req, connection }) => {
             reactionRequester,
             commentRequester,
             subCommentRequester,
+            commentAttachmentRequester,
             messageRequester,
-            messageImageRequester,
+            chatFileStorageRequester,
             propertyUserRequester,
             workspaceRequester,
             boardRequester,
@@ -425,6 +441,7 @@ const context = ({ req, connection }) => {
             menuResolvers,
             profileResolvers,
             studentResolvers,
+            studentWorkspaceResolvers,
             educationResolvers,
             workResolvers,
             skillResolvers,
@@ -434,6 +451,7 @@ const context = ({ req, connection }) => {
             studentClassResolvers,
             studentGroupResolvers,
             postResolvers,
+            postAttachmentResolvers,
             eventResolvers,
             courseCategoryResolvers,
             courseResolvers,
@@ -443,8 +461,9 @@ const context = ({ req, connection }) => {
             reactionResolvers,
             commentResolvers,
             subCommentResolvers,
+            commentAttachmentResolvers,
             messageResolvers,
-            messageImageResolvers,
+            chatFileStorageResolvers,
             propertyUserResolvers,
             workspaceResolvers,
             boardResolvers,

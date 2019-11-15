@@ -23,11 +23,15 @@ input RegisterInput {
   studentId: String
 }
 
-input UpdateUserInput {
+input UserUpdateInput {
   password: String
   firstName: String
   lastName: String
   role: Role
+  avatar: String
+  phone: String
+  address: String
+  studentId: String
 }
 
 input ChangeProfileInput {
@@ -39,12 +43,16 @@ input ChangeProfileInput {
   studentId: String
 }
 
-input CreateUserInput {
+input UserCreateInput {
   email: String!
   password: String!
   firstName: String!
   lastName: String
   role: Role!
+  avatar: String
+  phone: String
+  address: String
+  studentId: String
 }
 
 input VerifyEmailInput {
@@ -86,11 +94,11 @@ extend type Mutation {
   register(input: RegisterInput): Login
   loginWithGoogle(input: LoginWithGoogleInput): Login
   loginWithFacebook(input: LoginWithFacebookInput): Login
-  createUser(input: CreateUserInput): Login
+  createUser(input: UserCreateInput): Login
   forgetPassword(input: ForgetPasswordInput): Response
   resetPassword(input: ResetPasswordInput): Response
   verifyEmail(input: VerifyEmailInput): Response
-  updateUser(input: UpdateUserInput, id: String!): User
+  updateUser(input: UserUpdateInput, id: String!): User
   deleteUser(id: String!): User
   changeProfile(input: ChangeProfileInput): User
   changePassword(input: ChangePasswordInput): Response
@@ -346,9 +354,9 @@ enum UserOrderBy {
 `
 const resolvers = ({ pubSub }) => ({
     Query: {
-        users: async (_, { where = {}, query = {}, limit, skip, orderBy }, { requester, headers }) => {
+        users: async (_, { where = {}, query = {}, limit, skip }, { requester, headers }) => {
             try {
-                return await requester.userRequester.send({ type: "find", where: Object.assign(where, query), limit, skip, orderBy, headers });
+                return await requester.userRequester.send({ type: "find", where: Object.assign(where, query), limit, skip, headers });
             } catch (e) {
                 throw new Error(e)
             }
@@ -360,9 +368,9 @@ const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        usersConnection: async (_, { where = {}, query = {}, limit, skip, orderBy }, { headers, requester }) => {
+        usersConnection: async (_, { where = {}, query = {}, limit, skip }, { headers, requester }) => {
             try {
-                return await requester.userRequester.send({ type: "findConnection", where: Object.assign(where, query), limit, skip, orderBy, headers });
+                return await requester.userRequester.send({ type: "findConnection", where: Object.assign(where, query), limit, skip, headers });
             } catch (e) {
                 throw new Error(e)
             }

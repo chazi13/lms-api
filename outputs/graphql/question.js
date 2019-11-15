@@ -7,6 +7,7 @@ type Question {
   updatedAt: DateTime
   title: String!
   quiz: Quiz
+  options(query: JSON): [Option]
   answers(query: JSON): [Answer]
   desc: String!
 }
@@ -66,6 +67,9 @@ input QuestionFilter {
   quiz: QuizFilter
   quiz_some: QuizFilter
   quiz_none: QuizFilter
+  options: OptionFilter
+  options_some: OptionFilter
+  options_none: OptionFilter
   answers: AnswerFilter
   answers_some: AnswerFilter
   answers_none: AnswerFilter
@@ -182,6 +186,13 @@ export const resolvers = ({ pubSub }) => ({
         quiz: async ({ quizId }, args, { headers, requester }) => {
             try {
                 return await requester.quizRequester.send({ type: 'get', id: quizId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        options: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.optionRequester.send({ type: 'find', where: Object.assign({ questionId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

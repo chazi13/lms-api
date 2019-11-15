@@ -8,6 +8,7 @@ type Post {
   text: String
   comments(query: JSON): [Comment]
   reactions(query: JSON): [Reaction]
+  attachments(query: JSON): [PostAttachment]
 }
 input PostFilter {
   AND: [PostFilter!]
@@ -68,6 +69,9 @@ input PostFilter {
   reactions: ReactionFilter
   reactions_some: ReactionFilter
   reactions_none: ReactionFilter
+  attachments: PostAttachmentFilter
+  attachments_some: PostAttachmentFilter
+  attachments_none: PostAttachmentFilter
 }
 enum PostOrderBy {
   id_ASC
@@ -168,6 +172,13 @@ export const resolvers = ({ pubSub }) => ({
         reactions: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.reactionRequester.send({ type: 'find', where: Object.assign({ postId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        attachments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.postAttachmentRequester.send({ type: 'find', where: Object.assign({ postId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

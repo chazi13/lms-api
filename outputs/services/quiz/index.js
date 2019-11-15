@@ -8,7 +8,6 @@ const cote = require('cote')({ redis: { host: REDIS_HOST, port: REDIS_PORT } })
 const appRoot = require('app-root-path');
 const pluralize = require("pluralize")
 let externalHook = null
-
 try {
     const root = appRoot.toString()
     const split = root.split('/')

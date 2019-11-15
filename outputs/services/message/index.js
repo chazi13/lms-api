@@ -8,7 +8,6 @@ const cote = require('cote')({ redis: { host: REDIS_HOST, port: REDIS_PORT } })
 const appRoot = require('app-root-path');
 const pluralize = require("pluralize")
 let externalHook = null
-
 try {
     const root = appRoot.toString()
     const split = root.split('/')
@@ -452,7 +451,20 @@ app.service('messages').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     } 
+                    
                     //onDelete
+                    //ON DELETE SET CASCADE
+                    await getRequester('file').send({ type: 'delete', 
+                        id: null,   
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }, 
+                        params: {
+                            query: {
+                                messageId: context.id
+                            }
+                        }
+                    })
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)

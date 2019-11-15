@@ -7,6 +7,7 @@ type SubComment {
   updatedAt: DateTime
   text: String!
   comment: Comment
+  attachments(query: JSON): [CommentAttachment]
 }
 input SubCommentFilter {
   AND: [SubCommentFilter!]
@@ -64,6 +65,9 @@ input SubCommentFilter {
   comment: CommentFilter
   comment_some: CommentFilter
   comment_none: CommentFilter
+  attachments: CommentAttachmentFilter
+  attachments_some: CommentAttachmentFilter
+  attachments_none: CommentAttachmentFilter
 }
 enum SubCommentOrderBy {
   id_ASC
@@ -159,6 +163,13 @@ export const resolvers = ({ pubSub }) => ({
         comment: async ({ commentId }, args, { headers, requester }) => {
             try {
                 return await requester.commentRequester.send({ type: 'get', id: commentId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        attachments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.commentAttachmentRequester.send({ type: 'find', where: Object.assign({ subCommentId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

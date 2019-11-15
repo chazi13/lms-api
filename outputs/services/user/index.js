@@ -9,7 +9,6 @@ const bcrypt = require("bcryptjs");
 const ObjectId = require('mongodb').ObjectID;
 const appRoot = require('app-root-path');
 let externalHook = null
-
 try {
 	const root = appRoot.toString()
 	const split = root.split('/')
@@ -31,15 +30,15 @@ const emailRequester = new cote.Requester({
 });
 
 function camelize(text) {
-	return text.replace(/^([A-Z])|[\s-_]+(\w)/g, function (match, p1, p2, offset) {
+	return text.replace(/^([A-Z])|[\s-_]+(\w)/g, function(match, p1, p2, offset) {
 		if (p2) return p2.toUpperCase();
-		return p1.toLowerCase();
+		return p1.toLowerCase();        
 	});
 }
 
-const getRequester = (name) => {
+const getRequester = (name) =>{
 	const requesterName = `${name.charAt(0).toUpperCase() + name.slice(1)} Requester`
-	if (app.get(requesterName)) {
+	if(app.get(requesterName)){
 		return app.get(requesterName)
 	}
 	const requester = new cote.Requester({
@@ -47,7 +46,7 @@ const getRequester = (name) => {
 		key: `${camelize(name)}`,
 	})
 	let newRequester = {
-		send: params => requester.send({ ...params, isSystem: true })
+		send: params =>  requester.send({...params, isSystem: true})
 	}
 	app.set(requesterName, newRequester)
 	return newRequester
@@ -56,15 +55,15 @@ const getRequester = (name) => {
 app.getRequester = getRequester
 
 
-const whereTransformer = (where = {}) => {
-	let keys = Object.assign({}, where)
-	Object.keys(where).map((field) => {
+const whereTransformer = (where={})=>{
+	let keys = Object.assign({},where)
+	Object.keys(where).map((field)=>{
 		let split = field.split("_")
 		let type = split[split.length - 1]
-		if (type == "contains") {
+		if(type == "contains"){
 			delete keys[field]
 			let value = where[field]
-			if (split[1] == "not") {
+			if(split[1] == "not"){
 				value = `^((?!${value}).)*$`
 			}
 			keys[split[0]] = {
@@ -107,13 +106,13 @@ const whereTransformer = (where = {}) => {
 	return keys
 }
 
-const limitTransformer = (limit) => {
+const limitTransformer = (limit)=>{
 	return {
 		$limit: limit
 	}
 }
 
-const skipTransformer = (skip) => {
+const skipTransformer = (skip) =>{
 	return {
 		$skip: skip
 	}
@@ -128,13 +127,13 @@ const sortTransformer = (orderBy) =>{
 }
 const transformer = ({where, limit, skip, orderBy}) => {
 	let query = {}
-	if (where) {
+	if(where){
 		query = Object.assign(query, whereTransformer(where))
 	}
-	if (limit) {
+	if(limit){
 		query = Object.assign(query, limitTransformer(limit))
 	}
-	if (skip) {
+	if(skip){
 		query = Object.assign(query, skipTransformer(skip))
 	}
 	if(orderBy){
@@ -192,15 +191,15 @@ userService.on("get", async (req, cb) => {
 
 
 		if (req.id) {
-			try {
+			try{
 				data = await app.service("users").get(req.id, {
 					token
 				});
-			} catch (e) {
-				data = null
+			}catch(e){
+				data= null
 			}
 		} else {
-			try {
+			try{
 				let verify = await app
 					.service("authentication")
 					.verifyAccessToken(token);
@@ -208,8 +207,8 @@ userService.on("get", async (req, cb) => {
 				data = await app.service("users").get(user.id, {
 					token
 				});
-			} catch (e) {
-				data = null
+			}catch(e){
+				data= null
 			}
 		}
 		cb(null, data);
@@ -460,7 +459,7 @@ userService.on("changePassword", async (req, cb) => {
 		if (isValid) {
 			const auth = await app
 				.service("users")
-				.patch(user.id, { password: req.body.newPassword }, { isSystem: true });
+				.patch(user.id, { password: req.body.newPassword }, {isSystem: true});
 			cb(null, {
 				status: 1,
 				message: "Success"
@@ -522,7 +521,7 @@ userService.on("reSendVerifyEmail", async (req, cb) => {
 			.service("authentication")
 			.verifyAccessToken(token);
 		let user = await app.service("users").get(verify.sub);
-		if (user.status == 1) {
+		if(user.status == 1){
 			throw new Error("User has been verified.")
 		}
 		const emailToken = bcrypt.genSaltSync();
@@ -602,7 +601,7 @@ userService.on("changeProfile", async (req, cb) => {
 userService.on("updateUser", async (req, cb) => {
 	try {
 		let token = req.headers.authorization;
-		if (req.body.role) {
+		if(req.body.role){
 			req.body.role = req.body.role.toLowerCase()
 		}
 		let verify = await app
@@ -673,8 +672,8 @@ userService.on("verifyToken", async (req, cb) => {
 });
 
 app.service("authentication").hooks({
-	after: {
-		create: async (context) => {
+	after:{
+		create: async (context)=>{
 			externalHook && externalHook(app).after && externalHook(app).after.login && externalHook(app).after.login(context)
 		}
 	}
@@ -745,7 +744,7 @@ app.service("users").hooks({
 			return externalHook && externalHook(app).before && externalHook(app).before.update && externalHook(app).before.update(context)
 		},
 		patch: async context => {
-			if (!context.params.isSystem) {
+			if(!context.params.isSystem){
 				if (!context.params.token) {
 					cb(null, {
 						user: { permissions: permissions["public"] }
