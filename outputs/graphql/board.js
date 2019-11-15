@@ -9,6 +9,7 @@ type Board {
   background: String!
   workspace: Workspace
   visible: Visible
+  lists(query: JSON): [List]
 }
 input BoardFilter {
   AND: [BoardFilter!]
@@ -88,6 +89,9 @@ input BoardFilter {
   visible_lte: Visible
   visible_gt: Visible
   visible_gte: Visible
+  lists: ListFilter
+  lists_some: ListFilter
+  lists_none: ListFilter
 }
 enum BoardOrderBy {
   id_ASC
@@ -189,6 +193,13 @@ export const resolvers = ({ pubSub }) => ({
         workspace: async ({ workspaceId }, args, { headers, requester }) => {
             try {
                 return await requester.workspaceRequester.send({ type: 'get', id: workspaceId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        lists: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.listRequester.send({ type: 'find', where: Object.assign({ boardId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

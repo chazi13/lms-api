@@ -5,6 +5,7 @@ type List {
   updatedBy: User
   createdAt: DateTime
   updatedAt: DateTime
+  board: Board
   name: String!
   background: String!
   cards(query: JSON): [Card]
@@ -48,6 +49,9 @@ input ListFilter {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  board: BoardFilter
+  board_some: BoardFilter
+  board_none: BoardFilter
   name: String
   name_not: String
   name_in: [String]
@@ -99,10 +103,12 @@ type ListConnection {
   data: [List]
 }
 input CreateListInput {
+  boardId: String
   name: String!
   background: String!
 }
 input UpdateListInput {
+  boardId: String
   name: String
   background: String
 }
@@ -169,6 +175,13 @@ export const resolvers = ({ pubSub }) => ({
         updatedBy: async ({ updatedBy }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: updatedBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        board: async ({ boardId }, args, { headers, requester }) => {
+            try {
+                return await requester.boardRequester.send({ type: 'get', id: boardId, headers })
             } catch (e) {
                 throw new Error(e)
             }
