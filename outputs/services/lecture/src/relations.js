@@ -1,10 +1,4 @@
 module.exports = {
-    "section": {
-        "local": "sectionId",
-        "relatedTo": "section",
-        "foreignId": "id",
-        "type": "one"
-    },
     "article": {
         "local": "articleId",
         "relatedTo": "article",
