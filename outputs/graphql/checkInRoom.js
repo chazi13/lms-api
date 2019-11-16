@@ -7,6 +7,7 @@ type CheckInRoom {
   updatedAt: DateTime
   question: String
   users(query: JSON): [User]
+  description: String
   messages(query: JSON): [CheckInRoomMessage]
   comments(query: JSON): [Comment]
 }
@@ -66,6 +67,20 @@ input CheckInRoomFilter {
   users: UserFilter
   users_some: UserFilter
   users_none: UserFilter
+  description: String
+  description_not: String
+  description_in: [String]
+  description_not_in: [String]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
   messages: CheckInRoomMessageFilter
   messages_some: CheckInRoomMessageFilter
   messages_none: CheckInRoomMessageFilter
@@ -82,6 +97,8 @@ enum CheckInRoomOrderBy {
   updatedAt_DESC
   question_ASC
   question_DESC
+  description_ASC
+  description_DESC
 }
 type CheckInRoomConnection {
   total: Int
@@ -91,9 +108,11 @@ type CheckInRoomConnection {
 }
 input CreateCheckInRoomInput {
   question: String
+  description: String
 }
 input UpdateCheckInRoomInput {
   question: String
+  description: String
 }
 extend type Query {
   checkInRooms(

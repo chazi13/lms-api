@@ -9,6 +9,7 @@ type List {
   name: String!
   background: String!
   cards(query: JSON): [Card]
+  index: Integer
 }
 input ListFilter {
   AND: [ListFilter!]
@@ -83,6 +84,14 @@ input ListFilter {
   cards: CardFilter
   cards_some: CardFilter
   cards_none: CardFilter
+  index: Integer
+  index_not: Integer
+  index_in: [Integer]
+  index_not_in: [Integer]
+  index_lt: Integer
+  index_lte: Integer
+  index_gt: Integer
+  index_gte: Integer
 }
 enum ListOrderBy {
   id_ASC
@@ -106,11 +115,13 @@ input CreateListInput {
   boardId: String
   name: String!
   background: String!
+  index: Integer
 }
 input UpdateListInput {
   boardId: String
   name: String
   background: String
+  index: Integer
 }
 extend type Query {
   lists(

@@ -5,6 +5,7 @@ module.exports = function(app) {
     const model = new mongooseClient.Schema({
         question: { type: String, required: false, unique: false },
         usersId: { type: String, required: false },
+        description: { type: String, required: false, unique: false },
         createdBy: String,
         updatedBy: String
     }, {
