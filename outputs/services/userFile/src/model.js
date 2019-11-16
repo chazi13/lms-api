@@ -3,10 +3,10 @@ module.exports = function(app) {
     const mongooseClient = app.get('mongooseClient');
     const uniqueValidator = require('mongoose-unique-validator');
     const model = new mongooseClient.Schema({
-        name: { type: String, required: true, unique: false },
-        url: { type: String, required: false, unique: false },
-        src: { type: String, required: false, unique: false },
+        name: { type: String, required: false, unique: false },
         type: { type: String, required: false, unique: false },
+        embedLink: { type: String, required: false, unique: false },
+        url: { type: String, required: false, unique: false },
         folderId: { type: String, required: false },
         createdBy: String,
         updatedBy: String

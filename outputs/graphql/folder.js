@@ -6,6 +6,7 @@ type Folder {
   createdAt: DateTime
   updatedAt: DateTime
   name: String!
+  subFolder: Folder
   files(query: JSON): [UserFile]
 }
 input FolderFilter {
@@ -61,6 +62,9 @@ input FolderFilter {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  subFolder: FolderFilter
+  subFolder_some: FolderFilter
+  subFolder_none: FolderFilter
   files: UserFileFilter
   files_some: UserFileFilter
   files_none: UserFileFilter
@@ -83,9 +87,11 @@ type FolderConnection {
 }
 input CreateFolderInput {
   name: String!
+  subFolderId: String
 }
 input UpdateFolderInput {
   name: String
+  subFolderId: String
 }
 extend type Query {
   folders(
@@ -150,6 +156,13 @@ export const resolvers = ({ pubSub }) => ({
         updatedBy: async ({ updatedBy }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: updatedBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        subFolder: async ({ subFolderId }, args, { headers, requester }) => {
+            try {
+                return await requester.folderRequester.send({ type: 'get', id: subFolderId, headers })
             } catch (e) {
                 throw new Error(e)
             }

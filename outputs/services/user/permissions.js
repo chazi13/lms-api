@@ -50,7 +50,9 @@ const permissions = externalPermission && externalPermission().permissions || {
         'answer:find', 'answer:get', 'answer:create', 'answer:removeOwn', 'answer:patchOwn',
         'review:find', 'review:get', 'review:create', 'review:removeOwn', 'review:patchOwn',
         'checkInRoomMessage:find', 'checkInRoomMessage:get', 'checkInRoomMessage:create', 'checkInRoomMessage:removeOwn', 'checkInRoomMessage:patchOwn',
-        'checkInRoom:find', 'checkInRoom:get', 'checkInRoom:create', 'checkInRoom:removeOwn', 'checkInRoom:patchOwn'
+        'checkInRoom:find', 'checkInRoom:get', 'checkInRoom:create', 'checkInRoom:removeOwn', 'checkInRoom:patchOwn',
+        'folder:find', 'folder:get', 'folder:create', 'folder:removeOwn', 'folder:patchOwn',
+        'userFile:find', 'userFile:get', 'userFile:create', 'userFile:removeOwn', 'userFile:patchOwn'
     ],
 
     public: [
@@ -95,7 +97,9 @@ const permissions = externalPermission && externalPermission().permissions || {
         'answer:find', 'answer:get',
         'review:find', 'review:get',
         'checkInRoomMessage:find', 'checkInRoomMessage:get',
-        'checkInRoom:find', 'checkInRoom:get'
+        'checkInRoom:find', 'checkInRoom:get',
+        'folder:find', 'folder:get',
+        'userFile:find', 'userFile:get'
     ],
 }
 module.exports = {

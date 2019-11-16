@@ -330,7 +330,21 @@ app.service('folders').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     }
+                    
                     //beforeCreate
+                    if(context.data && context.data.folderId){
+                        let belongsTo = await getRequester('folder').send({ 
+                            type: "get", 
+                            id: context.data.folderId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("Folder not found.")
+                        }
+                    }             
+                    
                 }
                 
                 return externalHook && externalHook(app).before && externalHook(app).before.create && externalHook(app).before.create(context)
@@ -438,9 +452,22 @@ app.service('folders').hooks({
                         throw Error("UnAuthorized")
                     } 
                     
+                    
                     //onDelete
                     //ON DELETE SET CASCADE
                     await getRequester('file').send({ type: 'delete', 
+                        id: null,   
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }, 
+                        params: {
+                            query: {
+                                folderId: context.id
+                            }
+                        }
+                    })
+                    //ON DELETE SET CASCADE
+                    await getRequester('subFolder').send({ type: 'delete', 
                         id: null,   
                         headers: {
                             authorization: context.params.headers.authorization

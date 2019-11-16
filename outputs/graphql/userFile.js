@@ -5,10 +5,10 @@ type UserFile {
   updatedBy: User
   createdAt: DateTime
   updatedAt: DateTime
-  name: String!
-  url: String
-  src: String
+  name: String
   type: String
+  embedLink: String
+  url: String
   folder: Folder
 }
 input UserFileFilter {
@@ -64,34 +64,6 @@ input UserFileFilter {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  url: String
-  url_not: String
-  url_in: [String]
-  url_not_in: [String]
-  url_lt: String
-  url_lte: String
-  url_gt: String
-  url_gte: String
-  url_contains: String
-  url_not_contains: String
-  url_starts_with: String
-  url_not_starts_with: String
-  url_ends_with: String
-  url_not_ends_with: String
-  src: String
-  src_not: String
-  src_in: [String]
-  src_not_in: [String]
-  src_lt: String
-  src_lte: String
-  src_gt: String
-  src_gte: String
-  src_contains: String
-  src_not_contains: String
-  src_starts_with: String
-  src_not_starts_with: String
-  src_ends_with: String
-  src_not_ends_with: String
   type: String
   type_not: String
   type_in: [String]
@@ -106,6 +78,34 @@ input UserFileFilter {
   type_not_starts_with: String
   type_ends_with: String
   type_not_ends_with: String
+  embedLink: String
+  embedLink_not: String
+  embedLink_in: [String]
+  embedLink_not_in: [String]
+  embedLink_lt: String
+  embedLink_lte: String
+  embedLink_gt: String
+  embedLink_gte: String
+  embedLink_contains: String
+  embedLink_not_contains: String
+  embedLink_starts_with: String
+  embedLink_not_starts_with: String
+  embedLink_ends_with: String
+  embedLink_not_ends_with: String
+  url: String
+  url_not: String
+  url_in: [String]
+  url_not_in: [String]
+  url_lt: String
+  url_lte: String
+  url_gt: String
+  url_gte: String
+  url_contains: String
+  url_not_contains: String
+  url_starts_with: String
+  url_not_starts_with: String
+  url_ends_with: String
+  url_not_ends_with: String
   folder: FolderFilter
   folder_some: FolderFilter
   folder_none: FolderFilter
@@ -119,12 +119,12 @@ enum UserFileOrderBy {
   updatedAt_DESC
   name_ASC
   name_DESC
-  url_ASC
-  url_DESC
-  src_ASC
-  src_DESC
   type_ASC
   type_DESC
+  embedLink_ASC
+  embedLink_DESC
+  url_ASC
+  url_DESC
 }
 type UserFileConnection {
   total: Int
@@ -133,17 +133,17 @@ type UserFileConnection {
   data: [UserFile]
 }
 input CreateUserFileInput {
-  name: String!
-  url: String
-  src: Upload
+  name: String
   type: String
+  embedLink: String
+  url: Upload
   folderId: String
 }
 input UpdateUserFileInput {
   name: String
-  url: String
-  src: Upload
   type: String
+  embedLink: String
+  url: Upload
   folderId: String
 }
 extend type Query {
@@ -235,11 +235,11 @@ export const resolvers = ({ pubSub }) => ({
     Mutation: {
         createUserFile: async (_, { input = {} }, { requester: { userFileRequester }, headers, bucket, uuid, storageUrl, storageRequester }) => {
             try {
-                if (input.src) {
-                    let imageUserFile = await input.src
+                if (input.url) {
+                    let imageUserFile = await input.url
                     const key = "userFile/" + uuid() + "." + imageUserFile.mimetype.split("/")[1]
                     const url = storageUrl + key
-                    input.src = url
+                    input.url = url
                     const rs = imageUserFile.createReadStream()
                     let buffers = []
                     return new Promise((resolve, reject) => {
@@ -274,9 +274,9 @@ export const resolvers = ({ pubSub }) => ({
         },
         updateUserFile: async (_, { input = {}, id }, { requester: { userFileRequester }, headers, bucket, uuid, storageUrl, storageRequester }) => {
             try {
-                if (input.src) {
-                    let imageUserFile = await input.src
-                    delete input.src
+                if (input.url) {
+                    let imageUserFile = await input.url
+                    delete input.url
 
                     const rs = imageUserFile.createReadStream()
                     let buffers = []

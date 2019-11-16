@@ -180,6 +180,14 @@
         {
             "name": "checkInRoom Service",
             "script": "npm run checkInRoom-services"
+        },
+        {
+            "name": "folder Service",
+            "script": "npm run folder-services"
+        },
+        {
+            "name": "userFile Service",
+            "script": "npm run userFile-services"
         }
     ]
 }

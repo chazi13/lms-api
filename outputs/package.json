@@ -6,7 +6,7 @@
     "scripts": {
         "graphql": "nodemon --exec babel-node graphql --presets env",
         "build": "NODE_ENV=production babel ./src -d dist --presets env",
-        "dev": "npm-run-all --parallel graphql email-services pushNotification-services storage-services user-services menu-services profile-services student-services studentWorkspace-services education-services work-services skill-services project-services classRoom-services group-services studentClass-services studentGroup-services post-services postAttachment-services event-services courseCategory-services course-services section-services lecture-services article-services reaction-services comment-services subComment-services commentAttachment-services message-services chatFileStorage-services propertyUser-services workspace-services board-services list-services card-services checklist-services attachment-services quiz-services question-services option-services answer-services review-services checkInRoomMessage-services checkInRoom-services",
+        "dev": "npm-run-all --parallel graphql email-services pushNotification-services storage-services user-services menu-services profile-services student-services studentWorkspace-services education-services work-services skill-services project-services classRoom-services group-services studentClass-services studentGroup-services post-services postAttachment-services event-services courseCategory-services course-services section-services lecture-services article-services reaction-services comment-services subComment-services commentAttachment-services message-services chatFileStorage-services propertyUser-services workspace-services board-services list-services card-services checklist-services attachment-services quiz-services question-services option-services answer-services review-services checkInRoomMessage-services checkInRoom-services folder-services userFile-services",
         "serve": "node graphql",
         "test": "NODE_ENV=test nyc mocha --require babel-core/register test/test_helper.js './src/**/*.spec.js' --exit --timeout 20000",
         "email-services": "cd ./services/email && nodemon index.js",
@@ -52,7 +52,9 @@
         "answer-services": "cd ./services/answer && nodemon index.js",
         "review-services": "cd ./services/review && nodemon index.js",
         "checkInRoomMessage-services": "cd ./services/checkInRoomMessage && nodemon index.js",
-        "checkInRoom-services": "cd ./services/checkInRoom && nodemon index.js"
+        "checkInRoom-services": "cd ./services/checkInRoom && nodemon index.js",
+        "folder-services": "cd ./services/folder && nodemon index.js",
+        "userFile-services": "cd ./services/userFile && nodemon index.js"
     },
     "author": "",
     "license": "ISC",
