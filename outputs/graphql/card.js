@@ -12,7 +12,7 @@ type Card {
   checklists(query: JSON): [Checklist]
   posts(query: JSON): [Post]
   attachments(query: JSON): [Attachment]
-  index: Integer
+  index: Int
 }
 input CardFilter {
   AND: [CardFilter!]
@@ -107,14 +107,14 @@ input CardFilter {
   attachments: AttachmentFilter
   attachments_some: AttachmentFilter
   attachments_none: AttachmentFilter
-  index: Integer
-  index_not: Integer
-  index_in: [Integer]
-  index_not_in: [Integer]
-  index_lt: Integer
-  index_lte: Integer
-  index_gt: Integer
-  index_gte: Integer
+  index: Int
+  index_not: Int
+  index_in: [Int]
+  index_not_in: [Int]
+  index_lt: Int
+  index_lte: Int
+  index_gt: Int
+  index_gte: Int
 }
 enum CardOrderBy {
   id_ASC
@@ -129,6 +129,8 @@ enum CardOrderBy {
   image_DESC
   duedate_ASC
   duedate_DESC
+  index_ASC
+  index_DESC
 }
 type CardConnection {
   total: Int
@@ -141,14 +143,14 @@ input CreateCardInput {
   name: String!
   image: Upload
   duedate: String
-  index: Integer
+  index: Int
 }
 input UpdateCardInput {
   listId: String
   name: String
   image: Upload
   duedate: String
-  index: Integer
+  index: Int
 }
 extend type Query {
   cards(

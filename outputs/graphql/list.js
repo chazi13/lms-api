@@ -9,7 +9,7 @@ type List {
   name: String!
   background: String!
   cards(query: JSON): [Card]
-  index: Integer
+  index: Int
 }
 input ListFilter {
   AND: [ListFilter!]
@@ -84,14 +84,14 @@ input ListFilter {
   cards: CardFilter
   cards_some: CardFilter
   cards_none: CardFilter
-  index: Integer
-  index_not: Integer
-  index_in: [Integer]
-  index_not_in: [Integer]
-  index_lt: Integer
-  index_lte: Integer
-  index_gt: Integer
-  index_gte: Integer
+  index: Int
+  index_not: Int
+  index_in: [Int]
+  index_not_in: [Int]
+  index_lt: Int
+  index_lte: Int
+  index_gt: Int
+  index_gte: Int
 }
 enum ListOrderBy {
   id_ASC
@@ -104,6 +104,8 @@ enum ListOrderBy {
   name_DESC
   background_ASC
   background_DESC
+  index_ASC
+  index_DESC
 }
 type ListConnection {
   total: Int
@@ -115,13 +117,13 @@ input CreateListInput {
   boardId: String
   name: String!
   background: String!
-  index: Integer
+  index: Int
 }
 input UpdateListInput {
   boardId: String
   name: String
   background: String
-  index: Integer
+  index: Int
 }
 extend type Query {
   lists(

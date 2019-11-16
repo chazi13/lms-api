@@ -6,6 +6,7 @@ module.exports = function(app) {
         boardId: { type: String, required: false },
         name: { type: String, required: true, unique: false },
         background: { type: String, required: true, unique: false },
+        index: { type: Number, required: false, unique: false },
         createdBy: String,
         updatedBy: String
     }, {
