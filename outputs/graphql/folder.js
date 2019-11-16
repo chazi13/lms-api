@@ -6,8 +6,7 @@ type Folder {
   createdAt: DateTime
   updatedAt: DateTime
   name: String!
-  childFolder: Folder
-  parentFolder: Folder
+  subFolder: Folder
   files(query: JSON): [UserFile]
 }
 input FolderFilter {
@@ -63,12 +62,9 @@ input FolderFilter {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  childFolder: FolderFilter
-  childFolder_some: FolderFilter
-  childFolder_none: FolderFilter
-  parentFolder: FolderFilter
-  parentFolder_some: FolderFilter
-  parentFolder_none: FolderFilter
+  subFolder: FolderFilter
+  subFolder_some: FolderFilter
+  subFolder_none: FolderFilter
   files: UserFileFilter
   files_some: UserFileFilter
   files_none: UserFileFilter
@@ -91,13 +87,11 @@ type FolderConnection {
 }
 input CreateFolderInput {
   name: String!
-  childFolderId: String
-  parentFolderId: String
+  subFolderId: String
 }
 input UpdateFolderInput {
   name: String
-  childFolderId: String
-  parentFolderId: String
+  subFolderId: String
 }
 extend type Query {
   folders(
@@ -166,16 +160,9 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        childFolder: async ({ childFolderId }, args, { headers, requester }) => {
+        subFolder: async ({ subFolderId }, args, { headers, requester }) => {
             try {
-                return await requester.folderRequester.send({ type: 'get', id: childFolderId, headers })
-            } catch (e) {
-                throw new Error(e)
-            }
-        },
-        parentFolder: async ({ parentFolderId }, args, { headers, requester }) => {
-            try {
-                return await requester.folderRequester.send({ type: 'get', id: parentFolderId, headers })
+                return await requester.folderRequester.send({ type: 'get', id: subFolderId, headers })
             } catch (e) {
                 throw new Error(e)
             }

@@ -13,6 +13,7 @@ type Card {
   posts(query: JSON): [Post]
   attachments(query: JSON): [Attachment]
   index: Int
+  description: String
 }
 input CardFilter {
   AND: [CardFilter!]
@@ -115,6 +116,20 @@ input CardFilter {
   index_lte: Int
   index_gt: Int
   index_gte: Int
+  description: String
+  description_not: String
+  description_in: [String]
+  description_not_in: [String]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
 }
 enum CardOrderBy {
   id_ASC
@@ -131,6 +146,8 @@ enum CardOrderBy {
   duedate_DESC
   index_ASC
   index_DESC
+  description_ASC
+  description_DESC
 }
 type CardConnection {
   total: Int
@@ -144,6 +161,7 @@ input CreateCardInput {
   image: Upload
   duedate: String
   index: Int
+  description: String
 }
 input UpdateCardInput {
   listId: String
@@ -151,6 +169,7 @@ input UpdateCardInput {
   image: Upload
   duedate: String
   index: Int
+  description: String
 }
 extend type Query {
   cards(

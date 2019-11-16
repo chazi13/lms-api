@@ -8,6 +8,7 @@ module.exports = function(app) {
         image: { type: String, required: false, unique: false },
         duedate: { type: String, required: false, unique: false },
         index: { type: Number, required: false, unique: false },
+        description: { type: String, required: false, unique: false },
         createdBy: String,
         updatedBy: String
     }, {

@@ -1,6 +1,6 @@
 module.exports = {
     "folder": {
-        "local": "parentFolderId",
+        "local": "subFolderId",
         "relatedTo": "folder",
         "foreignId": "id",
         "type": "one"
