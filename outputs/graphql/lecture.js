@@ -7,7 +7,7 @@ type Lecture {
   updatedAt: DateTime
   title: String!
   type: LectureType!
-  section(query: JSON): Section!
+  section: Section
   embed: String
   description: String
   tableOfContent: String
@@ -160,7 +160,7 @@ type LectureConnection {
 input CreateLectureInput {
   title: String!
   type: LectureType!
-  sectionId: String!
+  sectionId: String
   embed: String
   description: String
   tableOfContent: String
