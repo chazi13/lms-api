@@ -4,7 +4,8 @@ module.exports = function(app) {
     const uniqueValidator = require('mongoose-unique-validator');
     const model = new mongooseClient.Schema({
         name: { type: String, required: true, unique: false },
-        subFolderId: { type: String, required: false },
+        childFolderId: { type: String, required: false },
+        parentFolderId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

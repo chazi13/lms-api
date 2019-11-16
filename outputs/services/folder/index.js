@@ -331,7 +331,21 @@ app.service('folders').hooks({
                         throw Error("UnAuthorized")
                     }
                     
+                    
                     //beforeCreate
+                    if(context.data && context.data.folderId){
+                        let belongsTo = await getRequester('folder').send({ 
+                            type: "get", 
+                            id: context.data.folderId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("Folder not found.")
+                        }
+                    }             
+                    
                     if(context.data && context.data.folderId){
                         let belongsTo = await getRequester('folder').send({ 
                             type: "get", 
@@ -453,6 +467,7 @@ app.service('folders').hooks({
                     } 
                     
                     
+                    
                     //onDelete
                     //ON DELETE SET CASCADE
                     await getRequester('file').send({ type: 'delete', 
@@ -467,7 +482,19 @@ app.service('folders').hooks({
                         }
                     })
                     //ON DELETE SET CASCADE
-                    await getRequester('subFolder').send({ type: 'delete', 
+                    await getRequester('parentFolder').send({ type: 'delete', 
+                        id: null,   
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }, 
+                        params: {
+                            query: {
+                                folderId: context.id
+                            }
+                        }
+                    })
+                    //ON DELETE SET CASCADE
+                    await getRequester('childFolder').send({ type: 'delete', 
                         id: null,   
                         headers: {
                             authorization: context.params.headers.authorization
