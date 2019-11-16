@@ -5,7 +5,7 @@ module.exports = function(app) {
     const model = new mongooseClient.Schema({
         userId: { type: String, required: false },
         questionId: { type: String, required: false },
-        answer: { type: String, required: true, unique: false },
+        answer: { type: Boolean, required: false, unique: false },
         token: { type: String, required: true, unique: false },
         createdBy: String,
         updatedBy: String

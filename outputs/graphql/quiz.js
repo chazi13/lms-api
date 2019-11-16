@@ -6,6 +6,8 @@ type Quiz {
   createdAt: DateTime
   updatedAt: DateTime
   title: String!
+  subdesc: String
+  section: String
   questions(query: JSON): [Question]
   reviews(query: JSON): [Review]
 }
@@ -62,6 +64,34 @@ input QuizFilter {
   title_not_starts_with: String
   title_ends_with: String
   title_not_ends_with: String
+  subdesc: String
+  subdesc_not: String
+  subdesc_in: [String]
+  subdesc_not_in: [String]
+  subdesc_lt: String
+  subdesc_lte: String
+  subdesc_gt: String
+  subdesc_gte: String
+  subdesc_contains: String
+  subdesc_not_contains: String
+  subdesc_starts_with: String
+  subdesc_not_starts_with: String
+  subdesc_ends_with: String
+  subdesc_not_ends_with: String
+  section: String
+  section_not: String
+  section_in: [String]
+  section_not_in: [String]
+  section_lt: String
+  section_lte: String
+  section_gt: String
+  section_gte: String
+  section_contains: String
+  section_not_contains: String
+  section_starts_with: String
+  section_not_starts_with: String
+  section_ends_with: String
+  section_not_ends_with: String
   questions: QuestionFilter
   questions_some: QuestionFilter
   questions_none: QuestionFilter
@@ -78,6 +108,10 @@ enum QuizOrderBy {
   updatedAt_DESC
   title_ASC
   title_DESC
+  subdesc_ASC
+  subdesc_DESC
+  section_ASC
+  section_DESC
 }
 type QuizConnection {
   total: Int
@@ -87,9 +121,13 @@ type QuizConnection {
 }
 input CreateQuizInput {
   title: String!
+  subdesc: String
+  section: String
 }
 input UpdateQuizInput {
   title: String
+  subdesc: String
+  section: String
 }
 extend type Query {
   quizzes(

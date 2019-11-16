@@ -7,7 +7,7 @@ type Answer {
   updatedAt: DateTime
   user: User
   question: Question
-  answer: String!
+  answer: Boolean
   token: String!
 }
 input AnswerFilter {
@@ -55,20 +55,8 @@ input AnswerFilter {
   question: QuestionFilter
   question_some: QuestionFilter
   question_none: QuestionFilter
-  answer: String
-  answer_not: String
-  answer_in: [String]
-  answer_not_in: [String]
-  answer_lt: String
-  answer_lte: String
-  answer_gt: String
-  answer_gte: String
-  answer_contains: String
-  answer_not_contains: String
-  answer_starts_with: String
-  answer_not_starts_with: String
-  answer_ends_with: String
-  answer_not_ends_with: String
+  answer: Boolean
+  answer_not: Boolean
   token: String
   token_not: String
   token_in: [String]
@@ -105,13 +93,13 @@ type AnswerConnection {
 input CreateAnswerInput {
   userId: String
   questionId: String
-  answer: String!
+  answer: Boolean
   token: String!
 }
 input UpdateAnswerInput {
   userId: String
   questionId: String
-  answer: String
+  answer: Boolean
   token: String
 }
 extend type Query {
