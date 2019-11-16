@@ -6,7 +6,8 @@ type Comment {
   createdAt: DateTime
   updatedAt: DateTime
   text: String!
-  post(query: JSON): Post!
+  post: Post
+  checkInRoom: CheckInRoom
   subComments(query: JSON): [SubComment]
   attachments(query: JSON): [CommentAttachment]
 }
@@ -66,6 +67,9 @@ input CommentFilter {
   post: PostFilter
   post_some: PostFilter
   post_none: PostFilter
+  checkInRoom: CheckInRoomFilter
+  checkInRoom_some: CheckInRoomFilter
+  checkInRoom_none: CheckInRoomFilter
   subComments: SubCommentFilter
   subComments_some: SubCommentFilter
   subComments_none: SubCommentFilter
@@ -91,11 +95,13 @@ type CommentConnection {
 }
 input CreateCommentInput {
   text: String!
-  postId: String!
+  postId: String
+  checkInRoomId: String
 }
 input UpdateCommentInput {
   text: String
   postId: String
+  checkInRoomId: String
 }
 extend type Query {
   comments(
@@ -167,6 +173,13 @@ export const resolvers = ({ pubSub }) => ({
         post: async ({ postId }, args, { headers, requester }) => {
             try {
                 return await requester.postRequester.send({ type: 'get', id: postId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        checkInRoom: async ({ checkInRoomId }, args, { headers, requester }) => {
+            try {
+                return await requester.checkInRoomRequester.send({ type: 'get', id: checkInRoomId, headers })
             } catch (e) {
                 throw new Error(e)
             }

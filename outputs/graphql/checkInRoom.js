@@ -8,6 +8,7 @@ type CheckInRoom {
   question: String
   users(query: JSON): [User]
   messages(query: JSON): [CheckInRoomMessage]
+  comments(query: JSON): [Comment]
 }
 input CheckInRoomFilter {
   AND: [CheckInRoomFilter!]
@@ -68,6 +69,9 @@ input CheckInRoomFilter {
   messages: CheckInRoomMessageFilter
   messages_some: CheckInRoomMessageFilter
   messages_none: CheckInRoomMessageFilter
+  comments: CommentFilter
+  comments_some: CommentFilter
+  comments_none: CommentFilter
 }
 enum CheckInRoomOrderBy {
   id_ASC
@@ -168,6 +172,13 @@ export const resolvers = ({ pubSub }) => ({
         messages: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.checkInRoomMessageRequester.send({ type: 'find', where: Object.assign({ checkInRoomId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        comments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.commentRequester.send({ type: 'find', where: Object.assign({ checkInRoomId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

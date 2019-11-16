@@ -10,5 +10,11 @@ module.exports = {
         "relatedTo": "group",
         "foreignId": "id",
         "type": "one"
+    },
+    "checkInRoom": {
+        "local": "checkInRoomId",
+        "relatedTo": "checkInRoom",
+        "foreignId": "id",
+        "type": "one"
     }
 }

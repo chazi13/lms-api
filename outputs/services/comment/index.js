@@ -331,7 +331,21 @@ app.service('comments').hooks({
                         throw Error("UnAuthorized")
                     }
                     
+                    
                     //beforeCreate
+                    if(context.data && context.data.checkInRoomId){
+                        let belongsTo = await getRequester('checkInRoom').send({ 
+                            type: "get", 
+                            id: context.data.checkInRoomId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("CheckInRoom not found.")
+                        }
+                    }             
+                    
                     if(context.data && context.data.postId){
                         let belongsTo = await getRequester('post').send({ 
                             type: "get", 

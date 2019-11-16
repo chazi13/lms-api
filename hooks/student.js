@@ -31,6 +31,59 @@ module.exports = (app) => ({
         },         
         delete: async (context) => {
             //do something after delete request
-        }        
+        },
+        register: async (context) => {
+            const { user } = contex.result
+            const headers = {
+              "authorization": Bearer`${accessToken}`
+            }
+        
+            const profile = await app.getRequester('profile').send({
+              type: 'create',
+              body: {
+                createdBy: user.id
+              },
+              headers
+            })
+        
+            const classes = await app.getRequester('classRoom').send({ type: 'get' })
+            const groups = await app.getRequester('group').send({ type: 'get' })
+        
+            const student = await app.getRequester('student').send({
+              type: 'create',
+              body: {
+                userId: user.id,
+                classRoomsIds: [classes[1].id]
+              },
+              headers
+            })
+        
+            const studentClass = await app.getRequester('studentClass').send({
+              type: 'create',
+              body: {
+                studentId: student.id,
+                classroom: classes[1].id
+              },
+              headers
+            })
+        
+            const studentGroup = await app.getRequester('studentGroup').send({
+              type: 'create',
+              body: {
+                studentId: student.id,
+                group: groups[1].id
+              },
+              headers
+            })
+        
+            const studentUpdate = await app.getRequester('student').send({
+              type: 'patch',
+              body: {
+                stundentClasses: [studentClass.id],
+                studentGroups: [studentGroup.id],
+              },
+              headers
+            })
+          }     
     },
 })

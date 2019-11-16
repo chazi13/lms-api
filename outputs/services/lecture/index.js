@@ -333,6 +333,7 @@ app.service('lectures').hooks({
                     
                     
                     
+                    
                     //beforeCreate
                     if(context.data && context.data.boardId){
                         let belongsTo = await getRequester('board').send({ 
@@ -370,6 +371,19 @@ app.service('lectures').hooks({
                         })
                         if(!belongsTo){
                             throw Error("Article not found.")
+                        }
+                    }             
+                    
+                    if(context.data && context.data.sectionId){
+                        let belongsTo = await getRequester('section').send({ 
+                            type: "get", 
+                            id: context.data.sectionId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("Section not found.")
                         }
                     }             
                     

@@ -7,6 +7,7 @@ type Lecture {
   updatedAt: DateTime
   title: String!
   type: LectureType!
+  section: Section
   embed: String
   description: String
   tableOfContent: String
@@ -76,6 +77,9 @@ input LectureFilter {
   type_lte: LectureType
   type_gt: LectureType
   type_gte: LectureType
+  section: SectionFilter
+  section_some: SectionFilter
+  section_none: SectionFilter
   embed: String
   embed_not: String
   embed_in: [String]
@@ -156,6 +160,7 @@ type LectureConnection {
 input CreateLectureInput {
   title: String!
   type: LectureType!
+  sectionId: String
   embed: String
   description: String
   tableOfContent: String
@@ -166,6 +171,7 @@ input CreateLectureInput {
 input UpdateLectureInput {
   title: String
   type: LectureType
+  sectionId: String
   embed: String
   description: String
   tableOfContent: String
@@ -236,6 +242,13 @@ export const resolvers = ({ pubSub }) => ({
         updatedBy: async ({ updatedBy }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: updatedBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        section: async ({ sectionId }, args, { headers, requester }) => {
+            try {
+                return await requester.sectionRequester.send({ type: 'get', id: sectionId, headers })
             } catch (e) {
                 throw new Error(e)
             }

@@ -7,6 +7,7 @@ module.exports = function(app) {
         studentsId: [{ type: String, required: true }],
         groupId: { type: String, required: true },
         background: { type: String, required: false, unique: false },
+        checkInRoomId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

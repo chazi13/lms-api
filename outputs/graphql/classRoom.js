@@ -10,6 +10,7 @@ type ClassRoom {
   group(query: JSON): Group!
   workspaces(query: JSON): [Workspace]
   background: String
+  checkInRoom: CheckInRoom
 }
 input ClassRoomFilter {
   AND: [ClassRoomFilter!]
@@ -87,6 +88,9 @@ input ClassRoomFilter {
   background_not_starts_with: String
   background_ends_with: String
   background_not_ends_with: String
+  checkInRoom: CheckInRoomFilter
+  checkInRoom_some: CheckInRoomFilter
+  checkInRoom_none: CheckInRoomFilter
 }
 enum ClassRoomOrderBy {
   id_ASC
@@ -112,6 +116,7 @@ input CreateClassRoomInput {
   studentsIds: [String]
   groupId: String!
   background: String
+  checkInRoomId: String
 }
 input UpdateClassRoomInput {
   name: String
@@ -119,6 +124,7 @@ input UpdateClassRoomInput {
   studentsIds: [String]
   groupId: String
   background: String
+  checkInRoomId: String
 }
 extend type Query {
   classRooms(
@@ -213,6 +219,13 @@ export const resolvers = ({ pubSub }) => ({
         workspaces: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.workspaceRequester.send({ type: 'find', where: Object.assign({ classRoomId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        checkInRoom: async ({ checkInRoomId }, args, { headers, requester }) => {
+            try {
+                return await requester.checkInRoomRequester.send({ type: 'get', id: checkInRoomId, headers })
             } catch (e) {
                 throw new Error(e)
             }
