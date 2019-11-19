@@ -9,6 +9,7 @@ type Folder {
   parentFolder: String
   cover: String
   files(query: JSON): [File]
+  classRoom: ClassRoom
 }
 input FolderFilter {
   AND: [FolderFilter!]
@@ -94,6 +95,9 @@ input FolderFilter {
   files: FileFilter
   files_some: FileFilter
   files_none: FileFilter
+  classRoom: ClassRoomFilter
+  classRoom_some: ClassRoomFilter
+  classRoom_none: ClassRoomFilter
 }
 enum FolderOrderBy {
   id_ASC
@@ -119,11 +123,13 @@ input CreateFolderInput {
   name: String
   parentFolder: String
   cover: String
+  classRoomId: String
 }
 input UpdateFolderInput {
   name: String
   parentFolder: String
   cover: String
+  classRoomId: String
 }
 extend type Query {
   folders(
@@ -195,6 +201,13 @@ export const resolvers = ({ pubSub }) => ({
         files: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.fileRequester.send({ type: 'find', where: Object.assign({ folderId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        classRoom: async ({ classRoomId }, args, { headers, requester }) => {
+            try {
+                return await requester.classRoomRequester.send({ type: 'get', id: classRoomId, headers })
             } catch (e) {
                 throw new Error(e)
             }

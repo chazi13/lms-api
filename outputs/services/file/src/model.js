@@ -8,6 +8,7 @@ module.exports = function(app) {
         embedLink: { type: String, required: false, unique: false },
         url: { type: String, required: false, unique: false },
         folderId: { type: String, required: false },
+        classRoomId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {
