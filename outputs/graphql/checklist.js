@@ -7,7 +7,7 @@ type Checklist {
   updatedAt: DateTime
   card: Card
   name: String!
-  status: String
+  status: Boolean
 }
 input ChecklistFilter {
   AND: [ChecklistFilter!]
@@ -65,20 +65,8 @@ input ChecklistFilter {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  status: String
-  status_not: String
-  status_in: [String]
-  status_not_in: [String]
-  status_lt: String
-  status_lte: String
-  status_gt: String
-  status_gte: String
-  status_contains: String
-  status_not_contains: String
-  status_starts_with: String
-  status_not_starts_with: String
-  status_ends_with: String
-  status_not_ends_with: String
+  status: Boolean
+  status_not: Boolean
 }
 enum ChecklistOrderBy {
   id_ASC
@@ -101,12 +89,12 @@ type ChecklistConnection {
 input CreateChecklistInput {
   cardId: String
   name: String!
-  status: String
+  status: Boolean
 }
 input UpdateChecklistInput {
   cardId: String
   name: String
-  status: String
+  status: Boolean
 }
 extend type Query {
   checklists(
