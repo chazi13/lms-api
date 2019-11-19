@@ -10,6 +10,7 @@ type UserFile {
   embedLink: String
   url: String
   folder: Folder
+  classroom: ClassRoom
 }
 input UserFileFilter {
   AND: [UserFileFilter!]
@@ -109,6 +110,9 @@ input UserFileFilter {
   folder: FolderFilter
   folder_some: FolderFilter
   folder_none: FolderFilter
+  classroom: ClassRoomFilter
+  classroom_some: ClassRoomFilter
+  classroom_none: ClassRoomFilter
 }
 enum UserFileOrderBy {
   id_ASC
@@ -138,6 +142,7 @@ input CreateUserFileInput {
   embedLink: String
   url: Upload
   folderId: String
+  classroomId: String
 }
 input UpdateUserFileInput {
   name: String
@@ -145,6 +150,7 @@ input UpdateUserFileInput {
   embedLink: String
   url: Upload
   folderId: String
+  classroomId: String
 }
 extend type Query {
   userFiles(
@@ -216,6 +222,13 @@ export const resolvers = ({ pubSub }) => ({
         folder: async ({ folderId }, args, { headers, requester }) => {
             try {
                 return await requester.folderRequester.send({ type: 'get', id: folderId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        classroom: async ({ classroomId }, args, { headers, requester }) => {
+            try {
+                return await requester.classRoomRequester.send({ type: 'get', id: classroomId, headers })
             } catch (e) {
                 throw new Error(e)
             }

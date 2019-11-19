@@ -1,7 +1,7 @@
 module.exports = {
-    "folder": {
-        "local": "subFolderId",
-        "relatedTo": "folder",
+    "classRoom": {
+        "local": "classroomId",
+        "relatedTo": "classRoom",
         "foreignId": "id",
         "type": "one"
     }

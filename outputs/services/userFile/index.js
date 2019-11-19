@@ -331,7 +331,21 @@ app.service('userFiles').hooks({
                         throw Error("UnAuthorized")
                     }
                     
+                    
                     //beforeCreate
+                    if(context.data && context.data.classRoomId){
+                        let belongsTo = await getRequester('classRoom').send({ 
+                            type: "get", 
+                            id: context.data.classRoomId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("ClassRoom not found.")
+                        }
+                    }             
+                    
                     if(context.data && context.data.folderId){
                         let belongsTo = await getRequester('folder').send({ 
                             type: "get", 

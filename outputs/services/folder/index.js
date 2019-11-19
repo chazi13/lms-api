@@ -332,16 +332,16 @@ app.service('folders').hooks({
                     }
                     
                     //beforeCreate
-                    if(context.data && context.data.folderId){
-                        let belongsTo = await getRequester('folder').send({ 
+                    if(context.data && context.data.classRoomId){
+                        let belongsTo = await getRequester('classRoom').send({ 
                             type: "get", 
-                            id: context.data.folderId, 
+                            id: context.data.classRoomId, 
                             headers:{
                                 token: context.params.headers.authorization
                             }
                         })
                         if(!belongsTo){
-                            throw Error("Folder not found.")
+                            throw Error("ClassRoom not found.")
                         }
                     }             
                     
@@ -451,33 +451,7 @@ app.service('folders').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     } 
-                    
-                    
                     //onDelete
-                    //ON DELETE SET CASCADE
-                    await getRequester('file').send({ type: 'delete', 
-                        id: null,   
-                        headers: {
-                            authorization: context.params.headers.authorization
-                        }, 
-                        params: {
-                            query: {
-                                folderId: context.id
-                            }
-                        }
-                    })
-                    //ON DELETE SET CASCADE
-                    await getRequester('subFolder').send({ type: 'delete', 
-                        id: null,   
-                        headers: {
-                            authorization: context.params.headers.authorization
-                        }, 
-                        params: {
-                            query: {
-                                folderId: context.id
-                            }
-                        }
-                    })
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)

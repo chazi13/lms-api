@@ -6,8 +6,9 @@ type Folder {
   createdAt: DateTime
   updatedAt: DateTime
   name: String!
-  subFolder: Folder
-  files(query: JSON): [UserFile]
+  parentFolder: String
+  userFiles(query: JSON): [UserFile]
+  classroom: ClassRoom
 }
 input FolderFilter {
   AND: [FolderFilter!]
@@ -62,12 +63,26 @@ input FolderFilter {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  subFolder: FolderFilter
-  subFolder_some: FolderFilter
-  subFolder_none: FolderFilter
-  files: UserFileFilter
-  files_some: UserFileFilter
-  files_none: UserFileFilter
+  parentFolder: String
+  parentFolder_not: String
+  parentFolder_in: [String]
+  parentFolder_not_in: [String]
+  parentFolder_lt: String
+  parentFolder_lte: String
+  parentFolder_gt: String
+  parentFolder_gte: String
+  parentFolder_contains: String
+  parentFolder_not_contains: String
+  parentFolder_starts_with: String
+  parentFolder_not_starts_with: String
+  parentFolder_ends_with: String
+  parentFolder_not_ends_with: String
+  userFiles: UserFileFilter
+  userFiles_some: UserFileFilter
+  userFiles_none: UserFileFilter
+  classroom: ClassRoomFilter
+  classroom_some: ClassRoomFilter
+  classroom_none: ClassRoomFilter
 }
 enum FolderOrderBy {
   id_ASC
@@ -78,6 +93,8 @@ enum FolderOrderBy {
   updatedAt_DESC
   name_ASC
   name_DESC
+  parentFolder_ASC
+  parentFolder_DESC
 }
 type FolderConnection {
   total: Int
@@ -87,11 +104,13 @@ type FolderConnection {
 }
 input CreateFolderInput {
   name: String!
-  subFolderId: String
+  parentFolder: String
+  classroomId: String
 }
 input UpdateFolderInput {
   name: String
-  subFolderId: String
+  parentFolder: String
+  classroomId: String
 }
 extend type Query {
   folders(
@@ -160,16 +179,16 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        subFolder: async ({ subFolderId }, args, { headers, requester }) => {
+        userFiles: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
-                return await requester.folderRequester.send({ type: 'get', id: subFolderId, headers })
+                return await requester.userFileRequester.send({ type: 'find', where: Object.assign({ folderId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
-        files: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+        classroom: async ({ classroomId }, args, { headers, requester }) => {
             try {
-                return await requester.userFileRequester.send({ type: 'find', where: Object.assign({ folderId: id }, where, query), limit, skip, orderBy, headers })
+                return await requester.classRoomRequester.send({ type: 'get', id: classroomId, headers })
             } catch (e) {
                 throw new Error(e)
             }
