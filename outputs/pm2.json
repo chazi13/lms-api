@@ -154,6 +154,10 @@
             "script": "npm run checklist-services"
         },
         {
+            "name": "listChecklist Service",
+            "script": "npm run listChecklist-services"
+        },
+        {
             "name": "attachment Service",
             "script": "npm run attachment-services"
         },

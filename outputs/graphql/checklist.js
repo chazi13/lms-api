@@ -7,7 +7,7 @@ type Checklist {
   updatedAt: DateTime
   card: Card
   name: String!
-  status: Boolean
+  listChecklists(query: JSON): [ListChecklist]
 }
 input ChecklistFilter {
   AND: [ChecklistFilter!]
@@ -65,8 +65,9 @@ input ChecklistFilter {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  status: Boolean
-  status_not: Boolean
+  listChecklists: ListChecklistFilter
+  listChecklists_some: ListChecklistFilter
+  listChecklists_none: ListChecklistFilter
 }
 enum ChecklistOrderBy {
   id_ASC
@@ -77,8 +78,6 @@ enum ChecklistOrderBy {
   updatedAt_DESC
   name_ASC
   name_DESC
-  status_ASC
-  status_DESC
 }
 type ChecklistConnection {
   total: Int
@@ -89,12 +88,10 @@ type ChecklistConnection {
 input CreateChecklistInput {
   cardId: String
   name: String!
-  status: Boolean
 }
 input UpdateChecklistInput {
   cardId: String
   name: String
-  status: Boolean
 }
 extend type Query {
   checklists(
@@ -166,6 +163,13 @@ export const resolvers = ({ pubSub }) => ({
         card: async ({ cardId }, args, { headers, requester }) => {
             try {
                 return await requester.cardRequester.send({ type: 'get', id: cardId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        listChecklists: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.listChecklistRequester.send({ type: 'find', where: Object.assign({ checklistId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
