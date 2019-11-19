@@ -31,7 +31,34 @@ module.exports = (app) => ({
         },         
         delete: async (context) => {
             //do something after delete request
-        }        
+        },
+        register: async (context) => {
+            const {user, accessToken} = context.result
+            const headers = {
+                authorization: accessToken
+            }
+
+            try {
+                const profile = await app.getRequester('profile').send({
+                    type: 'create',
+                    body: {
+                        createdBy: user.id
+                    },
+                    headers
+                })
+
+                const student = await app.getRequester('student').send({
+                    type: 'create',
+                    body: {
+                        userId: user.id,
+                        createdBy: user.id
+                    },
+                    headers
+                })
+            } catch (e) {
+                console.log(e)
+            }
+        }  
     },
     permissions: null
 })
