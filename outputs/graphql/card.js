@@ -15,6 +15,7 @@ type Card {
   index: Int
   description: String
   labels(query: JSON): [Label]
+  visible: Boolean
 }
 input CardFilter {
   AND: [CardFilter!]
@@ -134,6 +135,8 @@ input CardFilter {
   labels: LabelFilter
   labels_some: LabelFilter
   labels_none: LabelFilter
+  visible: Boolean
+  visible_not: Boolean
 }
 enum CardOrderBy {
   id_ASC
@@ -152,6 +155,8 @@ enum CardOrderBy {
   index_DESC
   description_ASC
   description_DESC
+  visible_ASC
+  visible_DESC
 }
 type CardConnection {
   total: Int
@@ -166,6 +171,7 @@ input CreateCardInput {
   duedate: String
   index: Int
   description: String
+  visible: Boolean
 }
 input UpdateCardInput {
   listId: String
@@ -174,6 +180,7 @@ input UpdateCardInput {
   duedate: String
   index: Int
   description: String
+  visible: Boolean
 }
 extend type Query {
   cards(

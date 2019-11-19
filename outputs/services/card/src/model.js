@@ -9,6 +9,7 @@ module.exports = function(app) {
         duedate: { type: String, required: false, unique: false },
         index: { type: Number, required: false, unique: false },
         description: { type: String, required: false, unique: false },
+        visible: { type: Boolean, required: false, unique: false },
         createdBy: String,
         updatedBy: String
     }, {
