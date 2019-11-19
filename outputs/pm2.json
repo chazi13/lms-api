@@ -186,8 +186,8 @@
             "script": "npm run folder-services"
         },
         {
-            "name": "userFile Service",
-            "script": "npm run userFile-services"
+            "name": "file Service",
+            "script": "npm run file-services"
         }
     ]
 }

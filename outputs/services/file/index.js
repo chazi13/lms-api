@@ -13,7 +13,7 @@ try {
     const split = root.split('/')
     split.pop()
     const path = split.join('/')
-    externalHook = require(path + '/hooks/folder')
+    externalHook = require(path + '/hooks/file')
 } catch (e) {
 
 }
@@ -25,9 +25,9 @@ function camelize(text) {
     });
 }
 
-const folderService = new cote.Responder({
-    name: 'Folder Service',
-    key: 'folder'
+const fileService = new cote.Responder({
+    name: 'File Service',
+    key: 'file'
 })
 
 const userRequester = new cote.Requester({
@@ -141,9 +141,9 @@ const transformer = ({where, limit, skip, orderBy}) => {
 }
 
 
-folderService.on("find", async (req, cb) => {
+fileService.on("find", async (req, cb) => {
     try {
-        let data = await app.service("folders").find({
+        let data = await app.service("files").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -155,9 +155,9 @@ folderService.on("find", async (req, cb) => {
     }
 })
 
-folderService.on("findConnection", async (req, cb) => {
+fileService.on("findConnection", async (req, cb) => {
     try {
-        let data = await app.service("folders").find({
+        let data = await app.service("files").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -169,9 +169,9 @@ folderService.on("findConnection", async (req, cb) => {
     }
 })
 
-folderService.on("findOwn", async (req, cb) => {
+fileService.on("findOwn", async (req, cb) => {
     try {
-        let data = await app.service("folders").find({
+        let data = await app.service("files").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -184,9 +184,9 @@ folderService.on("findOwn", async (req, cb) => {
     }
 })
 
-folderService.on("findConnectionOwn", async (req, cb) => {
+fileService.on("findConnectionOwn", async (req, cb) => {
     try {
-        let data = await app.service("folders").find({
+        let data = await app.service("files").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -199,9 +199,9 @@ folderService.on("findConnectionOwn", async (req, cb) => {
     }
 })
 
-folderService.on("create", async (req, cb) => {
+fileService.on("create", async (req, cb) => {
     try {
-        let data = await app.service("folders").create(req.body, {
+        let data = await app.service("files").create(req.body, {
             headers: req.headers,
             file: req.file,
             isSystem: req.isSystem
@@ -212,9 +212,9 @@ folderService.on("create", async (req, cb) => {
     }
 })
 
-folderService.on("patch", async (req, cb) => {
+fileService.on("patch", async (req, cb) => {
     try {
-        let data = await app.service("folders").patch(req.id, req.body, {
+        let data = await app.service("files").patch(req.id, req.body, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -226,9 +226,9 @@ folderService.on("patch", async (req, cb) => {
     }
 })
 
-folderService.on("delete", async (req, cb) => {
+fileService.on("delete", async (req, cb) => {
     try {
-        let data = await app.service("folders").remove(req.id, {
+        let data = await app.service("files").remove(req.id, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -241,11 +241,11 @@ folderService.on("delete", async (req, cb) => {
     }
 })
 
-folderService.on("get", async (req, cb) => {
+fileService.on("get", async (req, cb) => {
     try {
         let data = null
         if (req.id) {
-            data = await app.service("folders").get(req.id, {
+            data = await app.service("files").get(req.id, {
                 headers: req.headers,
                 isSystem: req.isSystem
             })
@@ -262,7 +262,7 @@ const checkAuthentication = (token) => {
 }
 
 
-app.service('folders').hooks({
+app.service('files').hooks({
     before: {
         find: async (context) => {
             try {
@@ -272,7 +272,7 @@ app.service('folders').hooks({
                     context.params.user = auth.user
 
                     
-                    if(auth.user.permissions.includes(`${camelize('folder')}:findOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('file')}:findOwn`)){
                         context.method = "findOwn"
                         context.params.query = {
                             ...context.params.query || {},
@@ -282,7 +282,7 @@ app.service('folders').hooks({
                     
                     //beforeFindAuthorization
                     await checkPermissions({
-                        roles: ['admin', 'folder']
+                        roles: ['admin', 'file']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -302,7 +302,7 @@ app.service('folders').hooks({
 
                     context.params.user = auth.user
                     await checkPermissions({
-                        roles: ['admin', 'folder']
+                        roles: ['admin', 'file']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -322,7 +322,7 @@ app.service('folders').hooks({
                     context.params.user = auth.user
 
                     await checkPermissions({
-                        roles: ['admin', 'folder']
+                        roles: ['admin', 'file']
                     })(context)
 
                     context.data.createdBy = auth.user.id || ''
@@ -330,7 +330,21 @@ app.service('folders').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     }
+                    
                     //beforeCreate
+                    if(context.data && context.data.folderId){
+                        let belongsTo = await getRequester('folder').send({ 
+                            type: "get", 
+                            id: context.data.folderId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("Folder not found.")
+                        }
+                    }             
+                    
                 }
                 
                 return externalHook && externalHook(app).before && externalHook(app).before.create && externalHook(app).before.create(context)
@@ -348,11 +362,11 @@ app.service('folders').hooks({
 
      
                     //beforeUpdate
-                    if(auth.user.permissions.includes(`${camelize('folder')}:updateOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('file')}:updateOwn`)){
                         context.method = "updateOwn"
                         if(context.id){
-                            let folder = await app.service(`${pluralize(camelize("folder"))}`).get(context.id, { headers: context.params.headers })
-                            if(folder && folder.createdBy !== auth.user.id){
+                            let file = await app.service(`${pluralize(camelize("file"))}`).get(context.id, { headers: context.params.headers })
+                            if(file && file.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
@@ -360,7 +374,7 @@ app.service('folders').hooks({
 
 
                     await checkPermissions({
-                        roles: ['admin', 'folder']
+                        roles: ['admin', 'file']
                     })(context)
 
 
@@ -386,18 +400,18 @@ app.service('folders').hooks({
  
             
                     //beforePatch
-                    if(auth.user.permissions.includes(`${camelize('folder')}:patchOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('file')}:patchOwn`)){
                         context.method = "patchOwn"
                         if(context.id){
-                            let folder = await app.service(`${pluralize(camelize("folders"))}`).get(context.id, { headers: context.params.headers })
-                            if(folder && folder.createdBy !== auth.user.id){
+                            let file = await app.service(`${pluralize(camelize("files"))}`).get(context.id, { headers: context.params.headers })
+                            if(file && file.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
 
                     await checkPermissions({
-                        roles: ['admin', 'folder']
+                        roles: ['admin', 'file']
                     })(context)
 
     
@@ -422,35 +436,22 @@ app.service('folders').hooks({
 
 
                     //beforeDelete
-                    if(auth.user.permissions.includes(`${camelize('folder')}:removeOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('file')}:removeOwn`)){
                         context.method = "removeOwn"
                         if(context.id){
-                            let folder = await app.service(`${pluralize(camelize("folders"))}`).get(context.id, { headers: context.params.headers })
-                            if(folder && folder.createdBy !== auth.user.id){
+                            let file = await app.service(`${pluralize(camelize("files"))}`).get(context.id, { headers: context.params.headers })
+                            if(file && file.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
                     await checkPermissions({
-                        roles: ['admin', 'folder']
+                        roles: ['admin', 'file']
                     })(context)
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     } 
-                    
                     //onDelete
-                    //ON DELETE SET CASCADE
-                    await getRequester('file').send({ type: 'delete', 
-                        id: null,   
-                        headers: {
-                            authorization: context.params.headers.authorization
-                        }, 
-                        params: {
-                            query: {
-                                folderId: context.id
-                            }
-                        }
-                    })
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)
@@ -472,7 +473,17 @@ app.service('folders').hooks({
         create: async (context) => {
             try {
                 
-                //afterCreate
+                
+                        getRequester('storage').send({
+                            type: "uploadFile",
+                            body: {
+                                buffer: context.params.file.buffer,
+                                key: context.params.file.key,
+                                mimeType: context.params.file.mimeType,
+                                bucket: context.params.file.bucket
+                            }
+                        })
+                    
                 return externalHook && externalHook(app).after && externalHook(app).after.create && externalHook(app).after.create(context)
             } catch (err) {
                 throw new Error(err)
@@ -481,7 +492,19 @@ app.service('folders').hooks({
         patch: async (context) => {
             try {
                 
-                //afterPatch
+                
+                        if (context.result.length > 0) {
+                            storageRequester.send({
+                                type: "uploadFile",
+                                body: {
+                                    buffer: context.params.file.buffer,
+                                    key: context.result.image.split(".com/")[1],
+                                    mimeType: context.params.file.mimeType,
+                                    bucket: context.params.file.bucket
+                                }
+                            })
+                        }
+                    
                 return externalHook && externalHook(app).after && externalHook(app).after.patch && externalHook(app).after.patch(context)
             } catch (err) {
                 throw new Error(err)
@@ -490,7 +513,17 @@ app.service('folders').hooks({
         remove: async (context) => {
             try {
                 
-                //afterDelete
+                
+                        if (context.result.length > 0) {
+                            storageRequester.send({
+                                type: "deleteFile",
+                                body: {
+                                    key: context.result.image.split(".com/")[1],
+                                    bucket: context.params.file.bucket
+                                }
+                            })
+                        }
+                    
                 return externalHook && externalHook(app).after && externalHook(app).after.remove && externalHook(app).after.remove(context)
             } catch (err) {
                 throw new Error(err)
@@ -501,5 +534,5 @@ app.service('folders').hooks({
 
 
 server.on('listening', () =>
-    console.log('Folder Rest Server on http://%s:%d', app.get('host'), port)
+    console.log('File Rest Server on http://%s:%d', app.get('host'), port)
 );

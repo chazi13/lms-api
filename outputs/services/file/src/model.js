@@ -4,8 +4,10 @@ module.exports = function(app) {
     const uniqueValidator = require('mongoose-unique-validator');
     const model = new mongooseClient.Schema({
         name: { type: String, required: false, unique: false },
-        parentFolder: { type: String, required: false, unique: false },
-        cover: { type: String, required: false, unique: false },
+        type: { type: String, required: false, unique: false },
+        embedLink: { type: String, required: false, unique: false },
+        url: { type: String, required: false, unique: false },
+        folderId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {
@@ -18,5 +20,5 @@ module.exports = function(app) {
     model.set('toJSON', { virtuals: true })
     model.plugin(mongooseVirtuals)
     model.plugin(uniqueValidator)
-    return mongooseClient.model("folders", model)
+    return mongooseClient.model("files", model)
 }
