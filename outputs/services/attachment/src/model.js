@@ -5,6 +5,7 @@ module.exports = function(app) {
     const model = new mongooseClient.Schema({
         name: { type: String, required: true, unique: false },
         url: { type: String, required: true, unique: false },
+        cardId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

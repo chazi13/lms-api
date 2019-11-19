@@ -146,6 +146,10 @@
             "script": "npm run card-services"
         },
         {
+            "name": "label Service",
+            "script": "npm run label-services"
+        },
+        {
             "name": "checklist Service",
             "script": "npm run checklist-services"
         },

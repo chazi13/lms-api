@@ -14,6 +14,7 @@ type Card {
   attachments(query: JSON): [Attachment]
   index: Int
   description: String
+  labels(query: JSON): [Label]
 }
 input CardFilter {
   AND: [CardFilter!]
@@ -130,6 +131,9 @@ input CardFilter {
   description_not_starts_with: String
   description_ends_with: String
   description_not_ends_with: String
+  labels: LabelFilter
+  labels_some: LabelFilter
+  labels_none: LabelFilter
 }
 enum CardOrderBy {
   id_ASC
@@ -262,6 +266,13 @@ export const resolvers = ({ pubSub }) => ({
         attachments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.attachmentRequester.send({ type: 'find', where: Object.assign({ cardId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        labels: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.labelRequester.send({ type: 'find', where: Object.assign({ cardId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

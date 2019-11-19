@@ -13,7 +13,7 @@ try {
     const split = root.split('/')
     split.pop()
     const path = split.join('/')
-    externalHook = require(path + '/hooks/checklist')
+    externalHook = require(path + '/hooks/label')
 } catch (e) {
 
 }
@@ -25,9 +25,9 @@ function camelize(text) {
     });
 }
 
-const checklistService = new cote.Responder({
-    name: 'Checklist Service',
-    key: 'checklist'
+const labelService = new cote.Responder({
+    name: 'Label Service',
+    key: 'label'
 })
 
 const userRequester = new cote.Requester({
@@ -141,9 +141,9 @@ const transformer = ({where, limit, skip, orderBy}) => {
 }
 
 
-checklistService.on("find", async (req, cb) => {
+labelService.on("find", async (req, cb) => {
     try {
-        let data = await app.service("checklists").find({
+        let data = await app.service("labels").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -155,9 +155,9 @@ checklistService.on("find", async (req, cb) => {
     }
 })
 
-checklistService.on("findConnection", async (req, cb) => {
+labelService.on("findConnection", async (req, cb) => {
     try {
-        let data = await app.service("checklists").find({
+        let data = await app.service("labels").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -169,9 +169,9 @@ checklistService.on("findConnection", async (req, cb) => {
     }
 })
 
-checklistService.on("findOwn", async (req, cb) => {
+labelService.on("findOwn", async (req, cb) => {
     try {
-        let data = await app.service("checklists").find({
+        let data = await app.service("labels").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -184,9 +184,9 @@ checklistService.on("findOwn", async (req, cb) => {
     }
 })
 
-checklistService.on("findConnectionOwn", async (req, cb) => {
+labelService.on("findConnectionOwn", async (req, cb) => {
     try {
-        let data = await app.service("checklists").find({
+        let data = await app.service("labels").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -199,9 +199,9 @@ checklistService.on("findConnectionOwn", async (req, cb) => {
     }
 })
 
-checklistService.on("create", async (req, cb) => {
+labelService.on("create", async (req, cb) => {
     try {
-        let data = await app.service("checklists").create(req.body, {
+        let data = await app.service("labels").create(req.body, {
             headers: req.headers,
             file: req.file,
             isSystem: req.isSystem
@@ -212,9 +212,9 @@ checklistService.on("create", async (req, cb) => {
     }
 })
 
-checklistService.on("patch", async (req, cb) => {
+labelService.on("patch", async (req, cb) => {
     try {
-        let data = await app.service("checklists").patch(req.id, req.body, {
+        let data = await app.service("labels").patch(req.id, req.body, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -226,9 +226,9 @@ checklistService.on("patch", async (req, cb) => {
     }
 })
 
-checklistService.on("delete", async (req, cb) => {
+labelService.on("delete", async (req, cb) => {
     try {
-        let data = await app.service("checklists").remove(req.id, {
+        let data = await app.service("labels").remove(req.id, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -241,11 +241,11 @@ checklistService.on("delete", async (req, cb) => {
     }
 })
 
-checklistService.on("get", async (req, cb) => {
+labelService.on("get", async (req, cb) => {
     try {
         let data = null
         if (req.id) {
-            data = await app.service("checklists").get(req.id, {
+            data = await app.service("labels").get(req.id, {
                 headers: req.headers,
                 isSystem: req.isSystem
             })
@@ -262,7 +262,7 @@ const checkAuthentication = (token) => {
 }
 
 
-app.service('checklists').hooks({
+app.service('labels').hooks({
     before: {
         find: async (context) => {
             try {
@@ -272,7 +272,7 @@ app.service('checklists').hooks({
                     context.params.user = auth.user
 
                     
-                    if(auth.user.permissions.includes(`${camelize('checklist')}:findOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('label')}:findOwn`)){
                         context.method = "findOwn"
                         context.params.query = {
                             ...context.params.query || {},
@@ -282,7 +282,7 @@ app.service('checklists').hooks({
                     
                     //beforeFindAuthorization
                     await checkPermissions({
-                        roles: ['admin', 'checklist']
+                        roles: ['admin', 'label']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -302,7 +302,7 @@ app.service('checklists').hooks({
 
                     context.params.user = auth.user
                     await checkPermissions({
-                        roles: ['admin', 'checklist']
+                        roles: ['admin', 'label']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -322,7 +322,7 @@ app.service('checklists').hooks({
                     context.params.user = auth.user
 
                     await checkPermissions({
-                        roles: ['admin', 'checklist']
+                        roles: ['admin', 'label']
                     })(context)
 
                     context.data.createdBy = auth.user.id || ''
@@ -362,11 +362,11 @@ app.service('checklists').hooks({
 
      
                     //beforeUpdate
-                    if(auth.user.permissions.includes(`${camelize('checklist')}:updateOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('label')}:updateOwn`)){
                         context.method = "updateOwn"
                         if(context.id){
-                            let checklist = await app.service(`${pluralize(camelize("checklist"))}`).get(context.id, { headers: context.params.headers })
-                            if(checklist && checklist.createdBy !== auth.user.id){
+                            let label = await app.service(`${pluralize(camelize("label"))}`).get(context.id, { headers: context.params.headers })
+                            if(label && label.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
@@ -374,7 +374,7 @@ app.service('checklists').hooks({
 
 
                     await checkPermissions({
-                        roles: ['admin', 'checklist']
+                        roles: ['admin', 'label']
                     })(context)
 
 
@@ -400,18 +400,18 @@ app.service('checklists').hooks({
  
             
                     //beforePatch
-                    if(auth.user.permissions.includes(`${camelize('checklist')}:patchOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('label')}:patchOwn`)){
                         context.method = "patchOwn"
                         if(context.id){
-                            let checklist = await app.service(`${pluralize(camelize("checklists"))}`).get(context.id, { headers: context.params.headers })
-                            if(checklist && checklist.createdBy !== auth.user.id){
+                            let label = await app.service(`${pluralize(camelize("labels"))}`).get(context.id, { headers: context.params.headers })
+                            if(label && label.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
 
                     await checkPermissions({
-                        roles: ['admin', 'checklist']
+                        roles: ['admin', 'label']
                     })(context)
 
     
@@ -436,17 +436,17 @@ app.service('checklists').hooks({
 
 
                     //beforeDelete
-                    if(auth.user.permissions.includes(`${camelize('checklist')}:removeOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('label')}:removeOwn`)){
                         context.method = "removeOwn"
                         if(context.id){
-                            let checklist = await app.service(`${pluralize(camelize("checklists"))}`).get(context.id, { headers: context.params.headers })
-                            if(checklist && checklist.createdBy !== auth.user.id){
+                            let label = await app.service(`${pluralize(camelize("labels"))}`).get(context.id, { headers: context.params.headers })
+                            if(label && label.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
                     await checkPermissions({
-                        roles: ['admin', 'checklist']
+                        roles: ['admin', 'label']
                     })(context)
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
@@ -502,5 +502,5 @@ app.service('checklists').hooks({
 
 
 server.on('listening', () =>
-    console.log('Checklist Rest Server on http://%s:%d', app.get('host'), port)
+    console.log('Label Rest Server on http://%s:%d', app.get('host'), port)
 );

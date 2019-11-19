@@ -5,6 +5,7 @@ type Checklist {
   updatedBy: User
   createdAt: DateTime
   updatedAt: DateTime
+  card: Card
   name: String!
   status: String
 }
@@ -47,6 +48,9 @@ input ChecklistFilter {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  card: CardFilter
+  card_some: CardFilter
+  card_none: CardFilter
   name: String
   name_not: String
   name_in: [String]
@@ -95,10 +99,12 @@ type ChecklistConnection {
   data: [Checklist]
 }
 input CreateChecklistInput {
+  cardId: String
   name: String!
   status: String
 }
 input UpdateChecklistInput {
+  cardId: String
   name: String
   status: String
 }
@@ -165,6 +171,13 @@ export const resolvers = ({ pubSub }) => ({
         updatedBy: async ({ updatedBy }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: updatedBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        card: async ({ cardId }, args, { headers, requester }) => {
+            try {
+                return await requester.cardRequester.send({ type: 'get', id: cardId, headers })
             } catch (e) {
                 throw new Error(e)
             }

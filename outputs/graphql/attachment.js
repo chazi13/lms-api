@@ -7,6 +7,7 @@ type Attachment {
   updatedAt: DateTime
   name: String!
   url: String!
+  card: Card
 }
 input AttachmentFilter {
   AND: [AttachmentFilter!]
@@ -75,6 +76,9 @@ input AttachmentFilter {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
+  card: CardFilter
+  card_some: CardFilter
+  card_none: CardFilter
 }
 enum AttachmentOrderBy {
   id_ASC
@@ -97,10 +101,12 @@ type AttachmentConnection {
 input CreateAttachmentInput {
   name: String!
   url: Upload!
+  cardId: String
 }
 input UpdateAttachmentInput {
   name: String
   url: Upload
+  cardId: String
 }
 extend type Query {
   attachments(
@@ -165,6 +171,13 @@ export const resolvers = ({ pubSub }) => ({
         updatedBy: async ({ updatedBy }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: updatedBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        card: async ({ cardId }, args, { headers, requester }) => {
+            try {
+                return await requester.cardRequester.send({ type: 'get', id: cardId, headers })
             } catch (e) {
                 throw new Error(e)
             }
