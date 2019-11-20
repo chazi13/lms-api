@@ -437,22 +437,7 @@ app.service('courses').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     } 
-                    
                     //onDelete
-                    //ON DELETE SET RESTRICT
-                    let categories = await getRequester('category').send({ 
-                        type: 'find', 
-                        query: {
-                            courseId: context.id
-                        }, 
-                        headers: {
-                            authorization: context.params.headers.authorization
-                        }
-                    })
-                    if(categories.length > 0){
-                        throw Error("Failed delete", null)
-                    }
-                
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)
