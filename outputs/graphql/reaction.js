@@ -7,6 +7,7 @@ type Reaction {
   updatedAt: DateTime
   type: String!
   post(query: JSON): Post!
+  user: User
 }
 input ReactionFilter {
   AND: [ReactionFilter!]
@@ -64,6 +65,9 @@ input ReactionFilter {
   post: PostFilter
   post_some: PostFilter
   post_none: PostFilter
+  user: UserFilter
+  user_some: UserFilter
+  user_none: UserFilter
 }
 enum ReactionOrderBy {
   id_ASC
@@ -84,10 +88,12 @@ type ReactionConnection {
 input CreateReactionInput {
   type: String!
   postId: String!
+  userId: String
 }
 input UpdateReactionInput {
   type: String
   postId: String
+  userId: String
 }
 extend type Query {
   reactions(
@@ -159,6 +165,13 @@ export const resolvers = ({ pubSub }) => ({
         post: async ({ postId }, args, { headers, requester }) => {
             try {
                 return await requester.postRequester.send({ type: 'get', id: postId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        user: async ({ userId }, args, { headers, requester }) => {
+            try {
+                return await requester.userRequester.send({ type: 'get', id: userId, headers })
             } catch (e) {
                 throw new Error(e)
             }

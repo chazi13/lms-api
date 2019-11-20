@@ -331,7 +331,21 @@ app.service('reactions').hooks({
                         throw Error("UnAuthorized")
                     }
                     
+                    
                     //beforeCreate
+                    if(context.data && context.data.userId){
+                        let belongsTo = await getRequester('user').send({ 
+                            type: "get", 
+                            id: context.data.userId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("User not found.")
+                        }
+                    }             
+                    
                     if(context.data && context.data.postId){
                         let belongsTo = await getRequester('post').send({ 
                             type: "get", 

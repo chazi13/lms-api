@@ -4,5 +4,11 @@ module.exports = {
         "relatedTo": "post",
         "foreignId": "id",
         "type": "one"
+    },
+    "user": {
+        "local": "userId",
+        "relatedTo": "User",
+        "foreignId": "id",
+        "type": "one"
     }
 }
