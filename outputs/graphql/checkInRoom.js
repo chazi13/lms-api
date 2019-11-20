@@ -11,7 +11,7 @@ type CheckInRoom {
   time: String
   messages(query: JSON): [CheckInRoomMessage]
   comments(query: JSON): [Comment]
-  classRoom(query: JSON): ClassRoom!
+  classRoom: ClassRoom
 }
 input CheckInRoomFilter {
   AND: [CheckInRoomFilter!]
@@ -131,7 +131,7 @@ input CreateCheckInRoomInput {
   question: String
   description: String
   time: String
-  classRoomId: String!
+  classRoomId: String
 }
 input UpdateCheckInRoomInput {
   question: String

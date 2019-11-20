@@ -453,7 +453,6 @@ app.service('checkInRooms').hooks({
                     } 
                     
                     
-                    
                     //onDelete
                     //ON DELETE SET CASCADE
                     await getRequester('comment').send({ type: 'delete', 
@@ -469,18 +468,6 @@ app.service('checkInRooms').hooks({
                     })
                     //ON DELETE SET CASCADE
                     await getRequester('message').send({ type: 'delete', 
-                        id: null,   
-                        headers: {
-                            authorization: context.params.headers.authorization
-                        }, 
-                        params: {
-                            query: {
-                                checkInRoomId: context.id
-                            }
-                        }
-                    })
-                    //ON DELETE SET CASCADE
-                    await getRequester('user').send({ type: 'delete', 
                         id: null,   
                         headers: {
                             authorization: context.params.headers.authorization

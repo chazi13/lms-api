@@ -7,7 +7,7 @@ module.exports = function(app) {
         usersId: { type: String, required: false },
         description: { type: String, required: false, unique: false },
         time: { type: String, required: false, unique: false },
-        classRoomId: { type: String, required: true },
+        classRoomId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {
