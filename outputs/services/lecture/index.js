@@ -494,7 +494,53 @@ app.service('lectures').hooks({
                         throw Error("UnAuthorized")
                     } 
                     
+                    
+                    
+                    
+                    
                     //onDelete
+                    //ON DELETE SET RESTRICT
+                    let tasks = await getRequester('task').send({ 
+                        type: 'find', 
+                        query: {
+                            lectureId: context.id
+                        }, 
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }
+                    })
+                    if(tasks.length > 0){
+                        throw Error("Failed delete", null)
+                    }
+                
+                    //ON DELETE SET RESTRICT
+                    let quizzes = await getRequester('quiz').send({ 
+                        type: 'find', 
+                        query: {
+                            lectureId: context.id
+                        }, 
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }
+                    })
+                    if(quizzes.length > 0){
+                        throw Error("Failed delete", null)
+                    }
+                
+                    //ON DELETE SET RESTRICT
+                    let articles = await getRequester('article').send({ 
+                        type: 'find', 
+                        query: {
+                            lectureId: context.id
+                        }, 
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }
+                    })
+                    if(articles.length > 0){
+                        throw Error("Failed delete", null)
+                    }
+                
                     //ON DELETE SET CASCADE
                     await getRequester('comment').send({ type: 'delete', 
                         id: null,   
@@ -507,6 +553,20 @@ app.service('lectures').hooks({
                             }
                         }
                     })
+                    //ON DELETE SET RESTRICT
+                    let sections = await getRequester('section').send({ 
+                        type: 'find', 
+                        query: {
+                            lectureId: context.id
+                        }, 
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }
+                    })
+                    if(sections.length > 0){
+                        throw Error("Failed delete", null)
+                    }
+                
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)

@@ -451,7 +451,37 @@ app.service('sections').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     } 
+                    
+                    
                     //onDelete
+                    //ON DELETE SET RESTRICT
+                    let lectures = await getRequester('lecture').send({ 
+                        type: 'find', 
+                        query: {
+                            sectionId: context.id
+                        }, 
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }
+                    })
+                    if(lectures.length > 0){
+                        throw Error("Failed delete", null)
+                    }
+                
+                    //ON DELETE SET RESTRICT
+                    let courses = await getRequester('course').send({ 
+                        type: 'find', 
+                        query: {
+                            sectionId: context.id
+                        }, 
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }
+                    })
+                    if(courses.length > 0){
+                        throw Error("Failed delete", null)
+                    }
+                
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)

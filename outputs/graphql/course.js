@@ -9,6 +9,7 @@ type Course {
   categories: [CourseCategory!]
   finishTime: String
   description: String
+  sections(query: JSON): [Section]
 }
 input CourseFilter {
   AND: [CourseFilter!]
@@ -94,6 +95,9 @@ input CourseFilter {
   description_not_starts_with: String
   description_ends_with: String
   description_not_ends_with: String
+  sections: SectionFilter
+  sections_some: SectionFilter
+  sections_none: SectionFilter
 }
 enum CourseOrderBy {
   id_ASC
@@ -214,6 +218,13 @@ export const resolvers = ({ pubSub }) => ({
                     }
                 }
                 return res
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        sections: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.sectionRequester.send({ type: 'find', where: Object.assign({ courseId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
