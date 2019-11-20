@@ -10,6 +10,7 @@ type CheckInRoom {
   description: String
   messages(query: JSON): [CheckInRoomMessage]
   comments(query: JSON): [Comment]
+  classRoom(query: JSON): ClassRoom!
 }
 input CheckInRoomFilter {
   AND: [CheckInRoomFilter!]
@@ -87,6 +88,9 @@ input CheckInRoomFilter {
   comments: CommentFilter
   comments_some: CommentFilter
   comments_none: CommentFilter
+  classRoom: ClassRoomFilter
+  classRoom_some: ClassRoomFilter
+  classRoom_none: ClassRoomFilter
 }
 enum CheckInRoomOrderBy {
   id_ASC
@@ -109,10 +113,12 @@ type CheckInRoomConnection {
 input CreateCheckInRoomInput {
   question: String
   description: String
+  classRoomId: String!
 }
 input UpdateCheckInRoomInput {
   question: String
   description: String
+  classRoomId: String
 }
 extend type Query {
   checkInRooms(
@@ -198,6 +204,13 @@ export const resolvers = ({ pubSub }) => ({
         comments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.commentRequester.send({ type: 'find', where: Object.assign({ checkInRoomId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        classRoom: async ({ classRoomId }, args, { headers, requester }) => {
+            try {
+                return await requester.classRoomRequester.send({ type: 'get', id: classRoomId, headers })
             } catch (e) {
                 throw new Error(e)
             }
