@@ -330,7 +330,21 @@ app.service('posts').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     }
+                    
                     //beforeCreate
+                    if(context.data && context.data.cardId){
+                        let belongsTo = await getRequester('card').send({ 
+                            type: "get", 
+                            id: context.data.cardId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("Card not found.")
+                        }
+                    }             
+                    
                 }
                 
                 return externalHook && externalHook(app).before && externalHook(app).before.create && externalHook(app).before.create(context)

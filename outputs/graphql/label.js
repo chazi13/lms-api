@@ -7,6 +7,7 @@ type Label {
   updatedAt: DateTime
   title: String!
   color: String
+  active: Boolean
   card(query: JSON): Card!
 }
 input LabelFilter {
@@ -76,6 +77,8 @@ input LabelFilter {
   color_not_starts_with: String
   color_ends_with: String
   color_not_ends_with: String
+  active: Boolean
+  active_not: Boolean
   card: CardFilter
   card_some: CardFilter
   card_none: CardFilter
@@ -91,6 +94,8 @@ enum LabelOrderBy {
   title_DESC
   color_ASC
   color_DESC
+  active_ASC
+  active_DESC
 }
 type LabelConnection {
   total: Int
@@ -101,11 +106,13 @@ type LabelConnection {
 input CreateLabelInput {
   title: String!
   color: String
+  active: Boolean
   cardId: String!
 }
 input UpdateLabelInput {
   title: String
   color: String
+  active: Boolean
   cardId: String
 }
 extend type Query {

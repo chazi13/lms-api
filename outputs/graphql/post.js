@@ -9,6 +9,7 @@ type Post {
   comments(query: JSON): [Comment]
   reactions(query: JSON): [Reaction]
   attachments(query: JSON): [PostAttachment]
+  card: Card
 }
 input PostFilter {
   AND: [PostFilter!]
@@ -72,6 +73,9 @@ input PostFilter {
   attachments: PostAttachmentFilter
   attachments_some: PostAttachmentFilter
   attachments_none: PostAttachmentFilter
+  card: CardFilter
+  card_some: CardFilter
+  card_none: CardFilter
 }
 enum PostOrderBy {
   id_ASC
@@ -91,9 +95,11 @@ type PostConnection {
 }
 input CreatePostInput {
   text: String
+  cardId: String
 }
 input UpdatePostInput {
   text: String
+  cardId: String
 }
 extend type Query {
   posts(
@@ -179,6 +185,13 @@ export const resolvers = ({ pubSub }) => ({
         attachments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.postAttachmentRequester.send({ type: 'find', where: Object.assign({ postId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        card: async ({ cardId }, args, { headers, requester }) => {
+            try {
+                return await requester.cardRequester.send({ type: 'get', id: cardId, headers })
             } catch (e) {
                 throw new Error(e)
             }
