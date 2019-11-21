@@ -10,6 +10,7 @@ type Student {
   stundentClasses(query: JSON): [StudentClass]
   studentGroups(query: JSON): [StudentGroup]
   studentWorkspaces(query: JSON): [StudentWorkspace]
+  studentCard(query: JSON): [CardMember]
 }
 input StudentFilter {
   AND: [StudentFilter!]
@@ -65,6 +66,9 @@ input StudentFilter {
   studentWorkspaces: StudentWorkspaceFilter
   studentWorkspaces_some: StudentWorkspaceFilter
   studentWorkspaces_none: StudentWorkspaceFilter
+  studentCard: CardMemberFilter
+  studentCard_some: CardMemberFilter
+  studentCard_none: CardMemberFilter
 }
 enum StudentOrderBy {
   id_ASC
@@ -197,6 +201,13 @@ export const resolvers = ({ pubSub }) => ({
         studentWorkspaces: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.studentWorkspaceRequester.send({ type: 'find', where: Object.assign({ studentId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        studentCards: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.cardMemberRequester.send({ type: 'find', where: Object.assign({ studentId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

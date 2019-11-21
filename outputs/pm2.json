@@ -146,6 +146,10 @@
             "script": "npm run card-services"
         },
         {
+            "name": "cardMember Service",
+            "script": "npm run cardMember-services"
+        },
+        {
             "name": "label Service",
             "script": "npm run label-services"
         },

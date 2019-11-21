@@ -13,7 +13,7 @@ try {
     const split = root.split('/')
     split.pop()
     const path = split.join('/')
-    externalHook = require(path + '/hooks/student')
+    externalHook = require(path + '/hooks/cardMember')
 } catch (e) {
 
 }
@@ -25,9 +25,9 @@ function camelize(text) {
     });
 }
 
-const studentService = new cote.Responder({
-    name: 'Student Service',
-    key: 'student'
+const cardMemberService = new cote.Responder({
+    name: 'CardMember Service',
+    key: 'cardMember'
 })
 
 const userRequester = new cote.Requester({
@@ -141,9 +141,9 @@ const transformer = ({where, limit, skip, orderBy}) => {
 }
 
 
-studentService.on("find", async (req, cb) => {
+cardMemberService.on("find", async (req, cb) => {
     try {
-        let data = await app.service("students").find({
+        let data = await app.service("cardMembers").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -155,9 +155,9 @@ studentService.on("find", async (req, cb) => {
     }
 })
 
-studentService.on("findConnection", async (req, cb) => {
+cardMemberService.on("findConnection", async (req, cb) => {
     try {
-        let data = await app.service("students").find({
+        let data = await app.service("cardMembers").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -169,9 +169,9 @@ studentService.on("findConnection", async (req, cb) => {
     }
 })
 
-studentService.on("findOwn", async (req, cb) => {
+cardMemberService.on("findOwn", async (req, cb) => {
     try {
-        let data = await app.service("students").find({
+        let data = await app.service("cardMembers").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -184,9 +184,9 @@ studentService.on("findOwn", async (req, cb) => {
     }
 })
 
-studentService.on("findConnectionOwn", async (req, cb) => {
+cardMemberService.on("findConnectionOwn", async (req, cb) => {
     try {
-        let data = await app.service("students").find({
+        let data = await app.service("cardMembers").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -199,9 +199,9 @@ studentService.on("findConnectionOwn", async (req, cb) => {
     }
 })
 
-studentService.on("create", async (req, cb) => {
+cardMemberService.on("create", async (req, cb) => {
     try {
-        let data = await app.service("students").create(req.body, {
+        let data = await app.service("cardMembers").create(req.body, {
             headers: req.headers,
             file: req.file,
             isSystem: req.isSystem
@@ -212,9 +212,9 @@ studentService.on("create", async (req, cb) => {
     }
 })
 
-studentService.on("patch", async (req, cb) => {
+cardMemberService.on("patch", async (req, cb) => {
     try {
-        let data = await app.service("students").patch(req.id, req.body, {
+        let data = await app.service("cardMembers").patch(req.id, req.body, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -226,9 +226,9 @@ studentService.on("patch", async (req, cb) => {
     }
 })
 
-studentService.on("delete", async (req, cb) => {
+cardMemberService.on("delete", async (req, cb) => {
     try {
-        let data = await app.service("students").remove(req.id, {
+        let data = await app.service("cardMembers").remove(req.id, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -241,11 +241,11 @@ studentService.on("delete", async (req, cb) => {
     }
 })
 
-studentService.on("get", async (req, cb) => {
+cardMemberService.on("get", async (req, cb) => {
     try {
         let data = null
         if (req.id) {
-            data = await app.service("students").get(req.id, {
+            data = await app.service("cardMembers").get(req.id, {
                 headers: req.headers,
                 isSystem: req.isSystem
             })
@@ -262,7 +262,7 @@ const checkAuthentication = (token) => {
 }
 
 
-app.service('students').hooks({
+app.service('cardMembers').hooks({
     before: {
         find: async (context) => {
             try {
@@ -272,7 +272,7 @@ app.service('students').hooks({
                     context.params.user = auth.user
 
                     
-                    if(auth.user.permissions.includes(`${camelize('student')}:findOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('cardMember')}:findOwn`)){
                         context.method = "findOwn"
                         context.params.query = {
                             ...context.params.query || {},
@@ -282,7 +282,7 @@ app.service('students').hooks({
                     
                     //beforeFindAuthorization
                     await checkPermissions({
-                        roles: ['admin', 'student']
+                        roles: ['admin', 'cardMember']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -302,7 +302,7 @@ app.service('students').hooks({
 
                     context.params.user = auth.user
                     await checkPermissions({
-                        roles: ['admin', 'student']
+                        roles: ['admin', 'cardMember']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -322,7 +322,7 @@ app.service('students').hooks({
                     context.params.user = auth.user
 
                     await checkPermissions({
-                        roles: ['admin', 'student']
+                        roles: ['admin', 'cardMember']
                     })(context)
 
                     context.data.createdBy = auth.user.id || ''
@@ -333,29 +333,29 @@ app.service('students').hooks({
                     
                     
                     //beforeCreate
-                    if(context.data && context.data.cardMemberId){
-                        let belongsTo = await getRequester('cardMember').send({ 
+                    if(context.data && context.data.cardId){
+                        let belongsTo = await getRequester('card').send({ 
                             type: "get", 
-                            id: context.data.cardMemberId, 
+                            id: context.data.cardId, 
                             headers:{
                                 token: context.params.headers.authorization
                             }
                         })
                         if(!belongsTo){
-                            throw Error("CardMember not found.")
+                            throw Error("Card not found.")
                         }
                     }             
                     
-                    if(context.data && context.data.userId){
-                        let belongsTo = await getRequester('user').send({ 
+                    if(context.data && context.data.studentId){
+                        let belongsTo = await getRequester('student').send({ 
                             type: "get", 
-                            id: context.data.userId, 
+                            id: context.data.studentId, 
                             headers:{
                                 token: context.params.headers.authorization
                             }
                         })
                         if(!belongsTo){
-                            throw Error("User not found.")
+                            throw Error("Student not found.")
                         }
                     }             
                     
@@ -376,11 +376,11 @@ app.service('students').hooks({
 
      
                     //beforeUpdate
-                    if(auth.user.permissions.includes(`${camelize('student')}:updateOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('cardMember')}:updateOwn`)){
                         context.method = "updateOwn"
                         if(context.id){
-                            let student = await app.service(`${pluralize(camelize("student"))}`).get(context.id, { headers: context.params.headers })
-                            if(student && student.createdBy !== auth.user.id){
+                            let cardMember = await app.service(`${pluralize(camelize("cardMember"))}`).get(context.id, { headers: context.params.headers })
+                            if(cardMember && cardMember.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
@@ -388,7 +388,7 @@ app.service('students').hooks({
 
 
                     await checkPermissions({
-                        roles: ['admin', 'student']
+                        roles: ['admin', 'cardMember']
                     })(context)
 
 
@@ -414,18 +414,18 @@ app.service('students').hooks({
  
             
                     //beforePatch
-                    if(auth.user.permissions.includes(`${camelize('student')}:patchOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('cardMember')}:patchOwn`)){
                         context.method = "patchOwn"
                         if(context.id){
-                            let student = await app.service(`${pluralize(camelize("students"))}`).get(context.id, { headers: context.params.headers })
-                            if(student && student.createdBy !== auth.user.id){
+                            let cardMember = await app.service(`${pluralize(camelize("cardMembers"))}`).get(context.id, { headers: context.params.headers })
+                            if(cardMember && cardMember.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
 
                     await checkPermissions({
-                        roles: ['admin', 'student']
+                        roles: ['admin', 'cardMember']
                     })(context)
 
     
@@ -450,35 +450,22 @@ app.service('students').hooks({
 
 
                     //beforeDelete
-                    if(auth.user.permissions.includes(`${camelize('student')}:removeOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('cardMember')}:removeOwn`)){
                         context.method = "removeOwn"
                         if(context.id){
-                            let student = await app.service(`${pluralize(camelize("students"))}`).get(context.id, { headers: context.params.headers })
-                            if(student && student.createdBy !== auth.user.id){
+                            let cardMember = await app.service(`${pluralize(camelize("cardMembers"))}`).get(context.id, { headers: context.params.headers })
+                            if(cardMember && cardMember.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
                     await checkPermissions({
-                        roles: ['admin', 'student']
+                        roles: ['admin', 'cardMember']
                     })(context)
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     } 
-                    
                     //onDelete
-                    //ON DELETE SET CASCADE
-                    await getRequester('user').send({ type: 'delete', 
-                        id: null,   
-                        headers: {
-                            authorization: context.params.headers.authorization
-                        }, 
-                        params: {
-                            query: {
-                                studentId: context.id
-                            }
-                        }
-                    })
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)
@@ -529,5 +516,5 @@ app.service('students').hooks({
 
 
 server.on('listening', () =>
-    console.log('Student Rest Server on http://%s:%d', app.get('host'), port)
+    console.log('CardMember Rest Server on http://%s:%d', app.get('host'), port)
 );
