@@ -7,7 +7,7 @@ module.exports = function(app) {
         categoriesId: [{ type: String, required: true }],
         finishTime: { type: String, required: false, unique: false },
         description: { type: String, required: false, unique: false },
-        classRoomId: { type: String, required: false },
+        spaceId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

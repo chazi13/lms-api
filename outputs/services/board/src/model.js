@@ -7,6 +7,7 @@ module.exports = function(app) {
         background: { type: String, required: true, unique: false },
         workspaceId: { type: String, required: false },
         visible: { type: String, required: false, unique: false },
+        usersId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

@@ -1,4 +1,4 @@
-const { HOST, REDIS_HOST, REDIS_PORT, forgetPasswordExpired, email, application } = require("./config");
+const { HOST, REDIS_HOST, REDIS_PORT, forgetPasswordExpired, email, application, APP_ID } = require("./config");
 const app = require("./src/app");
 const port = app.get("port");
 const server = app.listen(port);
@@ -10,10 +10,10 @@ const ObjectId = require('mongodb').ObjectID;
 const appRoot = require('app-root-path');
 let externalHook = null
 try {
-	const root = appRoot.toString()
-	const split = root.split('/')
-	split.pop()
-	const path = split.join('/')
+	const root = appRoot.toString();
+    const split = root.split('/');
+    split.pop();
+    const path = split.join('/');
 	externalHook = require(path + '/hooks/user')
 } catch (e) {
 
@@ -21,12 +21,12 @@ try {
 
 const userService = new cote.Responder({
 	name: "User Service",
-	key: "user"
+	key: APP_ID + "_user"
 });
 
 const emailRequester = new cote.Requester({
 	name: "Email Requester",
-	key: "email"
+	key: APP_ID + "_email"
 });
 
 function camelize(text) {
@@ -43,7 +43,7 @@ const getRequester = (name) =>{
 	}
 	const requester = new cote.Requester({
 		name: requesterName,
-		key: `${camelize(name)}`,
+		key: APP_ID + `_${camelize(name)}`,
 	})
 	let newRequester = {
 		send: params =>  requester.send({...params, isSystem: true})

@@ -1,4 +1,4 @@
-const { REDIS_HOST, REDIS_PORT } = require("./config")
+const { REDIS_HOST, REDIS_PORT, APP_ID } = require("./config")
 const app = require('./src/app');
 const port = app.get('port');
 const server = app.listen(port);
@@ -9,11 +9,11 @@ const appRoot = require('app-root-path');
 const pluralize = require("pluralize")
 let externalHook = null
 try {
-    const root = appRoot.toString()
-    const split = root.split('/')
-    split.pop()
-    const path = split.join('/')
-    externalHook = require(path + '/hooks/comment')
+    const root = appRoot.toString();
+    const split = root.split('/');
+    split.pop();
+    const path = split.join('/');
+    externalHook = require(path + '/hooks/comment');
 } catch (e) {
 
 }
@@ -27,12 +27,12 @@ function camelize(text) {
 
 const commentService = new cote.Responder({
     name: 'Comment Service',
-    key: 'comment'
+    key: APP_ID + '_comment'
 })
 
 const userRequester = new cote.Requester({
     name: 'User Requester',
-    key: 'user',
+    key: APP_ID + '_user',
 })
 
 const getRequester = (name) =>{
@@ -42,7 +42,7 @@ const getRequester = (name) =>{
     }
     const requester = new cote.Requester({
         name: requesterName,
-        key: `${camelize(name)}`,
+        key: APP_ID + `_${camelize(name)}`,
     })
     let newRequester = {
         send: params =>  requester.send({...params, isSystem: true})
@@ -332,7 +332,21 @@ app.service('comments').hooks({
                     }
                     
                     
+                    
                     //beforeCreate
+                    if(context.data && context.data.lectureId){
+                        let belongsTo = await getRequester('lecture').send({ 
+                            type: "get", 
+                            id: context.data.lectureId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("Lecture not found.")
+                        }
+                    }             
+                    
                     if(context.data && context.data.checkInRoomId){
                         let belongsTo = await getRequester('checkInRoom').send({ 
                             type: "get", 
@@ -466,9 +480,22 @@ app.service('comments').hooks({
                         throw Error("UnAuthorized")
                     } 
                     
+                    
                     //onDelete
                     //ON DELETE SET CASCADE
                     await getRequester('attachment').send({ type: 'delete', 
+                        id: null,   
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }, 
+                        params: {
+                            query: {
+                                commentId: context.id
+                            }
+                        }
+                    })
+                    //ON DELETE SET CASCADE
+                    await getRequester('subComment').send({ type: 'delete', 
                         id: null,   
                         headers: {
                             authorization: context.params.headers.authorization

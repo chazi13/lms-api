@@ -5,10 +5,11 @@ type Workspace {
   updatedBy: User
   createdAt: DateTime
   updatedAt: DateTime
-  class: ClassRoom
   name: String!
   description: String!
   boards(query: JSON): [Board]
+  users(query: JSON): [User]
+  space: Space
 }
 input WorkspaceFilter {
   AND: [WorkspaceFilter!]
@@ -49,9 +50,6 @@ input WorkspaceFilter {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  class: ClassRoomFilter
-  class_some: ClassRoomFilter
-  class_none: ClassRoomFilter
   name: String
   name_not: String
   name_in: [String]
@@ -83,6 +81,12 @@ input WorkspaceFilter {
   boards: BoardFilter
   boards_some: BoardFilter
   boards_none: BoardFilter
+  users: UserFilter
+  users_some: UserFilter
+  users_none: UserFilter
+  space: SpaceFilter
+  space_some: SpaceFilter
+  space_none: SpaceFilter
 }
 enum WorkspaceOrderBy {
   id_ASC
@@ -103,14 +107,14 @@ type WorkspaceConnection {
   data: [Workspace]
 }
 input CreateWorkspaceInput {
-  classId: String
   name: String!
   description: String!
+  spaceId: String
 }
 input UpdateWorkspaceInput {
-  classId: String
   name: String
   description: String
+  spaceId: String
 }
 extend type Query {
   workspaces(
@@ -179,16 +183,23 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        class: async ({ classId }, args, { headers, requester }) => {
+        boards: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
-                return await requester.classRoomRequester.send({ type: 'get', id: classId, headers })
+                return await requester.boardRequester.send({ type: 'find', where: Object.assign({ workspaceId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
-        boards: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+        users: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
-                return await requester.boardRequester.send({ type: 'find', where: Object.assign({ workspaceId: id }, where, query), limit, skip, orderBy, headers })
+                return await requester.userRequester.send({ type: 'find', where: Object.assign({ workspaceId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        space: async ({ spaceId }, args, { headers, requester }) => {
+            try {
+                return await requester.spaceRequester.send({ type: 'get', id: spaceId, headers })
             } catch (e) {
                 throw new Error(e)
             }

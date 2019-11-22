@@ -18,7 +18,20 @@ module.exports = (app) => ({
     },
     after:{
         find: async (context) => {
-            //do something after find request
+            const user = context.result
+            
+            try {
+                if (user.avatar !== null) {
+                    const avatar = await app.getRequester('attachment').send({
+                        type: 'get',
+                        id: user.avatar
+                    })
+
+                    context.result.avatar = avatar.url
+                }
+            } catch (e) {
+                console.log('on get avatar', e)
+            }
         },
         get: async (context) => {
             //do something after get request
@@ -35,7 +48,7 @@ module.exports = (app) => ({
         register: async (context) => {
             const {user, accessToken} = context.result
             const headers = {
-                authorization: accessToken
+                "authorization": accessToken
             }
 
             try {
@@ -46,19 +59,10 @@ module.exports = (app) => ({
                     },
                     headers
                 })
-
-                const student = await app.getRequester('student').send({
-                    type: 'create',
-                    body: {
-                        userId: user.id,
-                        createdBy: user.id
-                    },
-                    headers
-                })
             } catch (e) {
-                console.log(e)
+                console.log('on create profile', e)
             }
-        }  
+        }
     },
     permissions: null
 })

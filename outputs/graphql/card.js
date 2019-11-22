@@ -9,13 +9,14 @@ type Card {
   name: String!
   image: String
   duedate: String
-  checklists(query: JSON): [Checklist]
   posts(query: JSON): [Post]
-  attachments(query: JSON): [Attachment]
   index: Int
   description: String
-  labels(query: JSON): [Label]
   visible: Boolean
+  users(query: JSON): [User]
+  attachments(query: JSON): [Attachment]
+  checklists(query: JSON): [Checklist]
+  labels(query: JSON): [Label]
 }
 input CardFilter {
   AND: [CardFilter!]
@@ -101,15 +102,9 @@ input CardFilter {
   duedate_not_starts_with: String
   duedate_ends_with: String
   duedate_not_ends_with: String
-  checklists: ChecklistFilter
-  checklists_some: ChecklistFilter
-  checklists_none: ChecklistFilter
   posts: PostFilter
   posts_some: PostFilter
   posts_none: PostFilter
-  attachments: AttachmentFilter
-  attachments_some: AttachmentFilter
-  attachments_none: AttachmentFilter
   index: Int
   index_not: Int
   index_in: [Int]
@@ -132,11 +127,20 @@ input CardFilter {
   description_not_starts_with: String
   description_ends_with: String
   description_not_ends_with: String
+  visible: Boolean
+  visible_not: Boolean
+  users: UserFilter
+  users_some: UserFilter
+  users_none: UserFilter
+  attachments: AttachmentFilter
+  attachments_some: AttachmentFilter
+  attachments_none: AttachmentFilter
+  checklists: ChecklistFilter
+  checklists_some: ChecklistFilter
+  checklists_none: ChecklistFilter
   labels: LabelFilter
   labels_some: LabelFilter
   labels_none: LabelFilter
-  visible: Boolean
-  visible_not: Boolean
 }
 enum CardOrderBy {
   id_ASC
@@ -256,13 +260,6 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        checklists: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
-            try {
-                return await requester.checklistRequester.send({ type: 'find', where: Object.assign({ cardId: id }, where, query), limit, skip, orderBy, headers })
-            } catch (e) {
-                throw new Error(e)
-            }
-        },
         posts: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.postRequester.send({ type: 'find', where: Object.assign({ cardId: id }, where, query), limit, skip, orderBy, headers })
@@ -270,9 +267,23 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
+        users: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.userRequester.send({ type: 'find', where: Object.assign({ cardId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
         attachments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.attachmentRequester.send({ type: 'find', where: Object.assign({ cardId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        checklists: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.checklistRequester.send({ type: 'find', where: Object.assign({ cardId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

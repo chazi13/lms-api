@@ -4,10 +4,9 @@ module.exports = function(app) {
     const uniqueValidator = require('mongoose-unique-validator');
     const model = new mongooseClient.Schema({
         question: { type: String, required: false, unique: false },
-        usersId: { type: String, required: false },
         description: { type: String, required: false, unique: false },
         time: { type: String, required: false, unique: false },
-        classRoomId: { type: String, required: false },
+        spaceId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

@@ -7,7 +7,7 @@ type Section {
   updatedAt: DateTime
   title: String!
   course(query: JSON): Course!
-  lectures: [Lecture!]
+  lectures(query: JSON): [Lecture]
 }
 input SectionFilter {
   AND: [SectionFilter!]
@@ -88,14 +88,10 @@ type SectionConnection {
 input CreateSectionInput {
   title: String!
   courseId: String!
-  lectures: [CreateLectureInput]
-  lecturesIds: [String]
 }
 input UpdateSectionInput {
   title: String
   courseId: String
-  lectures: [UpdateLectureInput]
-  lecturesIds: [String]
 }
 extend type Query {
   sections(
@@ -123,8 +119,6 @@ extend type Mutation {
   createSection(input: CreateSectionInput): Section
   updateSection(input: UpdateSectionInput, id: String!): Section
   deleteSection(id: String!): Section
-  removeLectureOnSection(lectureId: String!, sectionId: String!): Section
-  addLectureOnSection(lectureId: String!, sectionId: String!): Section
 }
 `
 export const resolvers = ({ pubSub }) => ({
@@ -173,16 +167,9 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        lectures: async ({ lecturesId }, args, { headers, requester }) => {
+        lectures: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
-                let res = []
-                if (lecturesId) {
-                    for (let i = 0; i < lecturesId.length; i++) {
-                        let lecture = await requester.lectureRequester.send({ type: 'get', id: lecturesId[i], headers })
-                        res.push(lecture)
-                    }
-                }
-                return res
+                return await requester.lectureRequester.send({ type: 'find', where: Object.assign({ sectionId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
@@ -201,104 +188,20 @@ export const resolvers = ({ pubSub }) => ({
     },
     Mutation: {
         createSection: async (_, { input = {} }, { requester, resolvers, headers }) => {
-            let lecturesId = []
-
-            let sectionId = null
             try {
                 let data = await requester.sectionRequester.send({ type: 'create', body: input, headers })
-                sectionId = data.id
-
-                if (input.lectures) {
-                    for (let i = 0; i < input.lectures.length; i++) {
-                        let lectures = input.lectures[i]
-                        lectures.sectionsId = [sectionId]
-                        let res = await resolvers.lectureResolvers({ pubSub }).Mutation.createLecture(_, { input: lectures }, { headers, requester, resolvers })
-                        lecturesId.push(res.id)
-                    }
-                }
-                if (!input.lecturesId) {
-                    input.lecturesId = lecturesId
-                }
-
-                if (input.lecturesIds) {
-                    for (let i = 0; i < input.lecturesIds.length; i++) {
-                        lecturesId.push(input.lecturesIds[i])
-                        await requester.lectureRequester.send({ type: 'patch', isSystem: true, body: { $addToSet: { sectionsId: sectionId } }, id: input.lecturesIds[i], headers })
-                    }
-                }
-
-                data = await requester.sectionRequester.send({ type: 'patch', id: sectionId, body: input, headers })
                 pubSub.publish("sectionAdded", { sectionAdded: data })
                 return data
             } catch (e) {
-                if (sectionId) {
-                    requester.sectionRequester.send({ type: 'delete', id: sectionId, headers })
-                }
-
-                lecturesId.map((id) => {
-                    requester.lectureRequester.send({ type: 'delete', id, headers })
-                })
-
-                // console.log("ee", e)
                 throw new Error(e)
             }
         },
-        updateSection: async (_, { input = {}, id, params }, { requester, resolvers, headers }) => {
-            let lecturesId = []
-
-            let sectionId = null
+        updateSection: async (_, { input = {}, id }, { requester, resolvers, headers }) => {
             try {
-                let data
-                if (!id) {
-                    data = await requester.sectionRequester.send({ type: 'patch', body: input, params, id: null, headers })
-                    sectionId = data.id
-                } else {
-                    sectionId = id
-                }
-
-
-
-                if (input.lecturesIds && input.lectures) {
-                    throw new Error("Cannot create and update connection")
-                }
-
-
-                if (input.lecturesIds) {
-                    let res = await requester.lectureRequester.send({ type: 'patch', isSystem: true, body: { $set: { sectionsId: [] } }, params: { sectionsIds: { $in: [sectionId] } }, id: null, headers })
-                    for (let i = 0; i < input.lecturesIds.length; i++) {
-                        lecturesId.push(input.lecturesIds[i])
-                        await requester.lectureRequester.send({ type: 'patch', isSystem: true, body: { $addToSet: { sectionsId: sectionId } }, id: input.lecturesIds[i], headers })
-                    }
-                }
-
-
-
-                if (input.lectures) {
-                    await requester.lectureRequester.send({ type: 'patch', isSystem: true, body: { $set: { sectionsId: [] } }, params: { sectionsIds: { $in: [sectionId] } }, id: null, headers })
-                    for (let i = 0; i < input.lectures.length; i++) {
-                        let lectures = input.lectures[i]
-                        lectures.sectionsId = [sectionId]
-                        let res = await resolvers.lectureResolvers({ pubSub }).Mutation.createLecture(_, { input: lectures }, { headers, requester, resolvers })
-                        lecturesId.push(res.id)
-                    }
-                    input.lecturesIds = lecturesId
-                }
-
-
-
-
-
-                if (sectionId) {
-                    data = await requester.sectionRequester.send({ type: 'patch', id: sectionId, body: Object.assign(input, { $set: { lecturesId: input.lecturesIds, } }), headers })
-                }
-                pubSub.publish("sectionAdded", { sectionAdded: data })
+                let data = await requester.sectionRequester.send({ type: 'patch', body: input, id, headers })
+                pubSub.publish("sectionUpdated", { sectionUpdated: data })
                 return data
             } catch (e) {
-
-                lecturesId.map((id) => {
-                    requester.lectureRequester.send({ type: 'delete', id, headers })
-                })
-
                 throw new Error(e)
             }
         },
@@ -306,24 +209,6 @@ export const resolvers = ({ pubSub }) => ({
             try {
                 let data = await requester.sectionRequester.send({ type: 'delete', id, headers })
                 pubSub.publish("sectionDeleted", { sectionDeleted: data })
-                return data
-            } catch (e) {
-                throw new Error(e)
-            }
-        },
-        addLectureOnSection: async (_, { lectureId, sectionId }, { requester, resolvers, headers }) => {
-            try {
-                let data = await requester.sectionRequester.send({ type: 'patch', id: sectionId, headers, body: { $addToSet: { lecturesId: lectureId } } })
-                await requester.lectureRequester.send({ type: 'patch', headers, isSystem: true, id: lectureId, body: { $addToSet: { sectionsId: sectionId } } })
-                return data
-            } catch (e) {
-                throw new Error(e)
-            }
-        },
-        removeLectureOnSection: async (_, { lectureId, sectionId }, { requester, resolvers, headers }) => {
-            try {
-                let data = await requester.sectionRequester.send({ type: 'patch', id: sectionId, headers, body: { $pull: { lecturesId: lectureId } } })
-                await requester.lectureRequester.send({ type: 'patch', headers, isSystem: true, id: lectureId, body: { $pull: { sectionsId: sectionId } } })
                 return data
             } catch (e) {
                 throw new Error(e)

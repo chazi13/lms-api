@@ -1,4 +1,4 @@
-const { APP_ID, REST_API_KEY } = require('./config')
+const { ONESIGNAL_APP_ID, REST_API_KEY } = require('./config')
 const axios = require('axios');
 
 const headers = {
@@ -8,7 +8,7 @@ const headers = {
 let url = 'https://onesignal.com/'
 
 const sendNotifications = (params) =>{
-    params.app_id = APP_ID  
+    params.app_id = ONESIGNAL_APP_ID 
     return axios({
         method: 'post',
         url: url+"api/v1/notifications",

@@ -3,7 +3,6 @@ module.exports = function(app) {
     const mongooseClient = app.get('mongooseClient');
     const uniqueValidator = require('mongoose-unique-validator');
     const model = new mongooseClient.Schema({
-        studentId: { type: String, required: false },
         cardId: { type: String, required: false },
         createdBy: String,
         updatedBy: String

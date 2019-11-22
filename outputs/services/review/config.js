@@ -1,11 +1,19 @@
-require('dotenv').config()
+const appRoot = require('app-root-path')
+require("dotenv").config({ path: appRoot.path + '/.env' })
+
+const DATABASE = "mongo"
+const MONGODB = process.env.REVIEW_MONGODB
+const HOST = process.env.REVIEW_HOST
+const PORT = process.env.REVIEW_PORT
 
 module.exports = {
-    HOST: process.env.HOST,
-    PORT: process.env.PORT,
+    HOST,
+    PORT,
+    DATABASE,
+    MONGODB,
+    APP_ID: process.env.APP_ID,
     REDIS_HOST: process.env.REDIS_HOST,
     REDIS_PORT: process.env.REDIS_PORT,
-    MONGODB: process.env.MONGODB,
     feathers: {
         paginate: {
             default: 20,

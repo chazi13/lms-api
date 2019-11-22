@@ -1,4 +1,4 @@
-const { REDIS_HOST, REDIS_PORT } = require("./config")
+const { REDIS_HOST, REDIS_PORT, APP_ID } = require("./config")
 const app = require('./src/app');
 const port = app.get('port');
 const server = app.listen(port);
@@ -9,11 +9,11 @@ const appRoot = require('app-root-path');
 const pluralize = require("pluralize")
 let externalHook = null
 try {
-    const root = appRoot.toString()
-    const split = root.split('/')
-    split.pop()
-    const path = split.join('/')
-    externalHook = require(path + '/hooks/board')
+    const root = appRoot.toString();
+    const split = root.split('/');
+    split.pop();
+    const path = split.join('/');
+    externalHook = require(path + '/hooks/board');
 } catch (e) {
 
 }
@@ -27,12 +27,12 @@ function camelize(text) {
 
 const boardService = new cote.Responder({
     name: 'Board Service',
-    key: 'board'
+    key: APP_ID + '_board'
 })
 
 const userRequester = new cote.Requester({
     name: 'User Requester',
-    key: 'user',
+    key: APP_ID + '_user',
 })
 
 const getRequester = (name) =>{
@@ -42,7 +42,7 @@ const getRequester = (name) =>{
     }
     const requester = new cote.Requester({
         name: requesterName,
-        key: `${camelize(name)}`,
+        key: APP_ID + `_${camelize(name)}`,
     })
     let newRequester = {
         send: params =>  requester.send({...params, isSystem: true})
@@ -331,21 +331,7 @@ app.service('boards').hooks({
                         throw Error("UnAuthorized")
                     }
                     
-                    
                     //beforeCreate
-                    if(context.data && context.data.studentBoardId){
-                        let belongsTo = await getRequester('studentBoard').send({ 
-                            type: "get", 
-                            id: context.data.studentBoardId, 
-                            headers:{
-                                token: context.params.headers.authorization
-                            }
-                        })
-                        if(!belongsTo){
-                            throw Error("StudentBoard not found.")
-                        }
-                    }             
-                    
                     if(context.data && context.data.workspaceId){
                         let belongsTo = await getRequester('workspace').send({ 
                             type: "get", 
@@ -465,7 +451,22 @@ app.service('boards').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     } 
+                    
                     //onDelete
+                    //ON DELETE SET RESTRICT
+                    let lists = await getRequester('list').send({ 
+                        type: 'find', 
+                        where: {
+                            boardId: context.id
+                        }, 
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }
+                    })
+                    if(lists.length > 0){
+                        throw Error("Failed delete", null)
+                    }
+                
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)

@@ -1,4 +1,4 @@
-const { REDIS_HOST, REDIS_PORT } = require("./config")
+const { REDIS_HOST, REDIS_PORT, APP_ID } = require("./config")
 const app = require('./src/app');
 const port = app.get('port');
 const server = app.listen(port);
@@ -9,11 +9,11 @@ const appRoot = require('app-root-path');
 const pluralize = require("pluralize")
 let externalHook = null
 try {
-    const root = appRoot.toString()
-    const split = root.split('/')
-    split.pop()
-    const path = split.join('/')
-    externalHook = require(path + '/hooks/checklist')
+    const root = appRoot.toString();
+    const split = root.split('/');
+    split.pop();
+    const path = split.join('/');
+    externalHook = require(path + '/hooks/checklist');
 } catch (e) {
 
 }
@@ -27,12 +27,12 @@ function camelize(text) {
 
 const checklistService = new cote.Responder({
     name: 'Checklist Service',
-    key: 'checklist'
+    key: APP_ID + '_checklist'
 })
 
 const userRequester = new cote.Requester({
     name: 'User Requester',
-    key: 'user',
+    key: APP_ID + '_user',
 })
 
 const getRequester = (name) =>{
@@ -42,7 +42,7 @@ const getRequester = (name) =>{
     }
     const requester = new cote.Requester({
         name: requesterName,
-        key: `${camelize(name)}`,
+        key: APP_ID + `_${camelize(name)}`,
     })
     let newRequester = {
         send: params =>  requester.send({...params, isSystem: true})
@@ -451,7 +451,20 @@ app.service('checklists').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     } 
+                    
                     //onDelete
+                    //ON DELETE SET CASCADE
+                    await getRequester('listChecklist').send({ type: 'delete', 
+                        id: null,   
+                        headers: {
+                            authorization: context.params.headers.authorization
+                        }, 
+                        params: {
+                            query: {
+                                checklistId: context.id
+                            }
+                        }
+                    })
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)

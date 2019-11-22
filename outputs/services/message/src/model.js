@@ -8,7 +8,7 @@ module.exports = function(app) {
         userId: { type: String, required: false },
         parentMessage: { type: String, required: false, default: false, unique: false },
         isDeleted: { type: Boolean, required: false, default: false, unique: false },
-        classRoomId: { type: String, required: false },
+        spaceId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

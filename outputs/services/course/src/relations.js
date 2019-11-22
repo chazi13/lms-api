@@ -5,9 +5,9 @@ module.exports = {
         "foreignId": "id",
         "type": "manyToMany"
     },
-    "classRoom": {
-        "local": "classRoomId",
-        "relatedTo": "classRoom",
+    "space": {
+        "local": "spaceId",
+        "relatedTo": "space",
         "foreignId": "id",
         "type": "one"
     }

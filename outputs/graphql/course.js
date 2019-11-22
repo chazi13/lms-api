@@ -10,7 +10,7 @@ type Course {
   finishTime: String
   description: String
   sections(query: JSON): [Section]
-  classRoom: ClassRoom
+  space: Space
 }
 input CourseFilter {
   AND: [CourseFilter!]
@@ -99,9 +99,9 @@ input CourseFilter {
   sections: SectionFilter
   sections_some: SectionFilter
   sections_none: SectionFilter
-  classRoom: ClassRoomFilter
-  classRoom_some: ClassRoomFilter
-  classRoom_none: ClassRoomFilter
+  space: SpaceFilter
+  space_some: SpaceFilter
+  space_none: SpaceFilter
 }
 enum CourseOrderBy {
   id_ASC
@@ -129,7 +129,7 @@ input CreateCourseInput {
   categoriesIds: [String]
   finishTime: String
   description: String
-  classRoomId: String
+  spaceId: String
 }
 input UpdateCourseInput {
   title: String
@@ -137,7 +137,7 @@ input UpdateCourseInput {
   categoriesIds: [String]
   finishTime: String
   description: String
-  classRoomId: String
+  spaceId: String
 }
 extend type Query {
   courses(
@@ -235,9 +235,9 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        classRoom: async ({ classRoomId }, args, { headers, requester }) => {
+        space: async ({ spaceId }, args, { headers, requester }) => {
             try {
-                return await requester.classRoomRequester.send({ type: 'get', id: classRoomId, headers })
+                return await requester.spaceRequester.send({ type: 'get', id: spaceId, headers })
             } catch (e) {
                 throw new Error(e)
             }

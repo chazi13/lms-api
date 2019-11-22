@@ -3,9 +3,10 @@ module.exports = function(app) {
     const mongooseClient = app.get('mongooseClient');
     const uniqueValidator = require('mongoose-unique-validator');
     const model = new mongooseClient.Schema({
-        classId: { type: String, required: false },
         name: { type: String, required: true, unique: false },
         description: { type: String, required: true, unique: false },
+        usersId: { type: String, required: false },
+        spaceId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

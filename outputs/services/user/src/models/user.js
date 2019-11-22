@@ -13,7 +13,7 @@ module.exports = function(app) {
         avatar: { type: String, required: false, unique: false },
         phone: { type: String, required: false, unique: false },
         address: { type: String, required: false, unique: false },
-        studentId: { type: String, required: false, unique: false },
+        profileId: { type: String, required: false, unique: false },
     }, {
         timestamps: true
     })

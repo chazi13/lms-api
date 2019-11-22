@@ -10,6 +10,7 @@ module.exports = function(app) {
         index: { type: Number, required: false, unique: false },
         description: { type: String, required: false, unique: false },
         visible: { type: Boolean, required: false, unique: false },
+        usersId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

@@ -1,4 +1,4 @@
-const { REDIS_HOST, REDIS_PORT } = require("./config")
+const { REDIS_HOST, REDIS_PORT, APP_ID } = require("./config")
 const app = require('./src/app');
 const port = app.get('port');
 const server = app.listen(port);
@@ -9,11 +9,11 @@ const appRoot = require('app-root-path');
 const pluralize = require("pluralize")
 let externalHook = null
 try {
-    const root = appRoot.toString()
-    const split = root.split('/')
-    split.pop()
-    const path = split.join('/')
-    externalHook = require(path + '/hooks/workspace')
+    const root = appRoot.toString();
+    const split = root.split('/');
+    split.pop();
+    const path = split.join('/');
+    externalHook = require(path + '/hooks/workspace');
 } catch (e) {
 
 }
@@ -27,12 +27,12 @@ function camelize(text) {
 
 const workspaceService = new cote.Responder({
     name: 'Workspace Service',
-    key: 'workspace'
+    key: APP_ID + '_workspace'
 })
 
 const userRequester = new cote.Requester({
     name: 'User Requester',
-    key: 'user',
+    key: APP_ID + '_user',
 })
 
 const getRequester = (name) =>{
@@ -42,7 +42,7 @@ const getRequester = (name) =>{
     }
     const requester = new cote.Requester({
         name: requesterName,
-        key: `${camelize(name)}`,
+        key: APP_ID + `_${camelize(name)}`,
     })
     let newRequester = {
         send: params =>  requester.send({...params, isSystem: true})
@@ -332,16 +332,16 @@ app.service('workspaces').hooks({
                     }
                     
                     //beforeCreate
-                    if(context.data && context.data.classRoomId){
-                        let belongsTo = await getRequester('classRoom').send({ 
+                    if(context.data && context.data.spaceId){
+                        let belongsTo = await getRequester('space').send({ 
                             type: "get", 
-                            id: context.data.classRoomId, 
+                            id: context.data.spaceId, 
                             headers:{
                                 token: context.params.headers.authorization
                             }
                         })
                         if(!belongsTo){
-                            throw Error("ClassRoom not found.")
+                            throw Error("Space not found.")
                         }
                     }             
                     
@@ -456,7 +456,7 @@ app.service('workspaces').hooks({
                     //ON DELETE SET RESTRICT
                     let boards = await getRequester('board').send({ 
                         type: 'find', 
-                        query: {
+                        where: {
                             workspaceId: context.id
                         }, 
                         headers: {

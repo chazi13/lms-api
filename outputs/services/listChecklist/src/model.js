@@ -5,7 +5,7 @@ module.exports = function(app) {
     const model = new mongooseClient.Schema({
         title: { type: String, required: true, unique: false },
         status: { type: Boolean, required: false, unique: false },
-        checklistId: { type: String, required: false },
+        checklistId: { type: String, required: true },
         createdBy: String,
         updatedBy: String
     }, {

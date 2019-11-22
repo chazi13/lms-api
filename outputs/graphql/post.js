@@ -9,7 +9,7 @@ type Post {
   comments(query: JSON): [Comment]
   reactions(query: JSON): [Reaction]
   attachments(query: JSON): [PostAttachment]
-  classRoom: ClassRoom
+  space: Space
   card: Card
 }
 input PostFilter {
@@ -71,12 +71,17 @@ input PostFilter {
   reactions: ReactionFilter
   reactions_some: ReactionFilter
   reactions_none: ReactionFilter
-  attachments: PostAttachmentFilter
-  attachments_some: PostAttachmentFilter
-  attachments_none: PostAttachmentFilter
-  classRoom: ClassRoomFilter
-  classRoom_some: ClassRoomFilter
-  classRoom_none: ClassRoomFilter
+  attachments: PostAttachment
+  attachments_not: PostAttachment
+  attachments_in: [PostAttachment]
+  attachments_not_in: [PostAttachment]
+  attachments_lt: PostAttachment
+  attachments_lte: PostAttachment
+  attachments_gt: PostAttachment
+  attachments_gte: PostAttachment
+  space: SpaceFilter
+  space_some: SpaceFilter
+  space_none: SpaceFilter
   card: CardFilter
   card_some: CardFilter
   card_none: CardFilter
@@ -99,12 +104,14 @@ type PostConnection {
 }
 input CreatePostInput {
   text: String
-  classRoomId: String
+  attachments: [PostAttachment]
+  spaceId: String
   cardId: String
 }
 input UpdatePostInput {
   text: String
-  classRoomId: String
+  attachments: [PostAttachment]
+  spaceId: String
   cardId: String
 }
 extend type Query {
@@ -188,16 +195,9 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        attachments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+        space: async ({ spaceId }, args, { headers, requester }) => {
             try {
-                return await requester.postAttachmentRequester.send({ type: 'find', where: Object.assign({ postId: id }, where, query), limit, skip, orderBy, headers })
-            } catch (e) {
-                throw new Error(e)
-            }
-        },
-        classRoom: async ({ classRoomId }, args, { headers, requester }) => {
-            try {
-                return await requester.classRoomRequester.send({ type: 'get', id: classRoomId, headers })
+                return await requester.spaceRequester.send({ type: 'get', id: spaceId, headers })
             } catch (e) {
                 throw new Error(e)
             }

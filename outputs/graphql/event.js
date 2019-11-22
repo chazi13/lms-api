@@ -10,6 +10,7 @@ type Event {
   end: DateTime
   allDay: Boolean
   description: String
+  space: Space
 }
 input EventFilter {
   AND: [EventFilter!]
@@ -96,6 +97,9 @@ input EventFilter {
   description_not_starts_with: String
   description_ends_with: String
   description_not_ends_with: String
+  space: SpaceFilter
+  space_some: SpaceFilter
+  space_none: SpaceFilter
 }
 enum EventOrderBy {
   id_ASC
@@ -127,6 +131,7 @@ input CreateEventInput {
   end: DateTime
   allDay: Boolean
   description: String
+  spaceId: String
 }
 input UpdateEventInput {
   title: String
@@ -134,6 +139,7 @@ input UpdateEventInput {
   end: DateTime
   allDay: Boolean
   description: String
+  spaceId: String
 }
 extend type Query {
   events(
@@ -198,6 +204,13 @@ export const resolvers = ({ pubSub }) => ({
         updatedBy: async ({ updatedBy }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: updatedBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        space: async ({ spaceId }, args, { headers, requester }) => {
+            try {
+                return await requester.spaceRequester.send({ type: 'get', id: spaceId, headers })
             } catch (e) {
                 throw new Error(e)
             }

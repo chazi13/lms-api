@@ -9,8 +9,8 @@ type Board {
   background: String!
   workspace: Workspace
   visible: Visible
+  users(query: JSON): [User]
   lists(query: JSON): [List]
-  studentBoard(query: JSON): [StudentBoard]
 }
 input BoardFilter {
   AND: [BoardFilter!]
@@ -90,12 +90,12 @@ input BoardFilter {
   visible_lte: Visible
   visible_gt: Visible
   visible_gte: Visible
+  users: UserFilter
+  users_some: UserFilter
+  users_none: UserFilter
   lists: ListFilter
   lists_some: ListFilter
   lists_none: ListFilter
-  studentBoard: StudentBoardFilter
-  studentBoard_some: StudentBoardFilter
-  studentBoard_none: StudentBoardFilter
 }
 enum BoardOrderBy {
   id_ASC
@@ -201,16 +201,16 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        lists: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+        users: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
-                return await requester.listRequester.send({ type: 'find', where: Object.assign({ boardId: id }, where, query), limit, skip, orderBy, headers })
+                return await requester.userRequester.send({ type: 'find', where: Object.assign({ boardId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
-        studentBoards: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+        lists: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
-                return await requester.studentBoardRequester.send({ type: 'find', where: Object.assign({ boardId: id }, where, query), limit, skip, orderBy, headers })
+                return await requester.listRequester.send({ type: 'find', where: Object.assign({ boardId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }

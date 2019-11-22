@@ -6,6 +6,7 @@ module.exports = function(app) {
         text: { type: String, required: true, unique: false },
         postId: { type: String, required: false },
         checkInRoomId: { type: String, required: false },
+        lectureId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

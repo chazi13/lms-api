@@ -1,6 +1,6 @@
 const typeDef = `
 input LoginInput {
-  email: String!
+  email: EmailAddress!
   password: String
 }
 
@@ -13,14 +13,14 @@ input LoginWithFacebookInput {
 }
 
 input RegisterInput {
-  email: String!
+  email: EmailAddress!
   password: String!
   firstName: String!
   lastName: String
   avatar: String
   phone: String
   address: String
-  studentId: String
+  profileId: String
 }
 
 input UserUpdateInput {
@@ -31,7 +31,7 @@ input UserUpdateInput {
   avatar: String
   phone: String
   address: String
-  studentId: String
+  profileId: String
 }
 
 input ChangeProfileInput {
@@ -40,11 +40,11 @@ input ChangeProfileInput {
   avatar: String
   phone: String
   address: String
-  studentId: String
+  profileId: String
 }
 
 input UserCreateInput {
-  email: String!
+  email: EmailAddress!
   password: String!
   firstName: String!
   lastName: String
@@ -52,7 +52,7 @@ input UserCreateInput {
   avatar: String
   phone: String
   address: String
-  studentId: String
+  profileId: String
 }
 
 input VerifyEmailInput {
@@ -109,7 +109,7 @@ type User {
   id: String!
   firstName: String
   lastName: String
-  email: String
+  email: EmailAddress
   status: Int
   role: String
   createdBy: String
@@ -119,7 +119,7 @@ type User {
   avatar: String
   phone: String
   address: String
-  studentId: String
+  profileId: String
 }
 
 type ForgetPassword {
@@ -184,20 +184,14 @@ input UserFilter {
   lastName_not_starts_with: String
   lastName_ends_with: String
   lastName_not_ends_with: String
-  email: String
-  email_not: String
-  email_in: [String]
-  email_not_in: [String]
-  email_lt: String
-  email_lte: String
-  email_gt: String
-  email_gte: String
-  email_contains: String
-  email_not_contains: String
-  email_starts_with: String
-  email_not_starts_with: String
-  email_ends_with: String
-  email_not_ends_with: String
+  email: EmailAddress
+  email_not: EmailAddress
+  email_in: [EmailAddress]
+  email_not_in: [EmailAddress]
+  email_lt: EmailAddress
+  email_lte: EmailAddress
+  email_gt: EmailAddress
+  email_gte: EmailAddress
   status: Int
   status_not: Int
   status_in: [Int]
@@ -306,20 +300,20 @@ input UserFilter {
   address_not_starts_with: String
   address_ends_with: String
   address_not_ends_with: String
-  studentId: String
-  studentId_not: String
-  studentId_in: [String]
-  studentId_not_in: [String]
-  studentId_lt: String
-  studentId_lte: String
-  studentId_gt: String
-  studentId_gte: String
-  studentId_contains: String
-  studentId_not_contains: String
-  studentId_starts_with: String
-  studentId_not_starts_with: String
-  studentId_ends_with: String
-  studentId_not_ends_with: String
+  profileId: String
+  profileId_not: String
+  profileId_in: [String]
+  profileId_not_in: [String]
+  profileId_lt: String
+  profileId_lte: String
+  profileId_gt: String
+  profileId_gte: String
+  profileId_contains: String
+  profileId_not_contains: String
+  profileId_starts_with: String
+  profileId_not_starts_with: String
+  profileId_ends_with: String
+  profileId_not_ends_with: String
 }
 enum UserOrderBy {
   id_ASC
@@ -348,8 +342,8 @@ enum UserOrderBy {
   phone_DESC
   address_ASC
   address_DESC
-  studentId_ASC
-  studentId_DESC
+  profileId_ASC
+  profileId_DESC
 }
 `
 const resolvers = ({ pubSub }) => ({
@@ -377,9 +371,9 @@ const resolvers = ({ pubSub }) => ({
         },
     },
     User: {
-        studentId: async ({ studentIdId }, args, { headers, stringRequester }) => {
+        profileId: async ({ profileIdId }, args, { headers, stringRequester }) => {
             try {
-                return await requester.studentIdRequester.send({ type: 'get', id: studentIdId, headers })
+                return await requester.profileIdRequester.send({ type: 'get', id: profileIdId, headers })
             } catch (e) {
                 throw new Error(e)
             }

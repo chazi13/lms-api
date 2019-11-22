@@ -47,9 +47,14 @@ input CardMemberFilter {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  student: StudentFilter
-  student_some: StudentFilter
-  student_none: StudentFilter
+  student: Student
+  student_not: Student
+  student_in: [Student]
+  student_not_in: [Student]
+  student_lt: Student
+  student_lte: Student
+  student_gt: Student
+  student_gte: Student
   card: CardFilter
   card_some: CardFilter
   card_none: CardFilter
@@ -69,11 +74,11 @@ type CardMemberConnection {
   data: [CardMember]
 }
 input CreateCardMemberInput {
-  studentId: String
+  student: Student
   cardId: String
 }
 input UpdateCardMemberInput {
-  studentId: String
+  student: Student
   cardId: String
 }
 extend type Query {
@@ -139,13 +144,6 @@ export const resolvers = ({ pubSub }) => ({
         updatedBy: async ({ updatedBy }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: updatedBy, headers })
-            } catch (e) {
-                throw new Error(e)
-            }
-        },
-        student: async ({ studentId }, args, { headers, requester }) => {
-            try {
-                return await requester.studentRequester.send({ type: 'get', id: studentId, headers })
             } catch (e) {
                 throw new Error(e)
             }

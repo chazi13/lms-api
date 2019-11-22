@@ -1,7 +1,13 @@
 module.exports = {
-    "classRoom": {
-        "local": "classId",
-        "relatedTo": "classRoom",
+    "user": {
+        "local": "usersId",
+        "relatedTo": "User",
+        "foreignId": "id",
+        "type": "one"
+    },
+    "space": {
+        "local": "spaceId",
+        "relatedTo": "space",
         "foreignId": "id",
         "type": "one"
     }

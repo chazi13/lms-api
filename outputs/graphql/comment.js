@@ -8,6 +8,7 @@ type Comment {
   text: String!
   post: Post
   checkInRoom: CheckInRoom
+  lecture: Lecture
   subComments(query: JSON): [SubComment]
   attachments(query: JSON): [CommentAttachment]
 }
@@ -70,6 +71,9 @@ input CommentFilter {
   checkInRoom: CheckInRoomFilter
   checkInRoom_some: CheckInRoomFilter
   checkInRoom_none: CheckInRoomFilter
+  lecture: LectureFilter
+  lecture_some: LectureFilter
+  lecture_none: LectureFilter
   subComments: SubCommentFilter
   subComments_some: SubCommentFilter
   subComments_none: SubCommentFilter
@@ -97,11 +101,13 @@ input CreateCommentInput {
   text: String!
   postId: String
   checkInRoomId: String
+  lectureId: String
 }
 input UpdateCommentInput {
   text: String
   postId: String
   checkInRoomId: String
+  lectureId: String
 }
 extend type Query {
   comments(
@@ -180,6 +186,13 @@ export const resolvers = ({ pubSub }) => ({
         checkInRoom: async ({ checkInRoomId }, args, { headers, requester }) => {
             try {
                 return await requester.checkInRoomRequester.send({ type: 'get', id: checkInRoomId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        lecture: async ({ lectureId }, args, { headers, requester }) => {
+            try {
+                return await requester.lectureRequester.send({ type: 'get', id: lectureId, headers })
             } catch (e) {
                 throw new Error(e)
             }

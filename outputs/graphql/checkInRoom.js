@@ -6,12 +6,10 @@ type CheckInRoom {
   createdAt: DateTime
   updatedAt: DateTime
   question: String
-  users(query: JSON): [User]
   description: String
   time: String
-  messages(query: JSON): [CheckInRoomMessage]
   comments(query: JSON): [Comment]
-  classRoom: ClassRoom
+  space: Space
 }
 input CheckInRoomFilter {
   AND: [CheckInRoomFilter!]
@@ -66,9 +64,6 @@ input CheckInRoomFilter {
   question_not_starts_with: String
   question_ends_with: String
   question_not_ends_with: String
-  users: UserFilter
-  users_some: UserFilter
-  users_none: UserFilter
   description: String
   description_not: String
   description_in: [String]
@@ -97,15 +92,12 @@ input CheckInRoomFilter {
   time_not_starts_with: String
   time_ends_with: String
   time_not_ends_with: String
-  messages: CheckInRoomMessageFilter
-  messages_some: CheckInRoomMessageFilter
-  messages_none: CheckInRoomMessageFilter
   comments: CommentFilter
   comments_some: CommentFilter
   comments_none: CommentFilter
-  classRoom: ClassRoomFilter
-  classRoom_some: ClassRoomFilter
-  classRoom_none: ClassRoomFilter
+  space: SpaceFilter
+  space_some: SpaceFilter
+  space_none: SpaceFilter
 }
 enum CheckInRoomOrderBy {
   id_ASC
@@ -131,13 +123,13 @@ input CreateCheckInRoomInput {
   question: String
   description: String
   time: String
-  classRoomId: String
+  spaceId: String
 }
 input UpdateCheckInRoomInput {
   question: String
   description: String
   time: String
-  classRoomId: String
+  spaceId: String
 }
 extend type Query {
   checkInRooms(
@@ -206,20 +198,6 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        users: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
-            try {
-                return await requester.userRequester.send({ type: 'find', where: Object.assign({ checkInRoomId: id }, where, query), limit, skip, orderBy, headers })
-            } catch (e) {
-                throw new Error(e)
-            }
-        },
-        messages: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
-            try {
-                return await requester.checkInRoomMessageRequester.send({ type: 'find', where: Object.assign({ checkInRoomId: id }, where, query), limit, skip, orderBy, headers })
-            } catch (e) {
-                throw new Error(e)
-            }
-        },
         comments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.commentRequester.send({ type: 'find', where: Object.assign({ checkInRoomId: id }, where, query), limit, skip, orderBy, headers })
@@ -227,9 +205,9 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        classRoom: async ({ classRoomId }, args, { headers, requester }) => {
+        space: async ({ spaceId }, args, { headers, requester }) => {
             try {
-                return await requester.classRoomRequester.send({ type: 'get', id: classRoomId, headers })
+                return await requester.spaceRequester.send({ type: 'get', id: spaceId, headers })
             } catch (e) {
                 throw new Error(e)
             }

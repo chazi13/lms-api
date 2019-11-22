@@ -7,7 +7,7 @@ type ListChecklist {
   updatedAt: DateTime
   title: String!
   status: Boolean
-  checklist: Checklist
+  checklist(query: JSON): Checklist!
 }
 input ListChecklistFilter {
   AND: [ListChecklistFilter!]
@@ -89,7 +89,7 @@ type ListChecklistConnection {
 input CreateListChecklistInput {
   title: String!
   status: Boolean
-  checklistId: String
+  checklistId: String!
 }
 input UpdateListChecklistInput {
   title: String

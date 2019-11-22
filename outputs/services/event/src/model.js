@@ -8,6 +8,7 @@ module.exports = function(app) {
         end: { type: Date, required: false, unique: false },
         allDay: { type: Boolean, required: false, unique: false },
         description: { type: String, required: false, unique: false },
+        spaceId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {

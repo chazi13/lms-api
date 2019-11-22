@@ -8,8 +8,8 @@ type Folder {
   name: String
   parentFolder: String
   cover: String
-  files(query: JSON): [File]
-  classRoom: ClassRoom
+  userFiles(query: JSON): [UserFile]
+  space: Space
 }
 input FolderFilter {
   AND: [FolderFilter!]
@@ -92,12 +92,12 @@ input FolderFilter {
   cover_not_starts_with: String
   cover_ends_with: String
   cover_not_ends_with: String
-  files: FileFilter
-  files_some: FileFilter
-  files_none: FileFilter
-  classRoom: ClassRoomFilter
-  classRoom_some: ClassRoomFilter
-  classRoom_none: ClassRoomFilter
+  userFiles: UserFileFilter
+  userFiles_some: UserFileFilter
+  userFiles_none: UserFileFilter
+  space: SpaceFilter
+  space_some: SpaceFilter
+  space_none: SpaceFilter
 }
 enum FolderOrderBy {
   id_ASC
@@ -123,13 +123,13 @@ input CreateFolderInput {
   name: String
   parentFolder: String
   cover: String
-  classRoomId: String
+  spaceId: String
 }
 input UpdateFolderInput {
   name: String
   parentFolder: String
   cover: String
-  classRoomId: String
+  spaceId: String
 }
 extend type Query {
   folders(
@@ -198,16 +198,16 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        files: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+        userFiles: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
-                return await requester.fileRequester.send({ type: 'find', where: Object.assign({ folderId: id }, where, query), limit, skip, orderBy, headers })
+                return await requester.userFileRequester.send({ type: 'find', where: Object.assign({ folderId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
-        classRoom: async ({ classRoomId }, args, { headers, requester }) => {
+        space: async ({ spaceId }, args, { headers, requester }) => {
             try {
-                return await requester.classRoomRequester.send({ type: 'get', id: classRoomId, headers })
+                return await requester.spaceRequester.send({ type: 'get', id: spaceId, headers })
             } catch (e) {
                 throw new Error(e)
             }

@@ -1,15 +1,15 @@
-const { REDIS_HOST, REDIS_PORT, email } = require("./config");
+const { REDIS_HOST, REDIS_PORT, email, APP_ID } = require("./config");
 const cote = require("cote")({ redis: { host: REDIS_HOST, port: REDIS_PORT } });
 const sendEmail = require('./sendEmail')
 
 const emailService = new cote.Responder({
 	name: "Email Service",
-	key: "email"
+	key: APP_ID + "_email"
 });
 
 const userRequester = new cote.Requester({
 	name: "User Requester",
-	key: "user"
+	key: APP_ID + "_user"
 });
 
 emailService.on("send", async (req, cb) => {

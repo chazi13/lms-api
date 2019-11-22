@@ -1,4 +1,4 @@
-import { REDIS_HOST, REDIS_PORT, APP_NAME, BUCKET } from './config'
+import { REDIS_HOST, REDIS_PORT, APP_NAME, S3_BUCKET_NAME, GRAPHQL_PORT, GRAPHQL_PLAYGROUND, APP_ID } from './config'
 import { merge } from 'lodash'
 import express from 'express'
 import http from 'http'
@@ -8,54 +8,48 @@ import { GraphQLScalarType, Kind } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
 
 import { PubSub } from 'graphql-subscriptions'
+import { PhoneNumberScalar, EmailAddressScalar } from './utils/scallars'
 import { typeDef as Email, resolvers as emailResolvers } from './graphql/email'
 import { typeDef as PushNotification, resolvers as pushNotificationResolvers } from './graphql/pushNotification'
 import { typeDef as user, resolvers as userResolvers } from './graphql/user'
 import { typeDef as profile, resolvers as profileResolvers } from './graphql/profile'
-import { typeDef as student, resolvers as studentResolvers } from './graphql/student'
-import { typeDef as studentWorkspace, resolvers as studentWorkspaceResolvers } from './graphql/studentWorkspace'
 import { typeDef as education, resolvers as educationResolvers } from './graphql/education'
 import { typeDef as work, resolvers as workResolvers } from './graphql/work'
 import { typeDef as skill, resolvers as skillResolvers } from './graphql/skill'
 import { typeDef as project, resolvers as projectResolvers } from './graphql/project'
-import { typeDef as classRoom, resolvers as classRoomResolvers } from './graphql/classRoom'
-import { typeDef as group, resolvers as groupResolvers } from './graphql/group'
-import { typeDef as studentClass, resolvers as studentClassResolvers } from './graphql/studentClass'
-import { typeDef as studentGroup, resolvers as studentGroupResolvers } from './graphql/studentGroup'
-import { typeDef as post, resolvers as postResolvers } from './graphql/post'
-import { typeDef as postAttachment, resolvers as postAttachmentResolvers } from './graphql/postAttachment'
-import { typeDef as event, resolvers as eventResolvers } from './graphql/event'
+import { typeDef as space, resolvers as spaceResolvers } from './graphql/space'
+import { typeDef as menu, resolvers as menuResolvers } from './graphql/menu'
+import { typeDef as spaceMenu, resolvers as spaceMenuResolvers } from './graphql/spaceMenu'
 import { typeDef as courseCategory, resolvers as courseCategoryResolvers } from './graphql/courseCategory'
 import { typeDef as course, resolvers as courseResolvers } from './graphql/course'
 import { typeDef as section, resolvers as sectionResolvers } from './graphql/section'
 import { typeDef as lecture, resolvers as lectureResolvers } from './graphql/lecture'
 import { typeDef as article, resolvers as articleResolvers } from './graphql/article'
-import { typeDef as reaction, resolvers as reactionResolvers } from './graphql/reaction'
-import { typeDef as comment, resolvers as commentResolvers } from './graphql/comment'
-import { typeDef as subComment, resolvers as subCommentResolvers } from './graphql/subComment'
-import { typeDef as commentAttachment, resolvers as commentAttachmentResolvers } from './graphql/commentAttachment'
+import { typeDef as quiz, resolvers as quizResolvers } from './graphql/quiz'
+import { typeDef as question, resolvers as questionResolvers } from './graphql/question'
+import { typeDef as option, resolvers as optionResolvers } from './graphql/option'
+import { typeDef as answer, resolvers as answerResolvers } from './graphql/answer'
+import { typeDef as review, resolvers as reviewResolvers } from './graphql/review'
+import { typeDef as folder, resolvers as folderResolvers } from './graphql/folder'
+import { typeDef as userFile, resolvers as userFileResolvers } from './graphql/userFile'
+import { typeDef as event, resolvers as eventResolvers } from './graphql/event'
+import { typeDef as checkInRoom, resolvers as checkInRoomResolvers } from './graphql/checkInRoom'
 import { typeDef as message, resolvers as messageResolvers } from './graphql/message'
 import { typeDef as chatFileStorage, resolvers as chatFileStorageResolvers } from './graphql/chatFileStorage'
-import { typeDef as propertyUser, resolvers as propertyUserResolvers } from './graphql/propertyUser'
+import { typeDef as post, resolvers as postResolvers } from './graphql/post'
+import { typeDef as reaction, resolvers as reactionResolvers } from './graphql/reaction'
 import { typeDef as workspace, resolvers as workspaceResolvers } from './graphql/workspace'
 import { typeDef as board, resolvers as boardResolvers } from './graphql/board'
-import { typeDef as studentBoard, resolvers as studentBoardResolvers } from './graphql/studentBoard'
 import { typeDef as list, resolvers as listResolvers } from './graphql/list'
 import { typeDef as card, resolvers as cardResolvers } from './graphql/card'
 import { typeDef as cardMember, resolvers as cardMemberResolvers } from './graphql/cardMember'
 import { typeDef as label, resolvers as labelResolvers } from './graphql/label'
 import { typeDef as checklist, resolvers as checklistResolvers } from './graphql/checklist'
 import { typeDef as listChecklist, resolvers as listChecklistResolvers } from './graphql/listChecklist'
+import { typeDef as comment, resolvers as commentResolvers } from './graphql/comment'
+import { typeDef as subComment, resolvers as subCommentResolvers } from './graphql/subComment'
+import { typeDef as commentAttachment, resolvers as commentAttachmentResolvers } from './graphql/commentAttachment'
 import { typeDef as attachment, resolvers as attachmentResolvers } from './graphql/attachment'
-import { typeDef as quiz, resolvers as quizResolvers } from './graphql/quiz'
-import { typeDef as question, resolvers as questionResolvers } from './graphql/question'
-import { typeDef as option, resolvers as optionResolvers } from './graphql/option'
-import { typeDef as answer, resolvers as answerResolvers } from './graphql/answer'
-import { typeDef as review, resolvers as reviewResolvers } from './graphql/review'
-import { typeDef as checkInRoomMessage, resolvers as checkInRoomMessageResolvers } from './graphql/checkInRoomMessage'
-import { typeDef as checkInRoom, resolvers as checkInRoomResolvers } from './graphql/checkInRoom'
-import { typeDef as folder, resolvers as folderResolvers } from './graphql/folder'
-import { typeDef as file, resolvers as fileResolvers } from './graphql/file'
 const { injectConfigFromHook } = require('./utils/hookGraphql')
 const pubSub = new PubSub()
 const Prometheus = require('./monitor')
@@ -90,8 +84,12 @@ enum Visible {
    scalar Upload
    scalar DateTime
    scalar Date
+   scalar PhoneNumber
+   scalar EmailAddress
 `
 const resolver = {
+    PhoneNumber: PhoneNumberScalar,
+    EmailAddress: EmailAddressScalar,
     JSON: GraphQLJSON,
     Upload: GraphQLUpload,
     Date: new GraphQLScalarType({
@@ -143,8 +141,8 @@ const resolver = {
     })
 }
 const schema = makeExecutableSchema({
-    typeDefs: [typeDefs, createRateLimitTypeDef(), injectConfigFromHook("email", Email), injectConfigFromHook("pushNotification", PushNotification), injectConfigFromHook('user', user), injectConfigFromHook('profile', profile), injectConfigFromHook('student', student), injectConfigFromHook('studentWorkspace', studentWorkspace), injectConfigFromHook('education', education), injectConfigFromHook('work', work), injectConfigFromHook('skill', skill), injectConfigFromHook('project', project), injectConfigFromHook('classRoom', classRoom), injectConfigFromHook('group', group), injectConfigFromHook('studentClass', studentClass), injectConfigFromHook('studentGroup', studentGroup), injectConfigFromHook('post', post), injectConfigFromHook('postAttachment', postAttachment), injectConfigFromHook('event', event), injectConfigFromHook('courseCategory', courseCategory), injectConfigFromHook('course', course), injectConfigFromHook('section', section), injectConfigFromHook('lecture', lecture), injectConfigFromHook('article', article), injectConfigFromHook('reaction', reaction), injectConfigFromHook('comment', comment), injectConfigFromHook('subComment', subComment), injectConfigFromHook('commentAttachment', commentAttachment), injectConfigFromHook('message', message), injectConfigFromHook('chatFileStorage', chatFileStorage), injectConfigFromHook('propertyUser', propertyUser), injectConfigFromHook('workspace', workspace), injectConfigFromHook('board', board), injectConfigFromHook('studentBoard', studentBoard), injectConfigFromHook('list', list), injectConfigFromHook('card', card), injectConfigFromHook('cardMember', cardMember), injectConfigFromHook('label', label), injectConfigFromHook('checklist', checklist), injectConfigFromHook('listChecklist', listChecklist), injectConfigFromHook('attachment', attachment), injectConfigFromHook('quiz', quiz), injectConfigFromHook('question', question), injectConfigFromHook('option', option), injectConfigFromHook('answer', answer), injectConfigFromHook('review', review), injectConfigFromHook('checkInRoomMessage', checkInRoomMessage), injectConfigFromHook('checkInRoom', checkInRoom), injectConfigFromHook('folder', folder), injectConfigFromHook('file', file)],
-    resolvers: merge(resolver, emailResolvers, pushNotificationResolvers, userResolvers({ pubSub }), profileResolvers({ pubSub }), studentResolvers({ pubSub }), studentWorkspaceResolvers({ pubSub }), educationResolvers({ pubSub }), workResolvers({ pubSub }), skillResolvers({ pubSub }), projectResolvers({ pubSub }), classRoomResolvers({ pubSub }), groupResolvers({ pubSub }), studentClassResolvers({ pubSub }), studentGroupResolvers({ pubSub }), postResolvers({ pubSub }), postAttachmentResolvers({ pubSub }), eventResolvers({ pubSub }), courseCategoryResolvers({ pubSub }), courseResolvers({ pubSub }), sectionResolvers({ pubSub }), lectureResolvers({ pubSub }), articleResolvers({ pubSub }), reactionResolvers({ pubSub }), commentResolvers({ pubSub }), subCommentResolvers({ pubSub }), commentAttachmentResolvers({ pubSub }), messageResolvers({ pubSub }), chatFileStorageResolvers({ pubSub }), propertyUserResolvers({ pubSub }), workspaceResolvers({ pubSub }), boardResolvers({ pubSub }), studentBoardResolvers({ pubSub }), listResolvers({ pubSub }), cardResolvers({ pubSub }), cardMemberResolvers({ pubSub }), labelResolvers({ pubSub }), checklistResolvers({ pubSub }), listChecklistResolvers({ pubSub }), attachmentResolvers({ pubSub }), quizResolvers({ pubSub }), questionResolvers({ pubSub }), optionResolvers({ pubSub }), answerResolvers({ pubSub }), reviewResolvers({ pubSub }), checkInRoomMessageResolvers({ pubSub }), checkInRoomResolvers({ pubSub }), folderResolvers({ pubSub }), fileResolvers({ pubSub })),
+    typeDefs: [typeDefs, createRateLimitTypeDef(), injectConfigFromHook("email", Email), injectConfigFromHook("pushNotification", PushNotification), injectConfigFromHook('user', user), injectConfigFromHook('profile', profile), injectConfigFromHook('education', education), injectConfigFromHook('work', work), injectConfigFromHook('skill', skill), injectConfigFromHook('project', project), injectConfigFromHook('space', space), injectConfigFromHook('menu', menu), injectConfigFromHook('spaceMenu', spaceMenu), injectConfigFromHook('courseCategory', courseCategory), injectConfigFromHook('course', course), injectConfigFromHook('section', section), injectConfigFromHook('lecture', lecture), injectConfigFromHook('article', article), injectConfigFromHook('quiz', quiz), injectConfigFromHook('question', question), injectConfigFromHook('option', option), injectConfigFromHook('answer', answer), injectConfigFromHook('review', review), injectConfigFromHook('folder', folder), injectConfigFromHook('userFile', userFile), injectConfigFromHook('event', event), injectConfigFromHook('checkInRoom', checkInRoom), injectConfigFromHook('message', message), injectConfigFromHook('chatFileStorage', chatFileStorage), injectConfigFromHook('post', post), injectConfigFromHook('reaction', reaction), injectConfigFromHook('workspace', workspace), injectConfigFromHook('board', board), injectConfigFromHook('list', list), injectConfigFromHook('card', card), injectConfigFromHook('cardMember', cardMember), injectConfigFromHook('label', label), injectConfigFromHook('checklist', checklist), injectConfigFromHook('listChecklist', listChecklist), injectConfigFromHook('comment', comment), injectConfigFromHook('subComment', subComment), injectConfigFromHook('commentAttachment', commentAttachment), injectConfigFromHook('attachment', attachment)],
+    resolvers: merge(resolver, emailResolvers, pushNotificationResolvers, userResolvers({ pubSub }), profileResolvers({ pubSub }), educationResolvers({ pubSub }), workResolvers({ pubSub }), skillResolvers({ pubSub }), projectResolvers({ pubSub }), spaceResolvers({ pubSub }), menuResolvers({ pubSub }), spaceMenuResolvers({ pubSub }), courseCategoryResolvers({ pubSub }), courseResolvers({ pubSub }), sectionResolvers({ pubSub }), lectureResolvers({ pubSub }), articleResolvers({ pubSub }), quizResolvers({ pubSub }), questionResolvers({ pubSub }), optionResolvers({ pubSub }), answerResolvers({ pubSub }), reviewResolvers({ pubSub }), folderResolvers({ pubSub }), userFileResolvers({ pubSub }), eventResolvers({ pubSub }), checkInRoomResolvers({ pubSub }), messageResolvers({ pubSub }), chatFileStorageResolvers({ pubSub }), postResolvers({ pubSub }), reactionResolvers({ pubSub }), workspaceResolvers({ pubSub }), boardResolvers({ pubSub }), listResolvers({ pubSub }), cardResolvers({ pubSub }), cardMemberResolvers({ pubSub }), labelResolvers({ pubSub }), checklistResolvers({ pubSub }), listChecklistResolvers({ pubSub }), commentResolvers({ pubSub }), subCommentResolvers({ pubSub }), commentAttachmentResolvers({ pubSub }), attachmentResolvers({ pubSub })),
     schemaDirectives: {
         rateLimit: createRateLimitDirective({
             keyGenerator
@@ -154,247 +152,212 @@ const schema = makeExecutableSchema({
 
 const storageRequester = new cote.Requester({
     name: 'Storage Requester',
-    key: 'storage',
+    key: APP_ID + '_storage',
 })
 
 const emailRequester = new cote.Requester({
     name: 'Email Requester',
-    key: 'email',
+    key: APP_ID + '_email',
 })
 
 const pushNotificationRequester = new cote.Requester({
     name: 'Push Notification Requester',
-    key: 'pushNotification',
+    key: APP_ID + '_pushNotification',
 })
 
 const userRequester = new cote.Requester({
     name: 'user Requester',
-    key: 'user',
+    key: APP_ID + '_user',
 })
 
 const profileRequester = new cote.Requester({
     name: 'profile Requester',
-    key: 'profile',
-})
-
-const studentRequester = new cote.Requester({
-    name: 'student Requester',
-    key: 'student',
-})
-
-const studentWorkspaceRequester = new cote.Requester({
-    name: 'studentWorkspace Requester',
-    key: 'studentWorkspace',
+    key: APP_ID + '_profile',
 })
 
 const educationRequester = new cote.Requester({
     name: 'education Requester',
-    key: 'education',
+    key: APP_ID + '_education',
 })
 
 const workRequester = new cote.Requester({
     name: 'work Requester',
-    key: 'work',
+    key: APP_ID + '_work',
 })
 
 const skillRequester = new cote.Requester({
     name: 'skill Requester',
-    key: 'skill',
+    key: APP_ID + '_skill',
 })
 
 const projectRequester = new cote.Requester({
     name: 'project Requester',
-    key: 'project',
+    key: APP_ID + '_project',
 })
 
-const classRoomRequester = new cote.Requester({
-    name: 'classRoom Requester',
-    key: 'classRoom',
+const spaceRequester = new cote.Requester({
+    name: 'space Requester',
+    key: APP_ID + '_space',
 })
 
-const groupRequester = new cote.Requester({
-    name: 'group Requester',
-    key: 'group',
+const menuRequester = new cote.Requester({
+    name: 'menu Requester',
+    key: APP_ID + '_menu',
 })
 
-const studentClassRequester = new cote.Requester({
-    name: 'studentClass Requester',
-    key: 'studentClass',
-})
-
-const studentGroupRequester = new cote.Requester({
-    name: 'studentGroup Requester',
-    key: 'studentGroup',
-})
-
-const postRequester = new cote.Requester({
-    name: 'post Requester',
-    key: 'post',
-})
-
-const postAttachmentRequester = new cote.Requester({
-    name: 'postAttachment Requester',
-    key: 'postAttachment',
-})
-
-const eventRequester = new cote.Requester({
-    name: 'event Requester',
-    key: 'event',
+const spaceMenuRequester = new cote.Requester({
+    name: 'spaceMenu Requester',
+    key: APP_ID + '_spaceMenu',
 })
 
 const courseCategoryRequester = new cote.Requester({
     name: 'courseCategory Requester',
-    key: 'courseCategory',
+    key: APP_ID + '_courseCategory',
 })
 
 const courseRequester = new cote.Requester({
     name: 'course Requester',
-    key: 'course',
+    key: APP_ID + '_course',
 })
 
 const sectionRequester = new cote.Requester({
     name: 'section Requester',
-    key: 'section',
+    key: APP_ID + '_section',
 })
 
 const lectureRequester = new cote.Requester({
     name: 'lecture Requester',
-    key: 'lecture',
+    key: APP_ID + '_lecture',
 })
 
 const articleRequester = new cote.Requester({
     name: 'article Requester',
-    key: 'article',
-})
-
-const reactionRequester = new cote.Requester({
-    name: 'reaction Requester',
-    key: 'reaction',
-})
-
-const commentRequester = new cote.Requester({
-    name: 'comment Requester',
-    key: 'comment',
-})
-
-const subCommentRequester = new cote.Requester({
-    name: 'subComment Requester',
-    key: 'subComment',
-})
-
-const commentAttachmentRequester = new cote.Requester({
-    name: 'commentAttachment Requester',
-    key: 'commentAttachment',
-})
-
-const messageRequester = new cote.Requester({
-    name: 'message Requester',
-    key: 'message',
-})
-
-const chatFileStorageRequester = new cote.Requester({
-    name: 'chatFileStorage Requester',
-    key: 'chatFileStorage',
-})
-
-const propertyUserRequester = new cote.Requester({
-    name: 'propertyUser Requester',
-    key: 'propertyUser',
-})
-
-const workspaceRequester = new cote.Requester({
-    name: 'workspace Requester',
-    key: 'workspace',
-})
-
-const boardRequester = new cote.Requester({
-    name: 'board Requester',
-    key: 'board',
-})
-
-const studentBoardRequester = new cote.Requester({
-    name: 'studentBoard Requester',
-    key: 'studentBoard',
-})
-
-const listRequester = new cote.Requester({
-    name: 'list Requester',
-    key: 'list',
-})
-
-const cardRequester = new cote.Requester({
-    name: 'card Requester',
-    key: 'card',
-})
-
-const cardMemberRequester = new cote.Requester({
-    name: 'cardMember Requester',
-    key: 'cardMember',
-})
-
-const labelRequester = new cote.Requester({
-    name: 'label Requester',
-    key: 'label',
-})
-
-const checklistRequester = new cote.Requester({
-    name: 'checklist Requester',
-    key: 'checklist',
-})
-
-const listChecklistRequester = new cote.Requester({
-    name: 'listChecklist Requester',
-    key: 'listChecklist',
-})
-
-const attachmentRequester = new cote.Requester({
-    name: 'attachment Requester',
-    key: 'attachment',
+    key: APP_ID + '_article',
 })
 
 const quizRequester = new cote.Requester({
     name: 'quiz Requester',
-    key: 'quiz',
+    key: APP_ID + '_quiz',
 })
 
 const questionRequester = new cote.Requester({
     name: 'question Requester',
-    key: 'question',
+    key: APP_ID + '_question',
 })
 
 const optionRequester = new cote.Requester({
     name: 'option Requester',
-    key: 'option',
+    key: APP_ID + '_option',
 })
 
 const answerRequester = new cote.Requester({
     name: 'answer Requester',
-    key: 'answer',
+    key: APP_ID + '_answer',
 })
 
 const reviewRequester = new cote.Requester({
     name: 'review Requester',
-    key: 'review',
-})
-
-const checkInRoomMessageRequester = new cote.Requester({
-    name: 'checkInRoomMessage Requester',
-    key: 'checkInRoomMessage',
-})
-
-const checkInRoomRequester = new cote.Requester({
-    name: 'checkInRoom Requester',
-    key: 'checkInRoom',
+    key: APP_ID + '_review',
 })
 
 const folderRequester = new cote.Requester({
     name: 'folder Requester',
-    key: 'folder',
+    key: APP_ID + '_folder',
 })
 
-const fileRequester = new cote.Requester({
-    name: 'file Requester',
-    key: 'file',
+const userFileRequester = new cote.Requester({
+    name: 'userFile Requester',
+    key: APP_ID + '_userFile',
+})
+
+const eventRequester = new cote.Requester({
+    name: 'event Requester',
+    key: APP_ID + '_event',
+})
+
+const checkInRoomRequester = new cote.Requester({
+    name: 'checkInRoom Requester',
+    key: APP_ID + '_checkInRoom',
+})
+
+const messageRequester = new cote.Requester({
+    name: 'message Requester',
+    key: APP_ID + '_message',
+})
+
+const chatFileStorageRequester = new cote.Requester({
+    name: 'chatFileStorage Requester',
+    key: APP_ID + '_chatFileStorage',
+})
+
+const postRequester = new cote.Requester({
+    name: 'post Requester',
+    key: APP_ID + '_post',
+})
+
+const reactionRequester = new cote.Requester({
+    name: 'reaction Requester',
+    key: APP_ID + '_reaction',
+})
+
+const workspaceRequester = new cote.Requester({
+    name: 'workspace Requester',
+    key: APP_ID + '_workspace',
+})
+
+const boardRequester = new cote.Requester({
+    name: 'board Requester',
+    key: APP_ID + '_board',
+})
+
+const listRequester = new cote.Requester({
+    name: 'list Requester',
+    key: APP_ID + '_list',
+})
+
+const cardRequester = new cote.Requester({
+    name: 'card Requester',
+    key: APP_ID + '_card',
+})
+
+const cardMemberRequester = new cote.Requester({
+    name: 'cardMember Requester',
+    key: APP_ID + '_cardMember',
+})
+
+const labelRequester = new cote.Requester({
+    name: 'label Requester',
+    key: APP_ID + '_label',
+})
+
+const checklistRequester = new cote.Requester({
+    name: 'checklist Requester',
+    key: APP_ID + '_checklist',
+})
+
+const listChecklistRequester = new cote.Requester({
+    name: 'listChecklist Requester',
+    key: APP_ID + '_listChecklist',
+})
+
+const commentRequester = new cote.Requester({
+    name: 'comment Requester',
+    key: APP_ID + '_comment',
+})
+
+const subCommentRequester = new cote.Requester({
+    name: 'subComment Requester',
+    key: APP_ID + '_subComment',
+})
+
+const commentAttachmentRequester = new cote.Requester({
+    name: 'commentAttachment Requester',
+    key: APP_ID + '_commentAttachment',
+})
+
+const attachmentRequester = new cote.Requester({
+    name: 'attachment Requester',
+    key: APP_ID + '_attachment',
 })
 
 const uuid = () => {
@@ -416,9 +379,10 @@ const parseBearerToken = (headers) => {
 
 const context = ({ req, connection }) => {
     return {
-        bucket: BUCKET,
+        bucket: S3_BUCKET_NAME,
         uuid,
-        storageUrl: "https://" + BUCKET + ".s3-ap-southeast-1.amazonaws.com/",
+        ip: req && req.ip,
+        storageUrl: "https://" + S3_BUCKET_NAME + ".s3-ap-southeast-1.amazonaws.com/",
         headers: !connection && parseBearerToken(req.headers),
         requester: {
             storageRequester,
@@ -426,110 +390,110 @@ const context = ({ req, connection }) => {
             pushNotificationRequester,
             userRequester,
             profileRequester,
-            studentRequester,
-            studentWorkspaceRequester,
             educationRequester,
             workRequester,
             skillRequester,
             projectRequester,
-            classRoomRequester,
-            groupRequester,
-            studentClassRequester,
-            studentGroupRequester,
-            postRequester,
-            postAttachmentRequester,
-            eventRequester,
+            spaceRequester,
+            menuRequester,
+            spaceMenuRequester,
             courseCategoryRequester,
             courseRequester,
             sectionRequester,
             lectureRequester,
             articleRequester,
-            reactionRequester,
-            commentRequester,
-            subCommentRequester,
-            commentAttachmentRequester,
+            quizRequester,
+            questionRequester,
+            optionRequester,
+            answerRequester,
+            reviewRequester,
+            folderRequester,
+            userFileRequester,
+            eventRequester,
+            checkInRoomRequester,
             messageRequester,
             chatFileStorageRequester,
-            propertyUserRequester,
+            postRequester,
+            reactionRequester,
             workspaceRequester,
             boardRequester,
-            studentBoardRequester,
             listRequester,
             cardRequester,
             cardMemberRequester,
             labelRequester,
             checklistRequester,
             listChecklistRequester,
+            commentRequester,
+            subCommentRequester,
+            commentAttachmentRequester,
             attachmentRequester,
-            quizRequester,
-            questionRequester,
-            optionRequester,
-            answerRequester,
-            reviewRequester,
-            checkInRoomMessageRequester,
-            checkInRoomRequester,
-            folderRequester,
-            fileRequester,
         },
         resolvers: {
             userResolvers,
             profileResolvers,
-            studentResolvers,
-            studentWorkspaceResolvers,
             educationResolvers,
             workResolvers,
             skillResolvers,
             projectResolvers,
-            classRoomResolvers,
-            groupResolvers,
-            studentClassResolvers,
-            studentGroupResolvers,
-            postResolvers,
-            postAttachmentResolvers,
-            eventResolvers,
+            spaceResolvers,
+            menuResolvers,
+            spaceMenuResolvers,
             courseCategoryResolvers,
             courseResolvers,
             sectionResolvers,
             lectureResolvers,
             articleResolvers,
-            reactionResolvers,
-            commentResolvers,
-            subCommentResolvers,
-            commentAttachmentResolvers,
+            quizResolvers,
+            questionResolvers,
+            optionResolvers,
+            answerResolvers,
+            reviewResolvers,
+            folderResolvers,
+            userFileResolvers,
+            eventResolvers,
+            checkInRoomResolvers,
             messageResolvers,
             chatFileStorageResolvers,
-            propertyUserResolvers,
+            postResolvers,
+            reactionResolvers,
             workspaceResolvers,
             boardResolvers,
-            studentBoardResolvers,
             listResolvers,
             cardResolvers,
             cardMemberResolvers,
             labelResolvers,
             checklistResolvers,
             listChecklistResolvers,
-            attachmentResolvers,
-            quizResolvers,
-            questionResolvers,
-            optionResolvers,
-            answerResolvers,
-            reviewResolvers,
-            checkInRoomMessageResolvers,
-            checkInRoomResolvers,
-            folderResolvers,
-            fileResolvers
+            commentResolvers,
+            subCommentResolvers,
+            commentAttachmentResolvers,
+            attachmentResolvers
         }
     }
 }
 
-const server = new ApolloServer({
+const apolloServer = new ApolloServer({
     schema,
     context,
-    introspection: true
+    introspection: true,
+    playground: GRAPHQL_PLAYGROUND === "true"
 })
 
 
 const app = express();
+
+// CORS middleware
+app.use(function(req, res, next) {
+    // Allow Origins
+    res.header("Access-Control-Allow-Origin", "*");
+    // Allow Methods
+    res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
+    // Allow Headers
+    res.header("Access-Control-Allow-Headers", "Origin, Accept, Content-Type, Authorization");
+    // Next middleware 
+    next();
+});
+
 
 app.use(Prometheus.requestCounters);
 app.use(Prometheus.responseCounters);
@@ -543,10 +507,13 @@ Prometheus.injectMetricsRoute(app);
  * Enable collection of default metrics
  */
 Prometheus.startCollection();
-server.applyMiddleware({ app });
-const httpServer = http.createServer(app)
-server.installSubscriptionHandlers(httpServer)
-const PORT = 4000
-httpServer.listen(PORT, () => {
-    console.log("Server ready at http://localhost:" + PORT + "/graphql")
+apolloServer.applyMiddleware({ app });
+
+const httpServer = http.createServer(app);
+
+apolloServer.installSubscriptionHandlers(httpServer);
+
+httpServer.listen(GRAPHQL_PORT, () => {
+    console.log('🚀 Server ready at http://localhost:' + GRAPHQL_PORT + apolloServer.graphqlPath)
+    console.log('🚀 Subscriptions ready at ws://localhost:' + GRAPHQL_PORT + apolloServer.subscriptionsPath)
 })

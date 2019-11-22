@@ -1,7 +1,7 @@
 module.exports = {
-    "classRoom": {
-        "local": "classRoomId",
-        "relatedTo": "classRoom",
+    "space": {
+        "local": "spaceId",
+        "relatedTo": "space",
         "foreignId": "id",
         "type": "one"
     }

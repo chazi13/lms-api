@@ -6,7 +6,7 @@ module.exports = function(app) {
         name: { type: String, required: false, unique: false },
         parentFolder: { type: String, required: false, unique: false },
         cover: { type: String, required: false, unique: false },
-        classRoomId: { type: String, required: false },
+        spaceId: { type: String, required: false },
         createdBy: String,
         updatedBy: String
     }, {
