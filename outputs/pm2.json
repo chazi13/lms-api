@@ -50,16 +50,8 @@
             "script": "npm run project-services"
         },
         {
-            "name": "addOn Service",
-            "script": "npm run addOn-services"
-        },
-        {
             "name": "classRoom Service",
             "script": "npm run classRoom-services"
-        },
-        {
-            "name": "classAddOn Service",
-            "script": "npm run classAddOn-services"
         },
         {
             "name": "group Service",
