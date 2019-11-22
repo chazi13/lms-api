@@ -6,7 +6,7 @@ type Space {
   createdAt: DateTime
   updatedAt: DateTime
   name: String!
-  users: [User!]
+  students: [Student!]
   courses(query: JSON): [Course]
   folders(query: JSON): [Folder]
   userFiles(query: JSON): [UserFile]
@@ -69,9 +69,9 @@ input SpaceFilter {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  users: UserFilter
-  users_some: UserFilter
-  users_none: UserFilter
+  students: StudentFilter
+  students_some: StudentFilter
+  students_none: StudentFilter
   courses: CourseFilter
   courses_some: CourseFilter
   courses_none: CourseFilter
@@ -115,13 +115,13 @@ type SpaceConnection {
 }
 input CreateSpaceInput {
   name: String!
-  users: [UserCreateInput]
-  usersIds: [String]
+  students: [CreateStudentInput]
+  studentsIds: [String]
 }
 input UpdateSpaceInput {
   name: String
-  users: [UserUpdateInput]
-  usersIds: [String]
+  students: [UpdateStudentInput]
+  studentsIds: [String]
 }
 extend type Query {
   spaces(
@@ -149,8 +149,8 @@ extend type Mutation {
   createSpace(input: CreateSpaceInput): Space
   updateSpace(input: UpdateSpaceInput, id: String!): Space
   deleteSpace(id: String!): Space
-  removeUserOnSpace(userId: String!, spaceId: String!): Space
-  addUserOnSpace(userId: String!, spaceId: String!): Space
+  removeStudentOnSpace(studentId: String!, spaceId: String!): Space
+  addStudentOnSpace(studentId: String!, spaceId: String!): Space
 }
 `
 export const resolvers = ({ pubSub }) => ({
@@ -192,13 +192,13 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        users: async ({ usersId }, args, { headers, requester }) => {
+        students: async ({ studentsId }, args, { headers, requester }) => {
             try {
                 let res = []
-                if (usersId) {
-                    for (let i = 0; i < usersId.length; i++) {
-                        let user = await requester.userRequester.send({ type: 'get', id: usersId[i], headers })
-                        res.push(user)
+                if (studentsId) {
+                    for (let i = 0; i < studentsId.length; i++) {
+                        let student = await requester.studentRequester.send({ type: 'get', id: studentsId[i], headers })
+                        res.push(student)
                     }
                 }
                 return res
@@ -276,29 +276,29 @@ export const resolvers = ({ pubSub }) => ({
     },
     Mutation: {
         createSpace: async (_, { input = {} }, { requester, resolvers, headers }) => {
-            let usersId = []
+            let studentsId = []
 
             let spaceId = null
             try {
                 let data = await requester.spaceRequester.send({ type: 'create', body: input, headers })
                 spaceId = data.id
 
-                if (input.users) {
-                    for (let i = 0; i < input.users.length; i++) {
-                        let users = input.users[i]
-                        users.spacesId = [spaceId]
-                        let res = await resolvers.userResolvers({ pubSub }).Mutation.createUser(_, { input: users }, { headers, requester, resolvers })
-                        usersId.push(res.id)
+                if (input.students) {
+                    for (let i = 0; i < input.students.length; i++) {
+                        let students = input.students[i]
+                        students.spacesId = [spaceId]
+                        let res = await resolvers.studentResolvers({ pubSub }).Mutation.createStudent(_, { input: students }, { headers, requester, resolvers })
+                        studentsId.push(res.id)
                     }
                 }
-                if (!input.usersId) {
-                    input.usersId = usersId
+                if (!input.studentsId) {
+                    input.studentsId = studentsId
                 }
 
-                if (input.usersIds) {
-                    for (let i = 0; i < input.usersIds.length; i++) {
-                        usersId.push(input.usersIds[i])
-                        await requester.userRequester.send({ type: 'patch', isSystem: true, body: { $addToSet: { spacesId: spaceId } }, id: input.usersIds[i], headers })
+                if (input.studentsIds) {
+                    for (let i = 0; i < input.studentsIds.length; i++) {
+                        studentsId.push(input.studentsIds[i])
+                        await requester.studentRequester.send({ type: 'patch', isSystem: true, body: { $addToSet: { spacesId: spaceId } }, id: input.studentsIds[i], headers })
                     }
                 }
 
@@ -310,8 +310,8 @@ export const resolvers = ({ pubSub }) => ({
                     requester.spaceRequester.send({ type: 'delete', id: spaceId, headers })
                 }
 
-                usersId.map((id) => {
-                    requester.userRequester.send({ type: 'delete', id, headers })
+                studentsId.map((id) => {
+                    requester.studentRequester.send({ type: 'delete', id, headers })
                 })
 
                 // console.log("ee", e)
@@ -319,7 +319,7 @@ export const resolvers = ({ pubSub }) => ({
             }
         },
         updateSpace: async (_, { input = {}, id, params }, { requester, resolvers, headers }) => {
-            let usersId = []
+            let studentsId = []
 
             let spaceId = null
             try {
@@ -333,30 +333,30 @@ export const resolvers = ({ pubSub }) => ({
 
 
 
-                if (input.usersIds && input.users) {
+                if (input.studentsIds && input.students) {
                     throw new Error("Cannot create and update connection")
                 }
 
 
-                if (input.usersIds) {
-                    let res = await requester.userRequester.send({ type: 'patch', isSystem: true, body: { $set: { spacesId: [] } }, params: { spacesIds: { $in: [spaceId] } }, id: null, headers })
-                    for (let i = 0; i < input.usersIds.length; i++) {
-                        usersId.push(input.usersIds[i])
-                        await requester.userRequester.send({ type: 'patch', isSystem: true, body: { $addToSet: { spacesId: spaceId } }, id: input.usersIds[i], headers })
+                if (input.studentsIds) {
+                    let res = await requester.studentRequester.send({ type: 'patch', isSystem: true, body: { $set: { spacesId: [] } }, params: { spacesIds: { $in: [spaceId] } }, id: null, headers })
+                    for (let i = 0; i < input.studentsIds.length; i++) {
+                        studentsId.push(input.studentsIds[i])
+                        await requester.studentRequester.send({ type: 'patch', isSystem: true, body: { $addToSet: { spacesId: spaceId } }, id: input.studentsIds[i], headers })
                     }
                 }
 
 
 
-                if (input.users) {
-                    await requester.userRequester.send({ type: 'patch', isSystem: true, body: { $set: { spacesId: [] } }, params: { spacesIds: { $in: [spaceId] } }, id: null, headers })
-                    for (let i = 0; i < input.users.length; i++) {
-                        let users = input.users[i]
-                        users.spacesId = [spaceId]
-                        let res = await resolvers.userResolvers({ pubSub }).Mutation.createUser(_, { input: users }, { headers, requester, resolvers })
-                        usersId.push(res.id)
+                if (input.students) {
+                    await requester.studentRequester.send({ type: 'patch', isSystem: true, body: { $set: { spacesId: [] } }, params: { spacesIds: { $in: [spaceId] } }, id: null, headers })
+                    for (let i = 0; i < input.students.length; i++) {
+                        let students = input.students[i]
+                        students.spacesId = [spaceId]
+                        let res = await resolvers.studentResolvers({ pubSub }).Mutation.createStudent(_, { input: students }, { headers, requester, resolvers })
+                        studentsId.push(res.id)
                     }
-                    input.usersIds = usersId
+                    input.studentsIds = studentsId
                 }
 
 
@@ -364,14 +364,14 @@ export const resolvers = ({ pubSub }) => ({
 
 
                 if (spaceId) {
-                    data = await requester.spaceRequester.send({ type: 'patch', id: spaceId, body: Object.assign(input, { $set: { usersId: input.usersIds, } }), headers })
+                    data = await requester.spaceRequester.send({ type: 'patch', id: spaceId, body: Object.assign(input, { $set: { studentsId: input.studentsIds, } }), headers })
                 }
                 pubSub.publish("spaceAdded", { spaceAdded: data })
                 return data
             } catch (e) {
 
-                usersId.map((id) => {
-                    requester.userRequester.send({ type: 'delete', id, headers })
+                studentsId.map((id) => {
+                    requester.studentRequester.send({ type: 'delete', id, headers })
                 })
 
                 throw new Error(e)
@@ -386,19 +386,19 @@ export const resolvers = ({ pubSub }) => ({
                 throw new Error(e)
             }
         },
-        addUserOnSpace: async (_, { userId, spaceId }, { requester, resolvers, headers }) => {
+        addStudentOnSpace: async (_, { studentId, spaceId }, { requester, resolvers, headers }) => {
             try {
-                let data = await requester.spaceRequester.send({ type: 'patch', id: spaceId, headers, body: { $addToSet: { usersId: userId } } })
-                await requester.userRequester.send({ type: 'patch', headers, isSystem: true, id: userId, body: { $addToSet: { spacesId: spaceId } } })
+                let data = await requester.spaceRequester.send({ type: 'patch', id: spaceId, headers, body: { $addToSet: { studentsId: studentId } } })
+                await requester.studentRequester.send({ type: 'patch', headers, isSystem: true, id: studentId, body: { $addToSet: { spacesId: spaceId } } })
                 return data
             } catch (e) {
                 throw new Error(e)
             }
         },
-        removeUserOnSpace: async (_, { userId, spaceId }, { requester, resolvers, headers }) => {
+        removeStudentOnSpace: async (_, { studentId, spaceId }, { requester, resolvers, headers }) => {
             try {
-                let data = await requester.spaceRequester.send({ type: 'patch', id: spaceId, headers, body: { $pull: { usersId: userId } } })
-                await requester.userRequester.send({ type: 'patch', headers, isSystem: true, id: userId, body: { $pull: { spacesId: spaceId } } })
+                let data = await requester.spaceRequester.send({ type: 'patch', id: spaceId, headers, body: { $pull: { studentsId: studentId } } })
+                await requester.studentRequester.send({ type: 'patch', headers, isSystem: true, id: studentId, body: { $pull: { spacesId: spaceId } } })
                 return data
             } catch (e) {
                 throw new Error(e)

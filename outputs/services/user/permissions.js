@@ -16,6 +16,7 @@ const defaultPermissions = {
         'user:find', 'user:get', 'user:patch',
         'pushNotification:create', 'pushNotification:remove',
         'user:find', 'user:get', 'user:create', 'user:removeOwn', 'user:patchOwn',
+        'student:find', 'student:get', 'student:create', 'student:removeOwn', 'student:patchOwn',
         'profile:find', 'profile:get', 'profile:create', 'profile:removeOwn', 'profile:patchOwn',
         'education:find', 'education:get', 'education:create', 'education:removeOwn', 'education:patchOwn',
         'work:find', 'work:get', 'work:create', 'work:removeOwn', 'work:patchOwn',
@@ -59,6 +60,7 @@ const defaultPermissions = {
     public: [
 
         'user:find', 'user:get',
+        'student:find', 'student:get',
         'profile:find', 'profile:get',
         'education:find', 'education:get',
         'work:find', 'work:get',

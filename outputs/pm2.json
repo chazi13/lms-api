@@ -22,6 +22,10 @@
             "script": "npm run user-services"
         },
         {
+            "name": "mejik2_student_service",
+            "script": "npm run student-services"
+        },
+        {
             "name": "mejik2_profile_service",
             "script": "npm run profile-services"
         },

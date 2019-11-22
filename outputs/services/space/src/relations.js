@@ -1,8 +1,8 @@
 module.exports = {
-    "user": {
-        "local": "usersId",
-        "relatedTo": "User",
+    "student": {
+        "local": "studentsId",
+        "relatedTo": "student",
         "foreignId": "id",
-        "type": "one"
+        "type": "manyToMany"
     }
 }
