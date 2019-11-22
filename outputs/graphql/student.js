@@ -10,6 +10,7 @@ type Student {
   stundentClasses(query: JSON): [StudentClass]
   studentGroups(query: JSON): [StudentGroup]
   studentWorkspaces(query: JSON): [StudentWorkspace]
+  studentBoard: [StudentBoard]
   studentCard(query: JSON): [CardMember]
 }
 input StudentFilter {
@@ -66,6 +67,14 @@ input StudentFilter {
   studentWorkspaces: StudentWorkspaceFilter
   studentWorkspaces_some: StudentWorkspaceFilter
   studentWorkspaces_none: StudentWorkspaceFilter
+  studentBoard: StudentBoard
+  studentBoard_not: StudentBoard
+  studentBoard_in: [StudentBoard]
+  studentBoard_not_in: [StudentBoard]
+  studentBoard_lt: StudentBoard
+  studentBoard_lte: StudentBoard
+  studentBoard_gt: StudentBoard
+  studentBoard_gte: StudentBoard
   studentCard: CardMemberFilter
   studentCard_some: CardMemberFilter
   studentCard_none: CardMemberFilter
@@ -88,11 +97,13 @@ input CreateStudentInput {
   userId: String!
   classRooms: [CreateClassRoomInput]
   classRoomsIds: [String]
+  studentBoard: [StudentBoard]
 }
 input UpdateStudentInput {
   userId: String
   classRooms: [UpdateClassRoomInput]
   classRoomsIds: [String]
+  studentBoard: [StudentBoard]
 }
 extend type Query {
   students(

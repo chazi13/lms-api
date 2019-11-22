@@ -134,6 +134,10 @@
             "script": "npm run board-services"
         },
         {
+            "name": "boardStudent Service",
+            "script": "npm run boardStudent-services"
+        },
+        {
             "name": "list Service",
             "script": "npm run list-services"
         },
