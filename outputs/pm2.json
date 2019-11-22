@@ -122,6 +122,10 @@
             "script": "npm run post-services"
         },
         {
+            "name": "mejik2_postattachment_service",
+            "script": "npm run postAttachment-services"
+        },
+        {
             "name": "mejik2_reaction_service",
             "script": "npm run reaction-services"
         },

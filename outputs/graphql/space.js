@@ -115,12 +115,12 @@ type SpaceConnection {
 }
 input CreateSpaceInput {
   name: String!
-  users: [CreateUserInput]
+  users: [UserCreateInput]
   usersIds: [String]
 }
 input UpdateSpaceInput {
   name: String
-  users: [UpdateUserInput]
+  users: [UserUpdateInput]
   usersIds: [String]
 }
 extend type Query {

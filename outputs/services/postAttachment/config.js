@@ -2,9 +2,9 @@ const appRoot = require('app-root-path')
 require("dotenv").config({ path: appRoot.path + '/.env' })
 
 const DATABASE = "mongo"
-const MONGODB = process.env.CARDMEMBER_MONGODB
-const HOST = process.env.CARDMEMBER_HOST
-const PORT = process.env.CARDMEMBER_PORT
+const MONGODB = process.env.POSTATTACHMENT_MONGODB
+const HOST = process.env.POSTATTACHMENT_HOST
+const PORT = process.env.POSTATTACHMENT_PORT
 
 module.exports = {
     HOST,

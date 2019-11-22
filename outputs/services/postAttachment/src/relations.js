@@ -1,7 +1,7 @@
 module.exports = {
-    "card": {
-        "local": "cardId",
-        "relatedTo": "card",
+    "post": {
+        "local": "postId",
+        "relatedTo": "post",
         "foreignId": "id",
         "type": "one"
     }

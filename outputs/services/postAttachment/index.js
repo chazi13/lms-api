@@ -13,7 +13,7 @@ try {
     const split = root.split('/');
     split.pop();
     const path = split.join('/');
-    externalHook = require(path + '/hooks/cardMember');
+    externalHook = require(path + '/hooks/postAttachment');
 } catch (e) {
 
 }
@@ -25,9 +25,9 @@ function camelize(text) {
     });
 }
 
-const cardMemberService = new cote.Responder({
-    name: 'CardMember Service',
-    key: APP_ID + '_cardMember'
+const postAttachmentService = new cote.Responder({
+    name: 'PostAttachment Service',
+    key: APP_ID + '_postAttachment'
 })
 
 const userRequester = new cote.Requester({
@@ -141,9 +141,9 @@ const transformer = ({where, limit, skip, orderBy}) => {
 }
 
 
-cardMemberService.on("find", async (req, cb) => {
+postAttachmentService.on("find", async (req, cb) => {
     try {
-        let data = await app.service("cardMembers").find({
+        let data = await app.service("postAttachments").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -155,9 +155,9 @@ cardMemberService.on("find", async (req, cb) => {
     }
 })
 
-cardMemberService.on("findConnection", async (req, cb) => {
+postAttachmentService.on("findConnection", async (req, cb) => {
     try {
-        let data = await app.service("cardMembers").find({
+        let data = await app.service("postAttachments").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -169,9 +169,9 @@ cardMemberService.on("findConnection", async (req, cb) => {
     }
 })
 
-cardMemberService.on("findOwn", async (req, cb) => {
+postAttachmentService.on("findOwn", async (req, cb) => {
     try {
-        let data = await app.service("cardMembers").find({
+        let data = await app.service("postAttachments").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -184,9 +184,9 @@ cardMemberService.on("findOwn", async (req, cb) => {
     }
 })
 
-cardMemberService.on("findConnectionOwn", async (req, cb) => {
+postAttachmentService.on("findConnectionOwn", async (req, cb) => {
     try {
-        let data = await app.service("cardMembers").find({
+        let data = await app.service("postAttachments").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -199,9 +199,9 @@ cardMemberService.on("findConnectionOwn", async (req, cb) => {
     }
 })
 
-cardMemberService.on("create", async (req, cb) => {
+postAttachmentService.on("create", async (req, cb) => {
     try {
-        let data = await app.service("cardMembers").create(req.body, {
+        let data = await app.service("postAttachments").create(req.body, {
             headers: req.headers,
             file: req.file,
             isSystem: req.isSystem
@@ -212,9 +212,9 @@ cardMemberService.on("create", async (req, cb) => {
     }
 })
 
-cardMemberService.on("patch", async (req, cb) => {
+postAttachmentService.on("patch", async (req, cb) => {
     try {
-        let data = await app.service("cardMembers").patch(req.id, req.body, {
+        let data = await app.service("postAttachments").patch(req.id, req.body, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -226,9 +226,9 @@ cardMemberService.on("patch", async (req, cb) => {
     }
 })
 
-cardMemberService.on("delete", async (req, cb) => {
+postAttachmentService.on("delete", async (req, cb) => {
     try {
-        let data = await app.service("cardMembers").remove(req.id, {
+        let data = await app.service("postAttachments").remove(req.id, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -241,11 +241,11 @@ cardMemberService.on("delete", async (req, cb) => {
     }
 })
 
-cardMemberService.on("get", async (req, cb) => {
+postAttachmentService.on("get", async (req, cb) => {
     try {
         let data = null
         if (req.id) {
-            data = await app.service("cardMembers").get(req.id, {
+            data = await app.service("postAttachments").get(req.id, {
                 headers: req.headers,
                 isSystem: req.isSystem
             })
@@ -262,7 +262,7 @@ const checkAuthentication = (token) => {
 }
 
 
-app.service('cardMembers').hooks({
+app.service('postAttachments').hooks({
     before: {
         find: async (context) => {
             try {
@@ -272,7 +272,7 @@ app.service('cardMembers').hooks({
                     context.params.user = auth.user
 
                     
-                    if(auth.user.permissions.includes(`${camelize('cardMember')}:findOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('postAttachment')}:findOwn`)){
                         context.method = "findOwn"
                         context.params.query = {
                             ...context.params.query || {},
@@ -282,7 +282,7 @@ app.service('cardMembers').hooks({
                     
                     //beforeFindAuthorization
                     await checkPermissions({
-                        roles: ['admin', 'cardMember']
+                        roles: ['admin', 'postAttachment']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -302,7 +302,7 @@ app.service('cardMembers').hooks({
 
                     context.params.user = auth.user
                     await checkPermissions({
-                        roles: ['admin', 'cardMember']
+                        roles: ['admin', 'postAttachment']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -322,7 +322,7 @@ app.service('cardMembers').hooks({
                     context.params.user = auth.user
 
                     await checkPermissions({
-                        roles: ['admin', 'cardMember']
+                        roles: ['admin', 'postAttachment']
                     })(context)
 
                     context.data.createdBy = auth.user.id || ''
@@ -332,16 +332,16 @@ app.service('cardMembers').hooks({
                     }
                     
                     //beforeCreate
-                    if(context.data && context.data.cardId){
-                        let belongsTo = await getRequester('card').send({ 
+                    if(context.data && context.data.postId){
+                        let belongsTo = await getRequester('post').send({ 
                             type: "get", 
-                            id: context.data.cardId, 
+                            id: context.data.postId, 
                             headers:{
                                 token: context.params.headers.authorization
                             }
                         })
                         if(!belongsTo){
-                            throw Error("Card not found.")
+                            throw Error("Post not found.")
                         }
                     }             
                     
@@ -362,11 +362,11 @@ app.service('cardMembers').hooks({
 
      
                     //beforeUpdate
-                    if(auth.user.permissions.includes(`${camelize('cardMember')}:updateOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('postAttachment')}:updateOwn`)){
                         context.method = "updateOwn"
                         if(context.id){
-                            let cardMember = await app.service(`${pluralize(camelize("cardMember"))}`).get(context.id, { headers: context.params.headers })
-                            if(cardMember && cardMember.createdBy !== auth.user.id){
+                            let postAttachment = await app.service(`${pluralize(camelize("postAttachment"))}`).get(context.id, { headers: context.params.headers })
+                            if(postAttachment && postAttachment.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
@@ -374,7 +374,7 @@ app.service('cardMembers').hooks({
 
 
                     await checkPermissions({
-                        roles: ['admin', 'cardMember']
+                        roles: ['admin', 'postAttachment']
                     })(context)
 
 
@@ -400,18 +400,18 @@ app.service('cardMembers').hooks({
  
             
                     //beforePatch
-                    if(auth.user.permissions.includes(`${camelize('cardMember')}:patchOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('postAttachment')}:patchOwn`)){
                         context.method = "patchOwn"
                         if(context.id){
-                            let cardMember = await app.service(`${pluralize(camelize("cardMembers"))}`).get(context.id, { headers: context.params.headers })
-                            if(cardMember && cardMember.createdBy !== auth.user.id){
+                            let postAttachment = await app.service(`${pluralize(camelize("postAttachments"))}`).get(context.id, { headers: context.params.headers })
+                            if(postAttachment && postAttachment.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
 
                     await checkPermissions({
-                        roles: ['admin', 'cardMember']
+                        roles: ['admin', 'postAttachment']
                     })(context)
 
     
@@ -436,17 +436,17 @@ app.service('cardMembers').hooks({
 
 
                     //beforeDelete
-                    if(auth.user.permissions.includes(`${camelize('cardMember')}:removeOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('postAttachment')}:removeOwn`)){
                         context.method = "removeOwn"
                         if(context.id){
-                            let cardMember = await app.service(`${pluralize(camelize("cardMembers"))}`).get(context.id, { headers: context.params.headers })
-                            if(cardMember && cardMember.createdBy !== auth.user.id){
+                            let postAttachment = await app.service(`${pluralize(camelize("postAttachments"))}`).get(context.id, { headers: context.params.headers })
+                            if(postAttachment && postAttachment.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
                     await checkPermissions({
-                        roles: ['admin', 'cardMember']
+                        roles: ['admin', 'postAttachment']
                     })(context)
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
@@ -473,7 +473,17 @@ app.service('cardMembers').hooks({
         create: async (context) => {
             try {
                 
-                //afterCreate
+                
+                        getRequester('storage').send({
+                            type: "uploadFile",
+                            body: {
+                                buffer: context.params.file.buffer,
+                                key: context.params.file.key,
+                                mimeType: context.params.file.mimeType,
+                                bucket: context.params.file.bucket
+                            }
+                        })
+                    
                 return externalHook && externalHook(app).after && externalHook(app).after.create && externalHook(app).after.create(context)
             } catch (err) {
                 throw new Error(err)
@@ -482,7 +492,19 @@ app.service('cardMembers').hooks({
         patch: async (context) => {
             try {
                 
-                //afterPatch
+                
+                        if (context.result.length > 0) {
+                            storageRequester.send({
+                                type: "uploadFile",
+                                body: {
+                                    buffer: context.params.file.buffer,
+                                    key: context.result.image.split(".com/")[1],
+                                    mimeType: context.params.file.mimeType,
+                                    bucket: context.params.file.bucket
+                                }
+                            })
+                        }
+                    
                 return externalHook && externalHook(app).after && externalHook(app).after.patch && externalHook(app).after.patch(context)
             } catch (err) {
                 throw new Error(err)
@@ -491,7 +513,17 @@ app.service('cardMembers').hooks({
         remove: async (context) => {
             try {
                 
-                //afterDelete
+                
+                        if (context.result.length > 0) {
+                            storageRequester.send({
+                                type: "deleteFile",
+                                body: {
+                                    key: context.result.image.split(".com/")[1],
+                                    bucket: context.params.file.bucket
+                                }
+                            })
+                        }
+                    
                 return externalHook && externalHook(app).after && externalHook(app).after.remove && externalHook(app).after.remove(context)
             } catch (err) {
                 throw new Error(err)
@@ -502,5 +534,5 @@ app.service('cardMembers').hooks({
 
 
 server.on('listening', () =>
-    console.log('CardMember Rest Server on http://%s:%d', app.get('host'), port)
+    console.log('PostAttachment Rest Server on http://%s:%d', app.get('host'), port)
 );

@@ -71,14 +71,9 @@ input PostFilter {
   reactions: ReactionFilter
   reactions_some: ReactionFilter
   reactions_none: ReactionFilter
-  attachments: PostAttachment
-  attachments_not: PostAttachment
-  attachments_in: [PostAttachment]
-  attachments_not_in: [PostAttachment]
-  attachments_lt: PostAttachment
-  attachments_lte: PostAttachment
-  attachments_gt: PostAttachment
-  attachments_gte: PostAttachment
+  attachments: PostAttachmentFilter
+  attachments_some: PostAttachmentFilter
+  attachments_none: PostAttachmentFilter
   space: SpaceFilter
   space_some: SpaceFilter
   space_none: SpaceFilter
@@ -104,13 +99,11 @@ type PostConnection {
 }
 input CreatePostInput {
   text: String
-  attachments: [PostAttachment]
   spaceId: String
   cardId: String
 }
 input UpdatePostInput {
   text: String
-  attachments: [PostAttachment]
   spaceId: String
   cardId: String
 }
@@ -191,6 +184,13 @@ export const resolvers = ({ pubSub }) => ({
         reactions: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.reactionRequester.send({ type: 'find', where: Object.assign({ postId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        attachments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
+            try {
+                return await requester.postAttachmentRequester.send({ type: 'find', where: Object.assign({ postId: id }, where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
