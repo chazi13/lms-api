@@ -6,7 +6,7 @@
     "scripts": {
         "graphql": "npm run-script build && node ./dist/graphql --presets env",
         "build": "NODE_ENV=production babel graphql.js config.js monitor.js -d dist && NODE_ENV=production babel graphql/ -d dist/graphql && NODE_ENV=production babel utils/ -d dist/utils",
-        "dev": "npm-run-all --parallel graphql-dev email-services-dev pushNotification-services-dev storage-services-dev user-services-dev profile-services-dev education-services-dev work-services-dev skill-services-dev project-services-dev space-services-dev menu-services-dev spaceMenu-services-dev courseCategory-services-dev course-services-dev section-services-dev lecture-services-dev article-services-dev quiz-services-dev question-services-dev option-services-dev answer-services-dev review-services-dev folder-services-dev userFile-services-dev event-services-dev checkInRoom-services-dev message-services-dev chatFileStorage-services-dev post-services-dev reaction-services-dev workspace-services-dev board-services-dev list-services-dev card-services-dev cardMember-services-dev label-services-dev checklist-services-dev listChecklist-services-dev comment-services-dev subComment-services-dev commentAttachment-services-dev attachment-services-dev",
+        "dev": "npm-run-all --parallel graphql-dev email-services-dev pushNotification-services-dev storage-services-dev user-services-dev profile-services-dev education-services-dev work-services-dev skill-services-dev project-services-dev space-services-dev menu-services-dev spaceMenu-services-dev courseCategory-services-dev course-services-dev section-services-dev lecture-services-dev article-services-dev quiz-services-dev question-services-dev option-services-dev answer-services-dev review-services-dev folder-services-dev userFile-services-dev event-services-dev checkInRoom-services-dev message-services-dev chatFileStorage-services-dev post-services-dev reaction-services-dev workspace-services-dev board-services-dev list-services-dev card-services-dev label-services-dev checklist-services-dev listChecklist-services-dev comment-services-dev subComment-services-dev commentAttachment-services-dev attachment-services-dev",
         "serve": "node graphql",
         "test": "NODE_ENV=test nyc mocha --require babel-core/register test/test_helper.js './src/**/*.spec.js' --exit --timeout 20000",
         "graphql-dev": "nodemon --exec babel-node graphql --presets env",
@@ -78,8 +78,6 @@
         "list-services": "cd ./services/list && node index.js",
         "card-services-dev": "cd ./services/card && nodemon index.js",
         "card-services": "cd ./services/card && node index.js",
-        "cardMember-services-dev": "cd ./services/cardMember && nodemon index.js",
-        "cardMember-services": "cd ./services/cardMember && node index.js",
         "label-services-dev": "cd ./services/label && nodemon index.js",
         "label-services": "cd ./services/label && node index.js",
         "checklist-services-dev": "cd ./services/checklist && nodemon index.js",
@@ -94,7 +92,7 @@
         "commentAttachment-services": "cd ./services/commentAttachment && node index.js",
         "attachment-services-dev": "cd ./services/attachment && nodemon index.js",
         "attachment-services": "cd ./services/attachment && node index.js",
-        "production": "npm-run-all --parallel graphql email-services pushNotification-services storage-services user-services profile-services education-services work-services skill-services project-services space-services menu-services spaceMenu-services courseCategory-services course-services section-services lecture-services article-services quiz-services question-services option-services answer-services review-services folder-services userFile-services event-services checkInRoom-services message-services chatFileStorage-services post-services reaction-services workspace-services board-services list-services card-services cardMember-services label-services checklist-services listChecklist-services comment-services subComment-services commentAttachment-services attachment-services"
+        "production": "npm-run-all --parallel graphql email-services pushNotification-services storage-services user-services profile-services education-services work-services skill-services project-services space-services menu-services spaceMenu-services courseCategory-services course-services section-services lecture-services article-services quiz-services question-services option-services answer-services review-services folder-services userFile-services event-services checkInRoom-services message-services chatFileStorage-services post-services reaction-services workspace-services board-services list-services card-services label-services checklist-services listChecklist-services comment-services subComment-services commentAttachment-services attachment-services"
     },
     "author": "",
     "license": "ISC",

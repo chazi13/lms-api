@@ -142,10 +142,6 @@
             "script": "npm run card-services"
         },
         {
-            "name": "mejik2_cardmember_service",
-            "script": "npm run cardMember-services"
-        },
-        {
             "name": "mejik2_label_service",
             "script": "npm run label-services"
         },

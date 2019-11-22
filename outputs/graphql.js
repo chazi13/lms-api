@@ -42,7 +42,6 @@ import { typeDef as workspace, resolvers as workspaceResolvers } from './graphql
 import { typeDef as board, resolvers as boardResolvers } from './graphql/board'
 import { typeDef as list, resolvers as listResolvers } from './graphql/list'
 import { typeDef as card, resolvers as cardResolvers } from './graphql/card'
-import { typeDef as cardMember, resolvers as cardMemberResolvers } from './graphql/cardMember'
 import { typeDef as label, resolvers as labelResolvers } from './graphql/label'
 import { typeDef as checklist, resolvers as checklistResolvers } from './graphql/checklist'
 import { typeDef as listChecklist, resolvers as listChecklistResolvers } from './graphql/listChecklist'
@@ -141,8 +140,8 @@ const resolver = {
     })
 }
 const schema = makeExecutableSchema({
-    typeDefs: [typeDefs, createRateLimitTypeDef(), injectConfigFromHook("email", Email), injectConfigFromHook("pushNotification", PushNotification), injectConfigFromHook('user', user), injectConfigFromHook('profile', profile), injectConfigFromHook('education', education), injectConfigFromHook('work', work), injectConfigFromHook('skill', skill), injectConfigFromHook('project', project), injectConfigFromHook('space', space), injectConfigFromHook('menu', menu), injectConfigFromHook('spaceMenu', spaceMenu), injectConfigFromHook('courseCategory', courseCategory), injectConfigFromHook('course', course), injectConfigFromHook('section', section), injectConfigFromHook('lecture', lecture), injectConfigFromHook('article', article), injectConfigFromHook('quiz', quiz), injectConfigFromHook('question', question), injectConfigFromHook('option', option), injectConfigFromHook('answer', answer), injectConfigFromHook('review', review), injectConfigFromHook('folder', folder), injectConfigFromHook('userFile', userFile), injectConfigFromHook('event', event), injectConfigFromHook('checkInRoom', checkInRoom), injectConfigFromHook('message', message), injectConfigFromHook('chatFileStorage', chatFileStorage), injectConfigFromHook('post', post), injectConfigFromHook('reaction', reaction), injectConfigFromHook('workspace', workspace), injectConfigFromHook('board', board), injectConfigFromHook('list', list), injectConfigFromHook('card', card), injectConfigFromHook('cardMember', cardMember), injectConfigFromHook('label', label), injectConfigFromHook('checklist', checklist), injectConfigFromHook('listChecklist', listChecklist), injectConfigFromHook('comment', comment), injectConfigFromHook('subComment', subComment), injectConfigFromHook('commentAttachment', commentAttachment), injectConfigFromHook('attachment', attachment)],
-    resolvers: merge(resolver, emailResolvers, pushNotificationResolvers, userResolvers({ pubSub }), profileResolvers({ pubSub }), educationResolvers({ pubSub }), workResolvers({ pubSub }), skillResolvers({ pubSub }), projectResolvers({ pubSub }), spaceResolvers({ pubSub }), menuResolvers({ pubSub }), spaceMenuResolvers({ pubSub }), courseCategoryResolvers({ pubSub }), courseResolvers({ pubSub }), sectionResolvers({ pubSub }), lectureResolvers({ pubSub }), articleResolvers({ pubSub }), quizResolvers({ pubSub }), questionResolvers({ pubSub }), optionResolvers({ pubSub }), answerResolvers({ pubSub }), reviewResolvers({ pubSub }), folderResolvers({ pubSub }), userFileResolvers({ pubSub }), eventResolvers({ pubSub }), checkInRoomResolvers({ pubSub }), messageResolvers({ pubSub }), chatFileStorageResolvers({ pubSub }), postResolvers({ pubSub }), reactionResolvers({ pubSub }), workspaceResolvers({ pubSub }), boardResolvers({ pubSub }), listResolvers({ pubSub }), cardResolvers({ pubSub }), cardMemberResolvers({ pubSub }), labelResolvers({ pubSub }), checklistResolvers({ pubSub }), listChecklistResolvers({ pubSub }), commentResolvers({ pubSub }), subCommentResolvers({ pubSub }), commentAttachmentResolvers({ pubSub }), attachmentResolvers({ pubSub })),
+    typeDefs: [typeDefs, createRateLimitTypeDef(), injectConfigFromHook("email", Email), injectConfigFromHook("pushNotification", PushNotification), injectConfigFromHook('user', user), injectConfigFromHook('profile', profile), injectConfigFromHook('education', education), injectConfigFromHook('work', work), injectConfigFromHook('skill', skill), injectConfigFromHook('project', project), injectConfigFromHook('space', space), injectConfigFromHook('menu', menu), injectConfigFromHook('spaceMenu', spaceMenu), injectConfigFromHook('courseCategory', courseCategory), injectConfigFromHook('course', course), injectConfigFromHook('section', section), injectConfigFromHook('lecture', lecture), injectConfigFromHook('article', article), injectConfigFromHook('quiz', quiz), injectConfigFromHook('question', question), injectConfigFromHook('option', option), injectConfigFromHook('answer', answer), injectConfigFromHook('review', review), injectConfigFromHook('folder', folder), injectConfigFromHook('userFile', userFile), injectConfigFromHook('event', event), injectConfigFromHook('checkInRoom', checkInRoom), injectConfigFromHook('message', message), injectConfigFromHook('chatFileStorage', chatFileStorage), injectConfigFromHook('post', post), injectConfigFromHook('reaction', reaction), injectConfigFromHook('workspace', workspace), injectConfigFromHook('board', board), injectConfigFromHook('list', list), injectConfigFromHook('card', card), injectConfigFromHook('label', label), injectConfigFromHook('checklist', checklist), injectConfigFromHook('listChecklist', listChecklist), injectConfigFromHook('comment', comment), injectConfigFromHook('subComment', subComment), injectConfigFromHook('commentAttachment', commentAttachment), injectConfigFromHook('attachment', attachment)],
+    resolvers: merge(resolver, emailResolvers, pushNotificationResolvers, userResolvers({ pubSub }), profileResolvers({ pubSub }), educationResolvers({ pubSub }), workResolvers({ pubSub }), skillResolvers({ pubSub }), projectResolvers({ pubSub }), spaceResolvers({ pubSub }), menuResolvers({ pubSub }), spaceMenuResolvers({ pubSub }), courseCategoryResolvers({ pubSub }), courseResolvers({ pubSub }), sectionResolvers({ pubSub }), lectureResolvers({ pubSub }), articleResolvers({ pubSub }), quizResolvers({ pubSub }), questionResolvers({ pubSub }), optionResolvers({ pubSub }), answerResolvers({ pubSub }), reviewResolvers({ pubSub }), folderResolvers({ pubSub }), userFileResolvers({ pubSub }), eventResolvers({ pubSub }), checkInRoomResolvers({ pubSub }), messageResolvers({ pubSub }), chatFileStorageResolvers({ pubSub }), postResolvers({ pubSub }), reactionResolvers({ pubSub }), workspaceResolvers({ pubSub }), boardResolvers({ pubSub }), listResolvers({ pubSub }), cardResolvers({ pubSub }), labelResolvers({ pubSub }), checklistResolvers({ pubSub }), listChecklistResolvers({ pubSub }), commentResolvers({ pubSub }), subCommentResolvers({ pubSub }), commentAttachmentResolvers({ pubSub }), attachmentResolvers({ pubSub })),
     schemaDirectives: {
         rateLimit: createRateLimitDirective({
             keyGenerator
@@ -320,11 +319,6 @@ const cardRequester = new cote.Requester({
     key: APP_ID + '_card',
 })
 
-const cardMemberRequester = new cote.Requester({
-    name: 'cardMember Requester',
-    key: APP_ID + '_cardMember',
-})
-
 const labelRequester = new cote.Requester({
     name: 'label Requester',
     key: APP_ID + '_label',
@@ -419,7 +413,6 @@ const context = ({ req, connection }) => {
             boardRequester,
             listRequester,
             cardRequester,
-            cardMemberRequester,
             labelRequester,
             checklistRequester,
             listChecklistRequester,
@@ -460,7 +453,6 @@ const context = ({ req, connection }) => {
             boardResolvers,
             listResolvers,
             cardResolvers,
-            cardMemberResolvers,
             labelResolvers,
             checklistResolvers,
             listChecklistResolvers,
