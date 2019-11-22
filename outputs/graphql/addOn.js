@@ -1,5 +1,5 @@
 export const typeDef = `
-type Addons {
+type AddOn {
   id: String
   createdBy: User
   updatedBy: User
@@ -10,9 +10,9 @@ type Addons {
   url: String
   color: String
 }
-input AddonsFilter {
-  AND: [AddonsFilter!]
-  OR: [AddonsFilter!]
+input AddOnFilter {
+  AND: [AddOnFilter!]
+  OR: [AddOnFilter!]
   id: String
   id_not: String
   id_in: [String]
@@ -106,7 +106,7 @@ input AddonsFilter {
   color_ends_with: String
   color_not_ends_with: String
 }
-enum AddonsOrderBy {
+enum AddOnOrderBy {
   id_ASC
   id_DESC
   createdAt_ASC
@@ -122,77 +122,77 @@ enum AddonsOrderBy {
   color_ASC
   color_DESC
 }
-type AddonsConnection {
+type AddOnConnection {
   total: Int
   limit: Int
   skip: Int
-  data: [Addons]
+  data: [AddOn]
 }
-input CreateAddonsInput {
+input CreateAddOnInput {
   title: String!
   description: String!
   url: String
   color: String
 }
-input UpdateAddonsInput {
+input UpdateAddOnInput {
   title: String
   description: String
   url: String
   color: String
 }
 extend type Query {
-  addons(
+  addOns(
     query: JSON
-    where: AddonsFilter
-    orderBy: AddonsOrderBy
+    where: AddOnFilter
+    orderBy: AddOnOrderBy
     skip: Int
     limit: Int
-  ): [Addons]
-  addon(id: String!): Addons
-  addonsConnection(
+  ): [AddOn]
+  addOn(id: String!): AddOn
+  addOnsConnection(
     query: JSON
-    where: AddonsFilter
-    orderBy: AddonsOrderBy
+    where: AddOnFilter
+    orderBy: AddOnOrderBy
     skip: Int
     limit: Int
-  ): AddonsConnection
+  ): AddOnConnection
 }
 extend type Subscription {
-  addonAdded: Addon
-  addonUpdated: Addon
-  addonDeleted: Addon
+  addOnAdded: AddOn
+  addOnUpdated: AddOn
+  addOnDeleted: AddOn
 }
 extend type Mutation {
-  createAddon(input: CreateAddonInput): Addon
-  updateAddon(input: UpdateAddonInput, id: String!): Addon
-  deleteAddon(id: String!): Addon
+  createAddOn(input: CreateAddOnInput): AddOn
+  updateAddOn(input: UpdateAddOnInput, id: String!): AddOn
+  deleteAddOn(id: String!): AddOn
 }
 `
 export const resolvers = ({ pubSub }) => ({
     Query: {
-        addons: async (_, { where = {}, limit, skip, orderBy, query = {} }, { requester, resolvers, headers }) => {
+        addOns: async (_, { where = {}, limit, skip, orderBy, query = {} }, { requester, resolvers, headers }) => {
             try {
-                return await requester.addonsRequester.send({ type: 'find', where: Object.assign(where, query), limit, skip, orderBy, headers })
+                return await requester.addOnRequester.send({ type: 'find', where: Object.assign(where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
-        addon: async (_, { id }, { requester, resolvers, headers }) => {
+        addOn: async (_, { id }, { requester, resolvers, headers }) => {
             try {
-                return await requester.addonsRequester.send({ type: 'get', id, headers })
+                return await requester.addOnRequester.send({ type: 'get', id, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
-        addonsConnection: async (_, { where = {}, query = {}, limit, skip, orderBy }, { requester, resolvers, headers }) => {
+        addOnsConnection: async (_, { where = {}, query = {}, limit, skip, orderBy }, { requester, resolvers, headers }) => {
             try {
-                return await requester.addonsRequester.send({ type: 'findConnection', where: Object.assign(where, query), limit, skip, orderBy, headers })
+                return await requester.addOnRequester.send({ type: 'findConnection', where: Object.assign(where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
     },
-    Addons: {
+    AddOn: {
         createdBy: async ({ createdBy }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: createdBy, headers })
@@ -209,39 +209,39 @@ export const resolvers = ({ pubSub }) => ({
         },
     },
     Subscription: {
-        addonsAdded: {
-            subscribe: () => pubSub.asyncIterator('addonsAdded')
+        addOnAdded: {
+            subscribe: () => pubSub.asyncIterator('addOnAdded')
         },
-        addonsUpdated: {
-            subscribe: () => pubSub.asyncIterator('addonsUpdated')
+        addOnUpdated: {
+            subscribe: () => pubSub.asyncIterator('addOnUpdated')
         },
-        addonsDeleted: {
-            subscribe: () => pubSub.asyncIterator('addonsDeleted')
+        addOnDeleted: {
+            subscribe: () => pubSub.asyncIterator('addOnDeleted')
         },
     },
     Mutation: {
-        createAddons: async (_, { input = {} }, { requester, resolvers, headers }) => {
+        createAddOn: async (_, { input = {} }, { requester, resolvers, headers }) => {
             try {
-                let data = await requester.addonsRequester.send({ type: 'create', body: input, headers })
-                pubSub.publish("addonsAdded", { addonsAdded: data })
+                let data = await requester.addOnRequester.send({ type: 'create', body: input, headers })
+                pubSub.publish("addOnAdded", { addOnAdded: data })
                 return data
             } catch (e) {
                 throw new Error(e)
             }
         },
-        updateAddons: async (_, { input = {}, id }, { requester, resolvers, headers }) => {
+        updateAddOn: async (_, { input = {}, id }, { requester, resolvers, headers }) => {
             try {
-                let data = await requester.addonsRequester.send({ type: 'patch', body: input, id, headers })
-                pubSub.publish("addonsUpdated", { addonsUpdated: data })
+                let data = await requester.addOnRequester.send({ type: 'patch', body: input, id, headers })
+                pubSub.publish("addOnUpdated", { addOnUpdated: data })
                 return data
             } catch (e) {
                 throw new Error(e)
             }
         },
-        deleteAddons: async (_, { id }, { requester, resolvers, headers }) => {
+        deleteAddOn: async (_, { id }, { requester, resolvers, headers }) => {
             try {
-                let data = await requester.addonsRequester.send({ type: 'delete', id, headers })
-                pubSub.publish("addonsDeleted", { addonsDeleted: data })
+                let data = await requester.addOnRequester.send({ type: 'delete', id, headers })
+                pubSub.publish("addOnDeleted", { addOnDeleted: data })
                 return data
             } catch (e) {
                 throw new Error(e)

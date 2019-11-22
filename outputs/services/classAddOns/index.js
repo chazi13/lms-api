@@ -13,7 +13,7 @@ try {
     const split = root.split('/')
     split.pop()
     const path = split.join('/')
-    externalHook = require(path + '/hooks/addons')
+    externalHook = require(path + '/hooks/classAddOns')
 } catch (e) {
 
 }
@@ -25,9 +25,9 @@ function camelize(text) {
     });
 }
 
-const addonsService = new cote.Responder({
-    name: 'Addons Service',
-    key: 'addons'
+const classAddOnsService = new cote.Responder({
+    name: 'ClassAddOns Service',
+    key: 'classAddOns'
 })
 
 const userRequester = new cote.Requester({
@@ -141,9 +141,9 @@ const transformer = ({where, limit, skip, orderBy}) => {
 }
 
 
-addonsService.on("find", async (req, cb) => {
+classAddOnsService.on("find", async (req, cb) => {
     try {
-        let data = await app.service("addons").find({
+        let data = await app.service("classAddOns").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -155,9 +155,9 @@ addonsService.on("find", async (req, cb) => {
     }
 })
 
-addonsService.on("findConnection", async (req, cb) => {
+classAddOnsService.on("findConnection", async (req, cb) => {
     try {
-        let data = await app.service("addons").find({
+        let data = await app.service("classAddOns").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -169,9 +169,9 @@ addonsService.on("findConnection", async (req, cb) => {
     }
 })
 
-addonsService.on("findOwn", async (req, cb) => {
+classAddOnsService.on("findOwn", async (req, cb) => {
     try {
-        let data = await app.service("addons").find({
+        let data = await app.service("classAddOns").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -184,9 +184,9 @@ addonsService.on("findOwn", async (req, cb) => {
     }
 })
 
-addonsService.on("findConnectionOwn", async (req, cb) => {
+classAddOnsService.on("findConnectionOwn", async (req, cb) => {
     try {
-        let data = await app.service("addons").find({
+        let data = await app.service("classAddOns").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -199,9 +199,9 @@ addonsService.on("findConnectionOwn", async (req, cb) => {
     }
 })
 
-addonsService.on("create", async (req, cb) => {
+classAddOnsService.on("create", async (req, cb) => {
     try {
-        let data = await app.service("addons").create(req.body, {
+        let data = await app.service("classAddOns").create(req.body, {
             headers: req.headers,
             file: req.file,
             isSystem: req.isSystem
@@ -212,9 +212,9 @@ addonsService.on("create", async (req, cb) => {
     }
 })
 
-addonsService.on("patch", async (req, cb) => {
+classAddOnsService.on("patch", async (req, cb) => {
     try {
-        let data = await app.service("addons").patch(req.id, req.body, {
+        let data = await app.service("classAddOns").patch(req.id, req.body, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -226,9 +226,9 @@ addonsService.on("patch", async (req, cb) => {
     }
 })
 
-addonsService.on("delete", async (req, cb) => {
+classAddOnsService.on("delete", async (req, cb) => {
     try {
-        let data = await app.service("addons").remove(req.id, {
+        let data = await app.service("classAddOns").remove(req.id, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -241,11 +241,11 @@ addonsService.on("delete", async (req, cb) => {
     }
 })
 
-addonsService.on("get", async (req, cb) => {
+classAddOnsService.on("get", async (req, cb) => {
     try {
         let data = null
         if (req.id) {
-            data = await app.service("addons").get(req.id, {
+            data = await app.service("classAddOns").get(req.id, {
                 headers: req.headers,
                 isSystem: req.isSystem
             })
@@ -262,7 +262,7 @@ const checkAuthentication = (token) => {
 }
 
 
-app.service('addons').hooks({
+app.service('classAddOns').hooks({
     before: {
         find: async (context) => {
             try {
@@ -272,7 +272,7 @@ app.service('addons').hooks({
                     context.params.user = auth.user
 
                     
-                    if(auth.user.permissions.includes(`${camelize('addons')}:findOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('classAddOns')}:findOwn`)){
                         context.method = "findOwn"
                         context.params.query = {
                             ...context.params.query || {},
@@ -282,7 +282,7 @@ app.service('addons').hooks({
                     
                     //beforeFindAuthorization
                     await checkPermissions({
-                        roles: ['admin', 'addons']
+                        roles: ['admin', 'classAddOns']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -302,7 +302,7 @@ app.service('addons').hooks({
 
                     context.params.user = auth.user
                     await checkPermissions({
-                        roles: ['admin', 'addons']
+                        roles: ['admin', 'classAddOns']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -322,7 +322,7 @@ app.service('addons').hooks({
                     context.params.user = auth.user
 
                     await checkPermissions({
-                        roles: ['admin', 'addons']
+                        roles: ['admin', 'classAddOns']
                     })(context)
 
                     context.data.createdBy = auth.user.id || ''
@@ -330,7 +330,35 @@ app.service('addons').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     }
+                    
+                    
                     //beforeCreate
+                    if(context.data && context.data.classRoomId){
+                        let belongsTo = await getRequester('classRoom').send({ 
+                            type: "get", 
+                            id: context.data.classRoomId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("ClassRoom not found.")
+                        }
+                    }             
+                    
+                    if(context.data && context.data.addOnId){
+                        let belongsTo = await getRequester('addOn').send({ 
+                            type: "get", 
+                            id: context.data.addOnId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("AddOn not found.")
+                        }
+                    }             
+                    
                 }
                 
                 return externalHook && externalHook(app).before && externalHook(app).before.create && externalHook(app).before.create(context)
@@ -348,11 +376,11 @@ app.service('addons').hooks({
 
      
                     //beforeUpdate
-                    if(auth.user.permissions.includes(`${camelize('addons')}:updateOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('classAddOns')}:updateOwn`)){
                         context.method = "updateOwn"
                         if(context.id){
-                            let addons = await app.service(`${pluralize(camelize("addons"))}`).get(context.id, { headers: context.params.headers })
-                            if(addons && addons.createdBy !== auth.user.id){
+                            let classAddOns = await app.service(`${pluralize(camelize("classAddOns"))}`).get(context.id, { headers: context.params.headers })
+                            if(classAddOns && classAddOns.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
@@ -360,7 +388,7 @@ app.service('addons').hooks({
 
 
                     await checkPermissions({
-                        roles: ['admin', 'addons']
+                        roles: ['admin', 'classAddOns']
                     })(context)
 
 
@@ -386,18 +414,18 @@ app.service('addons').hooks({
  
             
                     //beforePatch
-                    if(auth.user.permissions.includes(`${camelize('addons')}:patchOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('classAddOns')}:patchOwn`)){
                         context.method = "patchOwn"
                         if(context.id){
-                            let addons = await app.service(`${pluralize(camelize("addons"))}`).get(context.id, { headers: context.params.headers })
-                            if(addons && addons.createdBy !== auth.user.id){
+                            let classAddOns = await app.service(`${pluralize(camelize("classAddOns"))}`).get(context.id, { headers: context.params.headers })
+                            if(classAddOns && classAddOns.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
 
                     await checkPermissions({
-                        roles: ['admin', 'addons']
+                        roles: ['admin', 'classAddOns']
                     })(context)
 
     
@@ -422,17 +450,17 @@ app.service('addons').hooks({
 
 
                     //beforeDelete
-                    if(auth.user.permissions.includes(`${camelize('addons')}:removeOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('classAddOns')}:removeOwn`)){
                         context.method = "removeOwn"
                         if(context.id){
-                            let addons = await app.service(`${pluralize(camelize("addons"))}`).get(context.id, { headers: context.params.headers })
-                            if(addons && addons.createdBy !== auth.user.id){
+                            let classAddOns = await app.service(`${pluralize(camelize("classAddOns"))}`).get(context.id, { headers: context.params.headers })
+                            if(classAddOns && classAddOns.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
                     await checkPermissions({
-                        roles: ['admin', 'addons']
+                        roles: ['admin', 'classAddOns']
                     })(context)
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
@@ -488,5 +516,5 @@ app.service('addons').hooks({
 
 
 server.on('listening', () =>
-    console.log('Addons Rest Server on http://%s:%d', app.get('host'), port)
+    console.log('ClassAddOns Rest Server on http://%s:%d', app.get('host'), port)
 );

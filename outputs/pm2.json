@@ -22,10 +22,6 @@
             "script": "npm run user-services"
         },
         {
-            "name": "addon Service",
-            "script": "npm run addon-services"
-        },
-        {
             "name": "profile Service",
             "script": "npm run profile-services"
         },
@@ -54,8 +50,16 @@
             "script": "npm run project-services"
         },
         {
+            "name": "addOn Service",
+            "script": "npm run addOn-services"
+        },
+        {
             "name": "classRoom Service",
             "script": "npm run classRoom-services"
+        },
+        {
+            "name": "classAddOn Service",
+            "script": "npm run classAddOn-services"
         },
         {
             "name": "group Service",

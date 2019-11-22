@@ -10,7 +10,6 @@ const permissions = externalPermission && externalPermission().permissions || {
     authenticated: [
         'user:find', 'user:get', 'user:patch',
         'pushNotification:create', 'pushNotification:remove',
-        'addon:find', 'addon:get', 'addon:create', 'addon:removeOwn', 'addon:patchOwn',
         'user:find', 'user:get', 'user:create', 'user:removeOwn', 'user:patchOwn',
         'profile:find', 'profile:get', 'profile:create', 'profile:removeOwn', 'profile:patchOwn',
         'student:find', 'student:get', 'student:create', 'student:removeOwn', 'student:patchOwn',
@@ -19,7 +18,9 @@ const permissions = externalPermission && externalPermission().permissions || {
         'work:find', 'work:get', 'work:create', 'work:removeOwn', 'work:patchOwn',
         'skill:find', 'skill:get', 'skill:create', 'skill:removeOwn', 'skill:patchOwn',
         'project:find', 'project:get', 'project:create', 'project:removeOwn', 'project:patchOwn',
+        'addOn:find', 'addOn:get', 'addOn:create', 'addOn:removeOwn', 'addOn:patchOwn',
         'classRoom:find', 'classRoom:get', 'classRoom:create', 'classRoom:removeOwn', 'classRoom:patchOwn',
+        'classAddOn:find', 'classAddOn:get', 'classAddOn:create', 'classAddOn:removeOwn', 'classAddOn:patchOwn',
         'group:find', 'group:get', 'group:create', 'group:removeOwn', 'group:patchOwn',
         'studentClass:find', 'studentClass:get', 'studentClass:create', 'studentClass:removeOwn', 'studentClass:patchOwn',
         'studentGroup:find', 'studentGroup:get', 'studentGroup:create', 'studentGroup:removeOwn', 'studentGroup:patchOwn',
@@ -61,7 +62,6 @@ const permissions = externalPermission && externalPermission().permissions || {
 
     public: [
 
-        'addon:find', 'addon:get',
         'user:find', 'user:get',
         'profile:find', 'profile:get',
         'student:find', 'student:get',
@@ -70,7 +70,9 @@ const permissions = externalPermission && externalPermission().permissions || {
         'work:find', 'work:get',
         'skill:find', 'skill:get',
         'project:find', 'project:get',
+        'addOn:find', 'addOn:get',
         'classRoom:find', 'classRoom:get',
+        'classAddOn:find', 'classAddOn:get',
         'group:find', 'group:get',
         'studentClass:find', 'studentClass:get',
         'studentGroup:find', 'studentGroup:get',
