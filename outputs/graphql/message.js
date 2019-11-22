@@ -11,6 +11,7 @@ type Message {
   parentMessage: String
   isDeleted: Boolean
   files(query: JSON): [ChatFileStorage]
+  classRoom: ClassRoom
 }
 input MessageFilter {
   AND: [MessageFilter!]
@@ -101,6 +102,9 @@ input MessageFilter {
   files: ChatFileStorageFilter
   files_some: ChatFileStorageFilter
   files_none: ChatFileStorageFilter
+  classRoom: ClassRoomFilter
+  classRoom_some: ClassRoomFilter
+  classRoom_none: ClassRoomFilter
 }
 enum MessageOrderBy {
   id_ASC
@@ -130,6 +134,7 @@ input CreateMessageInput {
   userId: String
   parentMessage: String
   isDeleted: Boolean
+  classRoomId: String
 }
 input UpdateMessageInput {
   text: String
@@ -137,6 +142,7 @@ input UpdateMessageInput {
   userId: String
   parentMessage: String
   isDeleted: Boolean
+  classRoomId: String
 }
 extend type Query {
   messages(
@@ -215,6 +221,13 @@ export const resolvers = ({ pubSub }) => ({
         files: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.chatFileStorageRequester.send({ type: 'find', where: Object.assign({ messageId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        classRoom: async ({ classRoomId }, args, { headers, requester }) => {
+            try {
+                return await requester.classRoomRequester.send({ type: 'get', id: classRoomId, headers })
             } catch (e) {
                 throw new Error(e)
             }

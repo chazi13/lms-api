@@ -3,12 +3,10 @@ module.exports = function(app) {
     const mongooseClient = app.get('mongooseClient');
     const uniqueValidator = require('mongoose-unique-validator');
     const model = new mongooseClient.Schema({
-        text: { type: String, required: false, unique: false },
-        MessageType: { type: String, required: false, unique: false },
-        userId: { type: String, required: false },
-        parentMessage: { type: String, required: false, default: false, unique: false },
-        isDeleted: { type: Boolean, required: false, default: false, unique: false },
-        classRoomId: { type: String, required: false },
+        title: { type: String, required: true, unique: false },
+        description: { type: String, required: true, unique: false },
+        url: { type: String, required: false, unique: false },
+        color: { type: String, required: false, unique: false },
         createdBy: String,
         updatedBy: String
     }, {
@@ -21,5 +19,5 @@ module.exports = function(app) {
     model.set('toJSON', { virtuals: true })
     model.plugin(mongooseVirtuals)
     model.plugin(uniqueValidator)
-    return mongooseClient.model("messages", model)
+    return mongooseClient.model("addons", model)
 }

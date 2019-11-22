@@ -10,7 +10,7 @@ const permissions = externalPermission && externalPermission().permissions || {
     authenticated: [
         'user:find', 'user:get', 'user:patch',
         'pushNotification:create', 'pushNotification:remove',
-        'menu:find', 'menu:get', 'menu:create', 'menu:removeOwn', 'menu:patchOwn',
+        'addon:find', 'addon:get', 'addon:create', 'addon:removeOwn', 'addon:patchOwn',
         'user:find', 'user:get', 'user:create', 'user:removeOwn', 'user:patchOwn',
         'profile:find', 'profile:get', 'profile:create', 'profile:removeOwn', 'profile:patchOwn',
         'student:find', 'student:get', 'student:create', 'student:removeOwn', 'student:patchOwn',
@@ -60,7 +60,7 @@ const permissions = externalPermission && externalPermission().permissions || {
 
     public: [
 
-        'menu:find', 'menu:get',
+        'addon:find', 'addon:get',
         'user:find', 'user:get',
         'profile:find', 'profile:get',
         'student:find', 'student:get',

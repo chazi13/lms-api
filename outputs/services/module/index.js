@@ -13,7 +13,7 @@ try {
     const split = root.split('/')
     split.pop()
     const path = split.join('/')
-    externalHook = require(path + '/hooks/message')
+    externalHook = require(path + '/hooks/module')
 } catch (e) {
 
 }
@@ -25,9 +25,9 @@ function camelize(text) {
     });
 }
 
-const messageService = new cote.Responder({
-    name: 'Message Service',
-    key: 'message'
+const moduleService = new cote.Responder({
+    name: 'Module Service',
+    key: 'module'
 })
 
 const userRequester = new cote.Requester({
@@ -141,9 +141,9 @@ const transformer = ({where, limit, skip, orderBy}) => {
 }
 
 
-messageService.on("find", async (req, cb) => {
+moduleService.on("find", async (req, cb) => {
     try {
-        let data = await app.service("messages").find({
+        let data = await app.service("modules").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -155,9 +155,9 @@ messageService.on("find", async (req, cb) => {
     }
 })
 
-messageService.on("findConnection", async (req, cb) => {
+moduleService.on("findConnection", async (req, cb) => {
     try {
-        let data = await app.service("messages").find({
+        let data = await app.service("modules").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -169,9 +169,9 @@ messageService.on("findConnection", async (req, cb) => {
     }
 })
 
-messageService.on("findOwn", async (req, cb) => {
+moduleService.on("findOwn", async (req, cb) => {
     try {
-        let data = await app.service("messages").find({
+        let data = await app.service("modules").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -184,9 +184,9 @@ messageService.on("findOwn", async (req, cb) => {
     }
 })
 
-messageService.on("findConnectionOwn", async (req, cb) => {
+moduleService.on("findConnectionOwn", async (req, cb) => {
     try {
-        let data = await app.service("messages").find({
+        let data = await app.service("modules").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -199,9 +199,9 @@ messageService.on("findConnectionOwn", async (req, cb) => {
     }
 })
 
-messageService.on("create", async (req, cb) => {
+moduleService.on("create", async (req, cb) => {
     try {
-        let data = await app.service("messages").create(req.body, {
+        let data = await app.service("modules").create(req.body, {
             headers: req.headers,
             file: req.file,
             isSystem: req.isSystem
@@ -212,9 +212,9 @@ messageService.on("create", async (req, cb) => {
     }
 })
 
-messageService.on("patch", async (req, cb) => {
+moduleService.on("patch", async (req, cb) => {
     try {
-        let data = await app.service("messages").patch(req.id, req.body, {
+        let data = await app.service("modules").patch(req.id, req.body, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -226,9 +226,9 @@ messageService.on("patch", async (req, cb) => {
     }
 })
 
-messageService.on("delete", async (req, cb) => {
+moduleService.on("delete", async (req, cb) => {
     try {
-        let data = await app.service("messages").remove(req.id, {
+        let data = await app.service("modules").remove(req.id, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -241,11 +241,11 @@ messageService.on("delete", async (req, cb) => {
     }
 })
 
-messageService.on("get", async (req, cb) => {
+moduleService.on("get", async (req, cb) => {
     try {
         let data = null
         if (req.id) {
-            data = await app.service("messages").get(req.id, {
+            data = await app.service("modules").get(req.id, {
                 headers: req.headers,
                 isSystem: req.isSystem
             })
@@ -262,7 +262,7 @@ const checkAuthentication = (token) => {
 }
 
 
-app.service('messages').hooks({
+app.service('modules').hooks({
     before: {
         find: async (context) => {
             try {
@@ -272,7 +272,7 @@ app.service('messages').hooks({
                     context.params.user = auth.user
 
                     
-                    if(auth.user.permissions.includes(`${camelize('message')}:findOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('module')}:findOwn`)){
                         context.method = "findOwn"
                         context.params.query = {
                             ...context.params.query || {},
@@ -282,7 +282,7 @@ app.service('messages').hooks({
                     
                     //beforeFindAuthorization
                     await checkPermissions({
-                        roles: ['admin', 'message']
+                        roles: ['admin', 'module']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -302,7 +302,7 @@ app.service('messages').hooks({
 
                     context.params.user = auth.user
                     await checkPermissions({
-                        roles: ['admin', 'message']
+                        roles: ['admin', 'module']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -322,7 +322,7 @@ app.service('messages').hooks({
                     context.params.user = auth.user
 
                     await checkPermissions({
-                        roles: ['admin', 'message']
+                        roles: ['admin', 'module']
                     })(context)
 
                     context.data.createdBy = auth.user.id || ''
@@ -330,35 +330,7 @@ app.service('messages').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     }
-                    
-                    
                     //beforeCreate
-                    if(context.data && context.data.classRoomId){
-                        let belongsTo = await getRequester('classRoom').send({ 
-                            type: "get", 
-                            id: context.data.classRoomId, 
-                            headers:{
-                                token: context.params.headers.authorization
-                            }
-                        })
-                        if(!belongsTo){
-                            throw Error("ClassRoom not found.")
-                        }
-                    }             
-                    
-                    if(context.data && context.data.userId){
-                        let belongsTo = await getRequester('user').send({ 
-                            type: "get", 
-                            id: context.data.userId, 
-                            headers:{
-                                token: context.params.headers.authorization
-                            }
-                        })
-                        if(!belongsTo){
-                            throw Error("User not found.")
-                        }
-                    }             
-                    
                 }
                 
                 return externalHook && externalHook(app).before && externalHook(app).before.create && externalHook(app).before.create(context)
@@ -376,11 +348,11 @@ app.service('messages').hooks({
 
      
                     //beforeUpdate
-                    if(auth.user.permissions.includes(`${camelize('message')}:updateOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('module')}:updateOwn`)){
                         context.method = "updateOwn"
                         if(context.id){
-                            let message = await app.service(`${pluralize(camelize("message"))}`).get(context.id, { headers: context.params.headers })
-                            if(message && message.createdBy !== auth.user.id){
+                            let module = await app.service(`${pluralize(camelize("module"))}`).get(context.id, { headers: context.params.headers })
+                            if(module && module.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
@@ -388,7 +360,7 @@ app.service('messages').hooks({
 
 
                     await checkPermissions({
-                        roles: ['admin', 'message']
+                        roles: ['admin', 'module']
                     })(context)
 
 
@@ -414,18 +386,18 @@ app.service('messages').hooks({
  
             
                     //beforePatch
-                    if(auth.user.permissions.includes(`${camelize('message')}:patchOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('module')}:patchOwn`)){
                         context.method = "patchOwn"
                         if(context.id){
-                            let message = await app.service(`${pluralize(camelize("messages"))}`).get(context.id, { headers: context.params.headers })
-                            if(message && message.createdBy !== auth.user.id){
+                            let module = await app.service(`${pluralize(camelize("modules"))}`).get(context.id, { headers: context.params.headers })
+                            if(module && module.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
 
                     await checkPermissions({
-                        roles: ['admin', 'message']
+                        roles: ['admin', 'module']
                     })(context)
 
     
@@ -450,35 +422,22 @@ app.service('messages').hooks({
 
 
                     //beforeDelete
-                    if(auth.user.permissions.includes(`${camelize('message')}:removeOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('module')}:removeOwn`)){
                         context.method = "removeOwn"
                         if(context.id){
-                            let message = await app.service(`${pluralize(camelize("messages"))}`).get(context.id, { headers: context.params.headers })
-                            if(message && message.createdBy !== auth.user.id){
+                            let module = await app.service(`${pluralize(camelize("modules"))}`).get(context.id, { headers: context.params.headers })
+                            if(module && module.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
                     await checkPermissions({
-                        roles: ['admin', 'message']
+                        roles: ['admin', 'module']
                     })(context)
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     } 
-                    
                     //onDelete
-                    //ON DELETE SET CASCADE
-                    await getRequester('file').send({ type: 'delete', 
-                        id: null,   
-                        headers: {
-                            authorization: context.params.headers.authorization
-                        }, 
-                        params: {
-                            query: {
-                                messageId: context.id
-                            }
-                        }
-                    })
                     
                }
                 return externalHook && externalHook(app).before && externalHook(app).before.remove && externalHook(app).before.remove(context)
@@ -529,5 +488,5 @@ app.service('messages').hooks({
 
 
 server.on('listening', () =>
-    console.log('Message Rest Server on http://%s:%d', app.get('host'), port)
+    console.log('Module Rest Server on http://%s:%d', app.get('host'), port)
 );

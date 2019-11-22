@@ -22,8 +22,8 @@
             "script": "npm run user-services"
         },
         {
-            "name": "menu Service",
-            "script": "npm run menu-services"
+            "name": "addon Service",
+            "script": "npm run addon-services"
         },
         {
             "name": "profile Service",

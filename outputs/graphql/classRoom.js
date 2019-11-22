@@ -11,6 +11,7 @@ type ClassRoom {
   workspaces(query: JSON): [Workspace]
   background: String
   checkInRoom: CheckInRoom
+  addons: [Addons!]
 }
 input ClassRoomFilter {
   AND: [ClassRoomFilter!]
@@ -91,6 +92,14 @@ input ClassRoomFilter {
   checkInRoom: CheckInRoomFilter
   checkInRoom_some: CheckInRoomFilter
   checkInRoom_none: CheckInRoomFilter
+  addons: Addons
+  addons_not: Addons
+  addons_in: [Addons]
+  addons_not_in: [Addons]
+  addons_lt: Addons
+  addons_lte: Addons
+  addons_gt: Addons
+  addons_gte: Addons
 }
 enum ClassRoomOrderBy {
   id_ASC
@@ -117,6 +126,7 @@ input CreateClassRoomInput {
   groupId: String!
   background: String
   checkInRoomId: String
+  addons: [CreateAddonsInput]
 }
 input UpdateClassRoomInput {
   name: String
@@ -125,6 +135,7 @@ input UpdateClassRoomInput {
   groupId: String
   background: String
   checkInRoomId: String
+  addons: [UpdateAddonsInput]
 }
 extend type Query {
   classRooms(
@@ -226,6 +237,20 @@ export const resolvers = ({ pubSub }) => ({
         checkInRoom: async ({ checkInRoomId }, args, { headers, requester }) => {
             try {
                 return await requester.checkInRoomRequester.send({ type: 'get', id: checkInRoomId, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        addons: async ({ addonsId }, args, { headers, requester }) => {
+            try {
+                let res = []
+                if (addonsId) {
+                    for (let i = 0; i < addonsId.length; i++) {
+                        let addons = await requester.addonsRequester.send({ type: 'get', id: addonsId[i], headers })
+                        res.push(addons)
+                    }
+                }
+                return res
             } catch (e) {
                 throw new Error(e)
             }
