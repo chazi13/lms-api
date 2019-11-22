@@ -12,7 +12,7 @@ type Space {
   userFiles(query: JSON): [UserFile]
   events(query: JSON): [Event]
   posts(query: JSON): [Post]
-  checkInRoom(query: JSON): [CheckInRoom]
+  checkInRooms(query: JSON): [CheckInRoom]
   messages(query: JSON): [Message]
   workspaces(query: JSON): [Workspace]
 }
@@ -87,9 +87,9 @@ input SpaceFilter {
   posts: PostFilter
   posts_some: PostFilter
   posts_none: PostFilter
-  checkInRoom: CheckInRoomFilter
-  checkInRoom_some: CheckInRoomFilter
-  checkInRoom_none: CheckInRoomFilter
+  checkInRooms: CheckInRoomFilter
+  checkInRooms_some: CheckInRoomFilter
+  checkInRooms_none: CheckInRoomFilter
   messages: MessageFilter
   messages_some: MessageFilter
   messages_none: MessageFilter
@@ -115,12 +115,12 @@ type SpaceConnection {
 }
 input CreateSpaceInput {
   name: String!
-  users: [UserCreateInput]
+  users: [CreateUserInput]
   usersIds: [String]
 }
 input UpdateSpaceInput {
   name: String
-  users: [UserUpdateInput]
+  users: [UpdateUserInput]
   usersIds: [String]
 }
 extend type Query {

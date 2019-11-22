@@ -330,21 +330,7 @@ app.service('spaces').hooks({
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
                     }
-                    
                     //beforeCreate
-                    if(context.data && context.data.checkInRoomId){
-                        let belongsTo = await getRequester('checkInRoom').send({ 
-                            type: "get", 
-                            id: context.data.checkInRoomId, 
-                            headers:{
-                                token: context.params.headers.authorization
-                            }
-                        })
-                        if(!belongsTo){
-                            throw Error("CheckInRoom not found.")
-                        }
-                    }             
-                    
                 }
                 
                 return externalHook && externalHook(app).before && externalHook(app).before.create && externalHook(app).before.create(context)
