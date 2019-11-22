@@ -331,6 +331,7 @@ app.service('posts').hooks({
                         throw Error("UnAuthorized")
                     }
                     
+                    
                     //beforeCreate
                     if(context.data && context.data.cardId){
                         let belongsTo = await getRequester('card').send({ 
@@ -342,6 +343,19 @@ app.service('posts').hooks({
                         })
                         if(!belongsTo){
                             throw Error("Card not found.")
+                        }
+                    }             
+                    
+                    if(context.data && context.data.classRoomId){
+                        let belongsTo = await getRequester('classRoom').send({ 
+                            type: "get", 
+                            id: context.data.classRoomId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("ClassRoom not found.")
                         }
                     }             
                     

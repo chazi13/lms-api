@@ -9,6 +9,7 @@ type Post {
   comments(query: JSON): [Comment]
   reactions(query: JSON): [Reaction]
   attachments(query: JSON): [PostAttachment]
+  classRoom: ClassRoom
   card: Card
 }
 input PostFilter {
@@ -73,6 +74,9 @@ input PostFilter {
   attachments: PostAttachmentFilter
   attachments_some: PostAttachmentFilter
   attachments_none: PostAttachmentFilter
+  classRoom: ClassRoomFilter
+  classRoom_some: ClassRoomFilter
+  classRoom_none: ClassRoomFilter
   card: CardFilter
   card_some: CardFilter
   card_none: CardFilter
@@ -95,10 +99,12 @@ type PostConnection {
 }
 input CreatePostInput {
   text: String
+  classRoomId: String
   cardId: String
 }
 input UpdatePostInput {
   text: String
+  classRoomId: String
   cardId: String
 }
 extend type Query {
@@ -185,6 +191,13 @@ export const resolvers = ({ pubSub }) => ({
         attachments: async ({ id }, { where = {}, limit, skip, orderBy, query = {} }, { headers, requester }) => {
             try {
                 return await requester.postAttachmentRequester.send({ type: 'find', where: Object.assign({ postId: id }, where, query), limit, skip, orderBy, headers })
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        classRoom: async ({ classRoomId }, args, { headers, requester }) => {
+            try {
+                return await requester.classRoomRequester.send({ type: 'get', id: classRoomId, headers })
             } catch (e) {
                 throw new Error(e)
             }
