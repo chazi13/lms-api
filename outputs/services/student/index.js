@@ -332,6 +332,7 @@ app.service('students').hooks({
                     }
                     
                     
+                    
                     //beforeCreate
                     if(context.data && context.data.cardMemberId){
                         let belongsTo = await getRequester('cardMember').send({ 
@@ -343,6 +344,19 @@ app.service('students').hooks({
                         })
                         if(!belongsTo){
                             throw Error("CardMember not found.")
+                        }
+                    }             
+                    
+                    if(context.data && context.data.studentBoardId){
+                        let belongsTo = await getRequester('studentBoard').send({ 
+                            type: "get", 
+                            id: context.data.studentBoardId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("StudentBoard not found.")
                         }
                     }             
                     

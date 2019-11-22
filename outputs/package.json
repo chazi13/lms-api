@@ -6,7 +6,7 @@
     "scripts": {
         "graphql": "nodemon --exec babel-node graphql --presets env",
         "build": "NODE_ENV=production babel ./src -d dist --presets env",
-        "dev": "npm-run-all --parallel graphql email-services pushNotification-services storage-services user-services profile-services student-services studentWorkspace-services education-services work-services skill-services project-services classRoom-services group-services studentClass-services studentGroup-services post-services postAttachment-services event-services courseCategory-services course-services section-services lecture-services article-services reaction-services comment-services subComment-services commentAttachment-services message-services chatFileStorage-services propertyUser-services workspace-services board-services boardStudent-services list-services card-services cardMember-services label-services checklist-services listChecklist-services attachment-services quiz-services question-services option-services answer-services review-services checkInRoomMessage-services checkInRoom-services folder-services file-services",
+        "dev": "npm-run-all --parallel graphql email-services pushNotification-services storage-services user-services profile-services student-services studentWorkspace-services education-services work-services skill-services project-services classRoom-services group-services studentClass-services studentGroup-services post-services postAttachment-services event-services courseCategory-services course-services section-services lecture-services article-services reaction-services comment-services subComment-services commentAttachment-services message-services chatFileStorage-services propertyUser-services workspace-services board-services studentBoard-services list-services card-services cardMember-services label-services checklist-services listChecklist-services attachment-services quiz-services question-services option-services answer-services review-services checkInRoomMessage-services checkInRoom-services folder-services file-services",
         "serve": "node graphql",
         "test": "NODE_ENV=test nyc mocha --require babel-core/register test/test_helper.js './src/**/*.spec.js' --exit --timeout 20000",
         "email-services": "cd ./services/email && nodemon index.js",
@@ -41,7 +41,7 @@
         "propertyUser-services": "cd ./services/propertyUser && nodemon index.js",
         "workspace-services": "cd ./services/workspace && nodemon index.js",
         "board-services": "cd ./services/board && nodemon index.js",
-        "boardStudent-services": "cd ./services/boardStudent && nodemon index.js",
+        "studentBoard-services": "cd ./services/studentBoard && nodemon index.js",
         "list-services": "cd ./services/list && nodemon index.js",
         "card-services": "cd ./services/card && nodemon index.js",
         "cardMember-services": "cd ./services/cardMember && nodemon index.js",

@@ -13,7 +13,7 @@ try {
     const split = root.split('/')
     split.pop()
     const path = split.join('/')
-    externalHook = require(path + '/hooks/boardStudent')
+    externalHook = require(path + '/hooks/studentBoard')
 } catch (e) {
 
 }
@@ -25,9 +25,9 @@ function camelize(text) {
     });
 }
 
-const boardStudentService = new cote.Responder({
-    name: 'BoardStudent Service',
-    key: 'boardStudent'
+const studentBoardService = new cote.Responder({
+    name: 'StudentBoard Service',
+    key: 'studentBoard'
 })
 
 const userRequester = new cote.Requester({
@@ -141,9 +141,9 @@ const transformer = ({where, limit, skip, orderBy}) => {
 }
 
 
-boardStudentService.on("find", async (req, cb) => {
+studentBoardService.on("find", async (req, cb) => {
     try {
-        let data = await app.service("boardStudents").find({
+        let data = await app.service("studentBoards").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -155,9 +155,9 @@ boardStudentService.on("find", async (req, cb) => {
     }
 })
 
-boardStudentService.on("findConnection", async (req, cb) => {
+studentBoardService.on("findConnection", async (req, cb) => {
     try {
-        let data = await app.service("boardStudents").find({
+        let data = await app.service("studentBoards").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem
@@ -169,9 +169,9 @@ boardStudentService.on("findConnection", async (req, cb) => {
     }
 })
 
-boardStudentService.on("findOwn", async (req, cb) => {
+studentBoardService.on("findOwn", async (req, cb) => {
     try {
-        let data = await app.service("boardStudents").find({
+        let data = await app.service("studentBoards").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -184,9 +184,9 @@ boardStudentService.on("findOwn", async (req, cb) => {
     }
 })
 
-boardStudentService.on("findConnectionOwn", async (req, cb) => {
+studentBoardService.on("findConnectionOwn", async (req, cb) => {
     try {
-        let data = await app.service("boardStudents").find({
+        let data = await app.service("studentBoards").find({
             query: transformer({where: req.where, limit: req.limit, skip: req.skip, orderBy: req.orderBy}),
             headers: req.headers,
             isSystem: req.isSystem,
@@ -199,9 +199,9 @@ boardStudentService.on("findConnectionOwn", async (req, cb) => {
     }
 })
 
-boardStudentService.on("create", async (req, cb) => {
+studentBoardService.on("create", async (req, cb) => {
     try {
-        let data = await app.service("boardStudents").create(req.body, {
+        let data = await app.service("studentBoards").create(req.body, {
             headers: req.headers,
             file: req.file,
             isSystem: req.isSystem
@@ -212,9 +212,9 @@ boardStudentService.on("create", async (req, cb) => {
     }
 })
 
-boardStudentService.on("patch", async (req, cb) => {
+studentBoardService.on("patch", async (req, cb) => {
     try {
-        let data = await app.service("boardStudents").patch(req.id, req.body, {
+        let data = await app.service("studentBoards").patch(req.id, req.body, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -226,9 +226,9 @@ boardStudentService.on("patch", async (req, cb) => {
     }
 })
 
-boardStudentService.on("delete", async (req, cb) => {
+studentBoardService.on("delete", async (req, cb) => {
     try {
-        let data = await app.service("boardStudents").remove(req.id, {
+        let data = await app.service("studentBoards").remove(req.id, {
             ...req.params || {},
             headers: req.headers,
             file: req.file,
@@ -241,11 +241,11 @@ boardStudentService.on("delete", async (req, cb) => {
     }
 })
 
-boardStudentService.on("get", async (req, cb) => {
+studentBoardService.on("get", async (req, cb) => {
     try {
         let data = null
         if (req.id) {
-            data = await app.service("boardStudents").get(req.id, {
+            data = await app.service("studentBoards").get(req.id, {
                 headers: req.headers,
                 isSystem: req.isSystem
             })
@@ -262,7 +262,7 @@ const checkAuthentication = (token) => {
 }
 
 
-app.service('boardStudents').hooks({
+app.service('studentBoards').hooks({
     before: {
         find: async (context) => {
             try {
@@ -272,7 +272,7 @@ app.service('boardStudents').hooks({
                     context.params.user = auth.user
 
                     
-                    if(auth.user.permissions.includes(`${camelize('boardStudent')}:findOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('studentBoard')}:findOwn`)){
                         context.method = "findOwn"
                         context.params.query = {
                             ...context.params.query || {},
@@ -282,7 +282,7 @@ app.service('boardStudents').hooks({
                     
                     //beforeFindAuthorization
                     await checkPermissions({
-                        roles: ['admin', 'boardStudent']
+                        roles: ['admin', 'studentBoard']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -302,7 +302,7 @@ app.service('boardStudents').hooks({
 
                     context.params.user = auth.user
                     await checkPermissions({
-                        roles: ['admin', 'boardStudent']
+                        roles: ['admin', 'studentBoard']
                     })(context)
 
                     if (!context.params.permitted) {
@@ -322,7 +322,7 @@ app.service('boardStudents').hooks({
                     context.params.user = auth.user
 
                     await checkPermissions({
-                        roles: ['admin', 'boardStudent']
+                        roles: ['admin', 'studentBoard']
                     })(context)
 
                     context.data.createdBy = auth.user.id || ''
@@ -376,11 +376,11 @@ app.service('boardStudents').hooks({
 
      
                     //beforeUpdate
-                    if(auth.user.permissions.includes(`${camelize('boardStudent')}:updateOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('studentBoard')}:updateOwn`)){
                         context.method = "updateOwn"
                         if(context.id){
-                            let boardStudent = await app.service(`${pluralize(camelize("boardStudent"))}`).get(context.id, { headers: context.params.headers })
-                            if(boardStudent && boardStudent.createdBy !== auth.user.id){
+                            let studentBoard = await app.service(`${pluralize(camelize("studentBoard"))}`).get(context.id, { headers: context.params.headers })
+                            if(studentBoard && studentBoard.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
@@ -388,7 +388,7 @@ app.service('boardStudents').hooks({
 
 
                     await checkPermissions({
-                        roles: ['admin', 'boardStudent']
+                        roles: ['admin', 'studentBoard']
                     })(context)
 
 
@@ -414,18 +414,18 @@ app.service('boardStudents').hooks({
  
             
                     //beforePatch
-                    if(auth.user.permissions.includes(`${camelize('boardStudent')}:patchOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('studentBoard')}:patchOwn`)){
                         context.method = "patchOwn"
                         if(context.id){
-                            let boardStudent = await app.service(`${pluralize(camelize("boardStudents"))}`).get(context.id, { headers: context.params.headers })
-                            if(boardStudent && boardStudent.createdBy !== auth.user.id){
+                            let studentBoard = await app.service(`${pluralize(camelize("studentBoards"))}`).get(context.id, { headers: context.params.headers })
+                            if(studentBoard && studentBoard.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
 
                     await checkPermissions({
-                        roles: ['admin', 'boardStudent']
+                        roles: ['admin', 'studentBoard']
                     })(context)
 
     
@@ -450,17 +450,17 @@ app.service('boardStudents').hooks({
 
 
                     //beforeDelete
-                    if(auth.user.permissions.includes(`${camelize('boardStudent')}:removeOwn`)){
+                    if(auth.user.permissions.includes(`${camelize('studentBoard')}:removeOwn`)){
                         context.method = "removeOwn"
                         if(context.id){
-                            let boardStudent = await app.service(`${pluralize(camelize("boardStudents"))}`).get(context.id, { headers: context.params.headers })
-                            if(boardStudent && boardStudent.createdBy !== auth.user.id){
+                            let studentBoard = await app.service(`${pluralize(camelize("studentBoards"))}`).get(context.id, { headers: context.params.headers })
+                            if(studentBoard && studentBoard.createdBy !== auth.user.id){
                                 throw new Error("UnAuthorized")
                             }
                         }
                     }
                     await checkPermissions({
-                        roles: ['admin', 'boardStudent']
+                        roles: ['admin', 'studentBoard']
                     })(context)
                     if (!context.params.permitted) {
                         throw Error("UnAuthorized")
@@ -516,5 +516,5 @@ app.service('boardStudents').hooks({
 
 
 server.on('listening', () =>
-    console.log('BoardStudent Rest Server on http://%s:%d', app.get('host'), port)
+    console.log('StudentBoard Rest Server on http://%s:%d', app.get('host'), port)
 );

@@ -1,5 +1,5 @@
 export const typeDef = `
-type BoardStudent {
+type StudentBoard {
   id: String
   createdBy: User
   updatedBy: User
@@ -8,9 +8,9 @@ type BoardStudent {
   student: Student
   board: Board
 }
-input BoardStudentFilter {
-  AND: [BoardStudentFilter!]
-  OR: [BoardStudentFilter!]
+input StudentBoardFilter {
+  AND: [StudentBoardFilter!]
+  OR: [StudentBoardFilter!]
   id: String
   id_not: String
   id_in: [String]
@@ -54,7 +54,7 @@ input BoardStudentFilter {
   board_some: BoardFilter
   board_none: BoardFilter
 }
-enum BoardStudentOrderBy {
+enum StudentBoardOrderBy {
   id_ASC
   id_DESC
   createdAt_ASC
@@ -62,73 +62,73 @@ enum BoardStudentOrderBy {
   updatedAt_ASC
   updatedAt_DESC
 }
-type BoardStudentConnection {
+type StudentBoardConnection {
   total: Int
   limit: Int
   skip: Int
-  data: [BoardStudent]
+  data: [StudentBoard]
 }
-input CreateBoardStudentInput {
+input CreateStudentBoardInput {
   studentId: String
   boardId: String
 }
-input UpdateBoardStudentInput {
+input UpdateStudentBoardInput {
   studentId: String
   boardId: String
 }
 extend type Query {
-  boardStudents(
+  studentBoards(
     query: JSON
-    where: BoardStudentFilter
-    orderBy: BoardStudentOrderBy
+    where: StudentBoardFilter
+    orderBy: StudentBoardOrderBy
     skip: Int
     limit: Int
-  ): [BoardStudent]
-  boardStudent(id: String!): BoardStudent
-  boardStudentsConnection(
+  ): [StudentBoard]
+  studentBoard(id: String!): StudentBoard
+  studentBoardsConnection(
     query: JSON
-    where: BoardStudentFilter
-    orderBy: BoardStudentOrderBy
+    where: StudentBoardFilter
+    orderBy: StudentBoardOrderBy
     skip: Int
     limit: Int
-  ): BoardStudentConnection
+  ): StudentBoardConnection
 }
 extend type Subscription {
-  boardStudentAdded: BoardStudent
-  boardStudentUpdated: BoardStudent
-  boardStudentDeleted: BoardStudent
+  studentBoardAdded: StudentBoard
+  studentBoardUpdated: StudentBoard
+  studentBoardDeleted: StudentBoard
 }
 extend type Mutation {
-  createBoardStudent(input: CreateBoardStudentInput): BoardStudent
-  updateBoardStudent(input: UpdateBoardStudentInput, id: String!): BoardStudent
-  deleteBoardStudent(id: String!): BoardStudent
+  createStudentBoard(input: CreateStudentBoardInput): StudentBoard
+  updateStudentBoard(input: UpdateStudentBoardInput, id: String!): StudentBoard
+  deleteStudentBoard(id: String!): StudentBoard
 }
 `
 export const resolvers = ({ pubSub }) => ({
     Query: {
-        boardStudents: async (_, { where = {}, limit, skip, orderBy, query = {} }, { requester, resolvers, headers }) => {
+        studentBoards: async (_, { where = {}, limit, skip, orderBy, query = {} }, { requester, resolvers, headers }) => {
             try {
-                return await requester.boardStudentRequester.send({ type: 'find', where: Object.assign(where, query), limit, skip, orderBy, headers })
+                return await requester.studentBoardRequester.send({ type: 'find', where: Object.assign(where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
-        boardStudent: async (_, { id }, { requester, resolvers, headers }) => {
+        studentBoard: async (_, { id }, { requester, resolvers, headers }) => {
             try {
-                return await requester.boardStudentRequester.send({ type: 'get', id, headers })
+                return await requester.studentBoardRequester.send({ type: 'get', id, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
-        boardStudentsConnection: async (_, { where = {}, query = {}, limit, skip, orderBy }, { requester, resolvers, headers }) => {
+        studentBoardsConnection: async (_, { where = {}, query = {}, limit, skip, orderBy }, { requester, resolvers, headers }) => {
             try {
-                return await requester.boardStudentRequester.send({ type: 'findConnection', where: Object.assign(where, query), limit, skip, orderBy, headers })
+                return await requester.studentBoardRequester.send({ type: 'findConnection', where: Object.assign(where, query), limit, skip, orderBy, headers })
             } catch (e) {
                 throw new Error(e)
             }
         },
     },
-    BoardStudent: {
+    StudentBoard: {
         createdBy: async ({ createdBy }, args, { headers, requester }) => {
             try {
                 return await requester.userRequester.send({ type: 'get', id: createdBy, headers })
@@ -159,39 +159,39 @@ export const resolvers = ({ pubSub }) => ({
         },
     },
     Subscription: {
-        boardStudentAdded: {
-            subscribe: () => pubSub.asyncIterator('boardStudentAdded')
+        studentBoardAdded: {
+            subscribe: () => pubSub.asyncIterator('studentBoardAdded')
         },
-        boardStudentUpdated: {
-            subscribe: () => pubSub.asyncIterator('boardStudentUpdated')
+        studentBoardUpdated: {
+            subscribe: () => pubSub.asyncIterator('studentBoardUpdated')
         },
-        boardStudentDeleted: {
-            subscribe: () => pubSub.asyncIterator('boardStudentDeleted')
+        studentBoardDeleted: {
+            subscribe: () => pubSub.asyncIterator('studentBoardDeleted')
         },
     },
     Mutation: {
-        createBoardStudent: async (_, { input = {} }, { requester, resolvers, headers }) => {
+        createStudentBoard: async (_, { input = {} }, { requester, resolvers, headers }) => {
             try {
-                let data = await requester.boardStudentRequester.send({ type: 'create', body: input, headers })
-                pubSub.publish("boardStudentAdded", { boardStudentAdded: data })
+                let data = await requester.studentBoardRequester.send({ type: 'create', body: input, headers })
+                pubSub.publish("studentBoardAdded", { studentBoardAdded: data })
                 return data
             } catch (e) {
                 throw new Error(e)
             }
         },
-        updateBoardStudent: async (_, { input = {}, id }, { requester, resolvers, headers }) => {
+        updateStudentBoard: async (_, { input = {}, id }, { requester, resolvers, headers }) => {
             try {
-                let data = await requester.boardStudentRequester.send({ type: 'patch', body: input, id, headers })
-                pubSub.publish("boardStudentUpdated", { boardStudentUpdated: data })
+                let data = await requester.studentBoardRequester.send({ type: 'patch', body: input, id, headers })
+                pubSub.publish("studentBoardUpdated", { studentBoardUpdated: data })
                 return data
             } catch (e) {
                 throw new Error(e)
             }
         },
-        deleteBoardStudent: async (_, { id }, { requester, resolvers, headers }) => {
+        deleteStudentBoard: async (_, { id }, { requester, resolvers, headers }) => {
             try {
-                let data = await requester.boardStudentRequester.send({ type: 'delete', id, headers })
-                pubSub.publish("boardStudentDeleted", { boardStudentDeleted: data })
+                let data = await requester.studentBoardRequester.send({ type: 'delete', id, headers })
+                pubSub.publish("studentBoardDeleted", { studentBoardDeleted: data })
                 return data
             } catch (e) {
                 throw new Error(e)

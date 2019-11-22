@@ -331,7 +331,21 @@ app.service('boards').hooks({
                         throw Error("UnAuthorized")
                     }
                     
+                    
                     //beforeCreate
+                    if(context.data && context.data.studentBoardId){
+                        let belongsTo = await getRequester('studentBoard').send({ 
+                            type: "get", 
+                            id: context.data.studentBoardId, 
+                            headers:{
+                                token: context.params.headers.authorization
+                            }
+                        })
+                        if(!belongsTo){
+                            throw Error("StudentBoard not found.")
+                        }
+                    }             
+                    
                     if(context.data && context.data.workspaceId){
                         let belongsTo = await getRequester('workspace').send({ 
                             type: "get", 

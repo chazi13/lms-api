@@ -20,6 +20,6 @@ app.use(express.urlencoded({ extended: true }));
 app.configure(express.rest())
 
 app.configure(mongoose)
-app.use('/boardStudents', service({ Model: Model(app), whitelist: ['$regex', '$options'], multi: ['update', 'patch', 'remove'], paginate: feathers.paginate, lean: { virtuals: true } }))
+app.use('/studentBoards', service({ Model: Model(app), whitelist: ['$regex', '$options'], multi: ['update', 'patch', 'remove'], paginate: feathers.paginate, lean: { virtuals: true } }))
 
 module.exports = app

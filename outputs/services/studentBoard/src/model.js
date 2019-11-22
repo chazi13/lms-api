@@ -17,5 +17,5 @@ module.exports = function(app) {
     model.set('toJSON', { virtuals: true })
     model.plugin(mongooseVirtuals)
     model.plugin(uniqueValidator)
-    return mongooseClient.model("boardStudents", model)
+    return mongooseClient.model("studentBoards", model)
 }
