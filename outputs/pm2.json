@@ -22,6 +22,10 @@
             "script": "npm run user-services"
         },
         {
+            "name": "addon Service",
+            "script": "npm run addon-services"
+        },
+        {
             "name": "profile Service",
             "script": "npm run profile-services"
         },

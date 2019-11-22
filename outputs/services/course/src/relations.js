@@ -4,5 +4,11 @@ module.exports = {
         "relatedTo": "courseCategory",
         "foreignId": "id",
         "type": "manyToMany"
+    },
+    "classRoom": {
+        "local": "classRoomId",
+        "relatedTo": "classRoom",
+        "foreignId": "id",
+        "type": "one"
     }
 }

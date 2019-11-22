@@ -4,10 +4,9 @@ module.exports = function(app) {
     const uniqueValidator = require('mongoose-unique-validator');
     const model = new mongooseClient.Schema({
         title: { type: String, required: true, unique: false },
-        categoriesId: [{ type: String, required: true }],
-        finishTime: { type: String, required: false, unique: false },
-        description: { type: String, required: false, unique: false },
-        classRoomId: { type: String, required: false },
+        description: { type: String, required: true, unique: false },
+        url: { type: String, required: false, unique: false },
+        color: { type: String, required: false, unique: false },
         createdBy: String,
         updatedBy: String
     }, {
@@ -20,5 +19,5 @@ module.exports = function(app) {
     model.set('toJSON', { virtuals: true })
     model.plugin(mongooseVirtuals)
     model.plugin(uniqueValidator)
-    return mongooseClient.model("courses", model)
+    return mongooseClient.model("addons", model)
 }
